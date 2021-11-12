@@ -16,7 +16,10 @@ export const Navbar = ({ children, items, loading = false }: NavbarProps) => {
   const [drawer, showDrawer] = React.useState<boolean>(false);
 
   const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-    if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
+    if (
+      event.type === 'keydown' &&
+      ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')
+    ) {
       return;
     }
     showDrawer(open);
@@ -36,6 +39,7 @@ export const Navbar = ({ children, items, loading = false }: NavbarProps) => {
       case 'divider':
         return <div></div>;
     }
+    return <div></div>;
   };
 
   return (

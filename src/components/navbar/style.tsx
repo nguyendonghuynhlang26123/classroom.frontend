@@ -1,8 +1,8 @@
 export const navbarSx = {
-  background: '#fff',
+  bgcolor: 'background.paper',
   color: 'text.primary',
   borderBottom: 2,
-  borderColor: 'grey.200',
+  borderColor: 'divider',
 };
 
 export const drawerItemSx = {

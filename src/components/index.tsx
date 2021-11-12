@@ -1,3 +1,3 @@
 export * from './navbar';
-export * from './wrappers';
+export * from './context';
 export * from './modal';

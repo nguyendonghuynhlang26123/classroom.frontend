@@ -1,5 +1,5 @@
 import { HomeOutlined, Event, RuleFolderOutlined, FactCheckOutlined } from '@mui/icons-material';
-import { DrawerItemConfigType } from './type';
+import { DrawerItemConfigType } from 'common/type';
 export const drawerItemConfigs: DrawerItemConfigType[] = [
   {
     title: 'Classes',

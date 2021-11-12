@@ -36,7 +36,7 @@ const Dashboard = () => {
       <Navbar items={drawerItemConfigs} loading={loading}>
         <>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Classroom
+            🎓Classroom
           </Typography>
 
           <div>

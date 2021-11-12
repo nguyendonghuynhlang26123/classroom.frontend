@@ -1,13 +1,17 @@
+import { mainTheme } from 'configs/theme.config';
 import React from 'react';
-import { ThemeWrapper } from './components/wrappers/ThemeWrapper';
+import { ThemeContext } from './components/context';
 import Dashboard from './pages/Dashboard';
+import LoginPage from './pages/Login';
+
 function App() {
   return (
-    <div className="App">
-      <ThemeWrapper>
-        <Dashboard />
-      </ThemeWrapper>
-    </div>
+    <React.Fragment>
+      <ThemeContext themeConfig={mainTheme}>
+        {/* <Dashboard /> */}
+        <LoginPage />
+      </ThemeContext>
+    </React.Fragment>
   );
 }
 

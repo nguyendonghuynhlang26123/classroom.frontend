@@ -1,4 +1,4 @@
-import { DrawerItemConfigType } from '../../configs/type';
+import { DrawerItemConfigType } from 'common/type';
 
 export type DrawerItemType = DrawerItemConfigType;
 
