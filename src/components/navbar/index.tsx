@@ -1,14 +1,13 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import CssBaseline from '@mui/material/CssBaseline';
 import useScrollTrigger from '@mui/material/useScrollTrigger';
-import { Drawer, IconButton, LinearProgress, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { Drawer, IconButton, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { NavbarProps, DrawerItemType } from './type';
 import { drawerItemSx, drawerListSx, navbarSx } from './style';
 import { Menu } from '@mui/icons-material';
 
-export const Navbar = ({ children, items, loading = false }: NavbarProps) => {
+export const Navbar = ({ children, items, toolbarComponents }: NavbarProps) => {
   const trigger = useScrollTrigger({
     disableHysteresis: true,
     threshold: 0,
@@ -44,7 +43,6 @@ export const Navbar = ({ children, items, loading = false }: NavbarProps) => {
 
   return (
     <React.Fragment>
-      <CssBaseline />
       <Drawer anchor={'left'} open={drawer} onClose={toggleDrawer(false)}>
         <List sx={drawerListSx} role="presentation" onKeyDown={toggleDrawer(false)}>
           {items.map((item, idx) => getListItemByType(item, idx))}
@@ -57,7 +55,7 @@ export const Navbar = ({ children, items, loading = false }: NavbarProps) => {
           </IconButton>
           {children}
         </Toolbar>
-        {loading && <LinearProgress />}
+        {toolbarComponents}
       </AppBar>
       <Toolbar />
     </React.Fragment>
