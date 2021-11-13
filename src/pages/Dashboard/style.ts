@@ -1,8 +1,10 @@
-export const bodyContainer: any = {
+import { SxType } from 'common/type';
+
+export const bodyContainer: SxType = {
   px: 2,
 };
 
-export const cardContainer: any = {
+export const cardContainer: SxType = {
   display: 'flex',
   flexDirection: 'row',
   flexWrap: 'wrap',

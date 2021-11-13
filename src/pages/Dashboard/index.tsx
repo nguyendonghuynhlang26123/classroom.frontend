@@ -1,8 +1,8 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, LinearProgress } from '@mui/material';
 import React from 'react';
-import { Navbar } from '../../components';
+import { Navbar, ProfileBtn } from 'components';
 import { drawerItemConfigs } from 'configs';
-import { ProfileBtn, AddBtn, ClassCard } from './components';
+import { AddBtn, ClassCard } from './subcomponents';
 import { bodyContainer, cardContainer } from './style';
 import { FormData, ClassData } from './type';
 import ClassroomRepository from './service';
@@ -16,7 +16,6 @@ const Dashboard = () => {
   React.useEffect(() => {
     setLoading(true);
     repository.get().then((data: ClassData[]) => {
-      console.log('log ~ file: index.tsx ~ line 19 ~ repository.get ~ data', data);
       setClasses(data);
       setLoading(false);
     });
@@ -33,7 +32,7 @@ const Dashboard = () => {
 
   return (
     <React.Fragment>
-      <Navbar items={drawerItemConfigs} loading={loading}>
+      <Navbar items={drawerItemConfigs} toolbarComponents={<>{loading && <LinearProgress />}</>}>
         <>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             🎓Classroom

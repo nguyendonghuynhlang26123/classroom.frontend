@@ -18,8 +18,8 @@ jobs:
 
       - name: Install and Build 🔧
         run: |
-          npm install
-          npm run build
+          yarn install
+          yarn build
         env:
           REACT_APP_BACKEND_DOMAIN: https://web-classroom-backend.herokuapp.com
           REACT_APP_BACKEND_API_END_POINT: api

@@ -1,4 +1,6 @@
-export const cardSx: any = {
+import { MultipleSxTypes } from 'common/type';
+
+export const cardSx: MultipleSxTypes = {
   card: {
     ':hover': {
       boxShadow: '0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%)',
