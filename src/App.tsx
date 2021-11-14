@@ -11,7 +11,7 @@ function App() {
   const dispatch = useAppDispatch();
   const { message, type } = useAppSelector((state) => state.message);
   const { isAuthenticated } = useAuth();
-  const routes = useRoutes(appRoutes(true));
+  const routes = useRoutes(appRoutes(isAuthenticated));
 
   return (
     <React.Fragment>

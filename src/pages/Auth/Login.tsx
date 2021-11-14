@@ -101,16 +101,6 @@ const LoginPage = () => {
             >
               Login with Google
             </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              size="large"
-              aria-label="Sign in with Facebook"
-              color="primary"
-              startIcon={<img src={FacebookIcon} alt="Facebook Icon" />}
-            >
-              Login with Facebook
-            </Button>
           </Paper>
         </Container>
       </Grow>

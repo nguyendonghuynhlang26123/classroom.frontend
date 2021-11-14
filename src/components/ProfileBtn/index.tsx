@@ -1,14 +1,24 @@
 import { AccountCircle } from '@mui/icons-material';
 import { IconButton, Menu, MenuItem } from '@mui/material';
+import { useAuth } from '../context';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const ProfileBtn = () => {
+  const { logOut } = useAuth();
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  const handleProfileClicked = () => {
     setAnchorEl(null);
+    navigate('/profile');
+  };
+
+  const handleLogOut = () => {
+    setAnchorEl(null);
+    logOut();
   };
 
   return (
@@ -38,11 +48,11 @@ export const ProfileBtn = () => {
           vertical: 'top',
           horizontal: 'right',
         }}
-        onClose={handleClose}
+        onClose={() => setAnchorEl(null)}
         keepMounted
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>My account</MenuItem>
+        <MenuItem onClick={handleProfileClicked}>Profile</MenuItem>
+        <MenuItem onClick={handleLogOut}>Logout</MenuItem>
       </Menu>
     </>
   );

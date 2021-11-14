@@ -1,5 +1,5 @@
 import { repository } from './repository';
-import { JWT_SESSION_KEY } from './../common/constants/index';
+import { JWT_SESSION_KEY, JWT_REFRESH_SESSION_KEY } from './../common/constants/index';
 import { AuthData } from 'common/interfaces';
 import jwtDecode from 'jwt-decode';
 
@@ -21,20 +21,21 @@ export class JwtAuthService {
       (err) => {
         if (err.response.status === 401 && err.config && !err.config.__isRetryRequest) {
           if (this._onAutoLogOut) this._onAutoLogOut();
-          this._setSession(null);
+          this._setSession(null, null); //Reset session
         }
       },
     );
 
     let access_token = localStorage.getItem(JWT_SESSION_KEY);
-    console.log('log ~ file: jwt.service.ts ~ line 36 ~ JwtAuthService ~ init ~ access_token', access_token);
+    let refresh_token = localStorage.getItem(JWT_REFRESH_SESSION_KEY);
     if (!access_token) return;
 
     if (this.isAuthTokenValid(access_token)) {
-      this._setSession(access_token);
+      this._setSession(access_token, refresh_token); // SET for axios.default.header
       if (this._onAutoLogIn) this._onAutoLogIn();
     } else {
-      this._setSession(null);
+      //TODO: Make use of Refresh token
+      this._setSession(null, null); //Reset session
       if (this._onAutoLogOut) this._onAutoLogOut();
     }
   }
@@ -42,54 +43,71 @@ export class JwtAuthService {
   logIn(body: AuthData) {
     return new Promise((resolve, reject) => {
       //TODO: Check again
-      repository.post(`/auth/login`, body).then((response: any) => {
-        if (response.data) {
-          //eslint disable
-          const token = response.data.access_token;
-          this._setSession(token);
-
-          resolve(response.data);
-        } else {
-          reject(response.data.error);
-        }
-      });
+      repository
+        .post(`/auth/login`, body)
+        .then((response: any) => {
+          if (response.data) {
+            //eslint disable
+            const access_token = response.data.access_token;
+            const refresh_token = response.data.refresh_token;
+            this._setSession(access_token, refresh_token);
+            if (this._onAutoLogIn) this._onAutoLogIn();
+            resolve(response.data);
+          }
+        })
+        .catch((response) => reject(response));
     });
   }
 
   register(body: AuthData) {
     return new Promise((resolve, reject) => {
       //TODO: Check again
-      repository.post(`/auth/login`, body).then((response: any) => {
-        if (response.data) {
-          //eslint disable
-          const token = response.data.access_token;
-          this._setSession(token);
+      repository
+        .post(`/auth/register`, body)
+        .then((response: any) => {
+          if (response.data) {
+            //eslint disable
+            const access_token = response.data.access_token;
+            const refresh_token = response.data.refresh_token;
+            this._setSession(access_token, refresh_token);
 
-          resolve(response.data);
-        } else {
-          reject(response.data.error);
-        }
-      });
+            if (this._onAutoLogIn) this._onAutoLogIn();
+            resolve(response.data);
+          }
+        })
+        .catch((response) => reject(response));
     });
   }
 
   logOut() {
-    this._setSession(null);
+    const refresh_token: any = localStorage.getItem(JWT_REFRESH_SESSION_KEY);
+    return new Promise((resolve, reject) => {
+      //TODO: Check again
+      repository
+        .post(`/auth/logout`, { refresh_token })
+        .then((response: any) => {
+          this._setSession(null, null);
+          if (this._onAutoLogOut) this._onAutoLogOut();
+          resolve(response.data);
+        })
+        .catch((response) => reject(response));
+    });
   }
 
-  loginWithExistingToken() {
+  getUserData() {
     //TODO: change api here
-    const token = localStorage.getItem(JWT_SESSION_KEY);
+    const token: any = localStorage.getItem(JWT_SESSION_KEY);
+    const decoded: any = jwtDecode(token);
 
     return new Promise((resolve, reject) => {
-      repository.get(`/users/:userId`).then((response: any) => {
-        if (response.data) {
-          this._setSession(response.data.access_token);
-          resolve(response.data);
-        } else {
-          reject(response.data.error);
-        }
-      });
+      repository
+        .get(`/users/${decoded?._id}`)
+        .then((response: any) => {
+          if (response.data) {
+            resolve(response.data);
+          }
+        })
+        .catch((response) => reject(response));
     });
   }
 
@@ -108,13 +126,18 @@ export class JwtAuthService {
   };
 
   //HELPER FUNCTIONS
-  _setSession = (access_token: string | null) => {
+  _setSession = (access_token: string | null, refresh_token: string | null) => {
+    console.log('log ~ file: jwt.service.ts ~ line 128 ~ JwtAuthService ~ _setSession', access_token);
     if (access_token) {
-      localStorage.setItem('access_token', access_token);
+      localStorage.setItem(JWT_SESSION_KEY, access_token);
       repository.defaults.headers.common['Authorization'] = 'Bearer ' + access_token;
     } else {
-      sessionStorage.removeItem('access_token');
+      localStorage.removeItem(JWT_SESSION_KEY);
       delete repository.defaults.headers.common['Authorization'];
     }
+
+    if (refresh_token) {
+      localStorage.setItem(JWT_REFRESH_SESSION_KEY, refresh_token);
+    } else localStorage.removeItem(JWT_REFRESH_SESSION_KEY);
   };
 }

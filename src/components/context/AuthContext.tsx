@@ -7,7 +7,7 @@ const baseURL = 'http://localhost:3001/api/v1';
 export type AuthProps = {
   signIn: (data: AuthData) => Promise<any>;
   register: (data: AuthData) => Promise<any>;
-  logOut: (type: any) => void;
+  logOut: () => void;
   isAuthenticated: boolean;
   userData: User | undefined;
 };
@@ -27,7 +27,6 @@ export const AuthProvider = ({ children }: { children: any }) => {
   const [infor, setInfor] = React.useState<User | undefined>(undefined);
   const [isAuthen, setIsAuthen] = React.useState(false);
   React.useEffect(() => {
-    console.log('Auth check - ', isAuthen);
     axios.get(baseURL, { withCredentials: true }); // Send get request to get CSRF token once site is visited.
     checkJWT();
   }, []);
@@ -35,8 +34,9 @@ export const AuthProvider = ({ children }: { children: any }) => {
   const checkJWT = () => {
     jwtService.setOnAutoLogIn(() => {
       jwtService
-        .loginWithExistingToken()
+        .getUserData()
         .then((data: any) => {
+          console.log('log ~ file: AuthContext.tsx ~ line 40 ~ .then ~ data', data);
           setIsAuthen(true);
           setInfor(data.user);
         })
@@ -46,55 +46,21 @@ export const AuthProvider = ({ children }: { children: any }) => {
     });
     jwtService.setOnAutoLogOut(() => {
       setIsAuthen(false);
+      setInfor(undefined);
     });
     jwtService.init();
   };
 
   const logIn = (body: AuthData) => {
-    console.log('AuthContext.tsx ~ line 50 ~ logIn');
-    const onLoginSucceed = (data: AuthData) => {
-      setIsAuthen(true);
-      alert('Logged In');
-    };
-    return new Promise((resolve, reject) => {
-      console.log('log ~ file: AuthContext.tsx ~ line 50 ~ logIn ~ body', body);
-
-      jwtService
-        .logIn(body)
-        .then((response: any) => {
-          onLoginSucceed(body);
-          resolve(response);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+    return jwtService.logIn(body);
   };
 
   const register = (body: AuthData) => {
-    console.log('AuthContext.tsx ~ line 50 ~ logIn');
-    const onRegisterSucceed = (data: AuthData) => {
-      setIsAuthen(true);
-      alert('Logged In');
-    };
-    return new Promise((resolve, reject) => {
-      console.log('log ~ file: AuthContext.tsx ~ line 50 ~ logIn ~ body', body);
-
-      jwtService
-        .register(body)
-        .then((response: any) => {
-          onRegisterSucceed(body);
-          resolve(response);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+    return jwtService.register(body);
   };
 
   const logOut = () => {
     setIsAuthen(false);
-    alert('Logged Out');
     jwtService.logOut();
     return null;
   };
