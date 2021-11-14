@@ -39,7 +39,7 @@ export const bannerSx: MultipleSxTypes = {
   },
   expand_row: {
     gap: 1,
-    '& .MuiTypography-root:first-child': {
+    '& .MuiTypography-root:first-of-type': {
       fontWeight: 500,
     },
   },

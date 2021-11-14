@@ -28,11 +28,7 @@ export const AuthProvider = ({ children }: { children: any }) => {
   const [isAuthen, setIsAuthen] = React.useState(false);
   React.useEffect(() => {
     console.log('Auth check - ', isAuthen);
-    axios
-      .get(baseURL, { withCredentials: true }) // Send get request to get CSRF token once site is visited.
-      .then((res) => {
-        console.log('log ~ file: AuthContext.tsx ~ line 32 ~ .then ~ res', res);
-      });
+    axios.get(baseURL, { withCredentials: true }); // Send get request to get CSRF token once site is visited.
     checkJWT();
   }, []);
 

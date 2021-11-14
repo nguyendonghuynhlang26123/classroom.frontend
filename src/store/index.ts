@@ -1,12 +1,11 @@
 import { combineReducers, createStore } from 'redux';
-import { languageReducer, loadingReducer, messageReducer, themeReducer } from './slices';
+import { loadingReducer, messageReducer, themeReducer } from './slices';
 
 //Utils functions such as dialog state, loading state, ....
 const staticReducer = {
   loading: loadingReducer,
   message: messageReducer,
   theme: themeReducer,
-  language: languageReducer,
 };
 
 function createReducers(asyncReducers: any) {

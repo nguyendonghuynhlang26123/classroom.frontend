@@ -3,11 +3,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 // Define a type for the slice state
 interface MessageState {
   message: string;
+  type?: 'warning' | 'info' | 'error' | 'success';
 }
 
 // Define the initial state using that type
 const initialState: MessageState = {
   message: '',
+  type: 'success',
 };
 
 export const messageSlice = createSlice({
@@ -17,9 +19,10 @@ export const messageSlice = createSlice({
   reducers: {
     // Use the PayloadAction type to declare the contents of `action.payload`
     showMessage: (state, action: PayloadAction<MessageState>) => ({
+      ...initialState,
       ...action.payload,
     }),
-    hideMessage: (state) => ({ message: '' }),
+    hideMessage: (state) => initialState,
   },
 });
 

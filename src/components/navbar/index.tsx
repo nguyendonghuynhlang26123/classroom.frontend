@@ -43,11 +43,11 @@ export const Navbar = ({ children, items, toolbarComponents }: NavbarProps) => {
 
   return (
     <React.Fragment>
-      <Drawer anchor={'left'} open={drawer} onClose={toggleDrawer(false)}>
+      {/* <Drawer anchor={'left'} open={drawer} onClose={toggleDrawer(false)}>
         <List sx={drawerListSx} role="presentation" onKeyDown={toggleDrawer(false)}>
           {items.map((item, idx) => getListItemByType(item, idx))}
         </List>
-      </Drawer>
+      </Drawer> */}
       <AppBar elevation={trigger ? 4 : 0} sx={navbarSx}>
         <Toolbar>
           <IconButton size="large" edge="start" color="inherit" aria-label="open drawer" onClick={toggleDrawer(true)}>
