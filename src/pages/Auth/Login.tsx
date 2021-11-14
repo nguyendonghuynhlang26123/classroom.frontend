@@ -6,6 +6,7 @@ import FacebookIcon from 'assets/images/fb.svg';
 import GoogleIcon from 'assets/images/gg.svg';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 
 const GG_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY as string;
 
@@ -15,6 +16,7 @@ const validationSchema = yup.object({
 });
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const { signIn, loaded } = useGoogleLogin({
     clientId: GG_API_KEY,
     isSignedIn: true,
@@ -35,6 +37,10 @@ const LoginPage = () => {
     console.log(success);
   };
 
+  const signUpOnClick = () => {
+    navigate('/auth/register');
+  };
+
   return (
     <Box sx={sharedStyleSx.root}>
       <Grow appear={true} in={true} timeout={500}>
@@ -51,6 +57,7 @@ const LoginPage = () => {
                 label="Email"
                 type="email"
                 fullWidth
+                autoComplete="off"
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 error={formik.touched.email && Boolean(formik.errors.email)}
@@ -62,6 +69,7 @@ const LoginPage = () => {
                 label="Password"
                 type="password"
                 fullWidth
+                autoComplete="off"
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 error={formik.touched.password && Boolean(formik.errors.password)}
@@ -73,7 +81,7 @@ const LoginPage = () => {
             </Box>
             <Stack direction="row" sx={sharedStyleSx.signUpContainer}>
               <Typography variant="body1">Don't have account?</Typography>
-              <Link>Sign up</Link>
+              <Link onClick={signUpOnClick}>Sign up</Link>
             </Stack>
             <Divider flexItem sx={sharedStyleSx.divider}>
               or

@@ -1,19 +1,14 @@
 import { mainTheme } from 'configs/theme.config';
 import React from 'react';
+import { useRoutes } from 'react-router-dom';
 import { ThemeContext } from './components/context';
-import Dashboard from './pages/Dashboard';
-import ClassroomBoard from './pages/Classroom';
-import LoginPage from './pages/Auth/Login';
-import RegisterPage from './pages/Auth/Register';
+import appRoutes from './pages/route';
 
 function App() {
+  const routes = useRoutes(appRoutes(false));
   return (
     <React.Fragment>
-      <ThemeContext themeConfig={mainTheme}>
-        {/* <Dashboard /> */}
-        <ClassroomBoard />
-        {/* <RegisterPage /> */}
-      </ThemeContext>
+      <ThemeContext themeConfig={mainTheme}>{routes}</ThemeContext>
     </React.Fragment>
   );
 }

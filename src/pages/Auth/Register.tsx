@@ -3,6 +3,7 @@ import React from 'react';
 import { sharedStyleSx } from './style';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 
 const GG_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY as string;
 
@@ -19,6 +20,7 @@ const validationSchema = yup.object({
 });
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -28,6 +30,10 @@ const RegisterPage = () => {
     validationSchema: validationSchema,
     onSubmit: (values) => {},
   });
+
+  const loginOnClick = () => {
+    navigate('/auth/login');
+  };
 
   return (
     <Box sx={sharedStyleSx.root}>
@@ -44,6 +50,7 @@ const RegisterPage = () => {
                 name="email"
                 label="Email"
                 type="email"
+                autoComplete="off"
                 fullWidth
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -55,6 +62,7 @@ const RegisterPage = () => {
                 name="password"
                 label="Password"
                 type="password"
+                autoComplete="off"
                 fullWidth
                 value={formik.values.password}
                 onChange={formik.handleChange}
@@ -73,12 +81,12 @@ const RegisterPage = () => {
                 helperText={formik.touched.passwordConfirm && formik.errors.passwordConfirm}
               />
               <Button fullWidth type="submit" size="large" variant="contained" aria-label="login btn">
-                Sign in
+                Sign up
               </Button>
             </Box>
             <Stack direction="row" sx={sharedStyleSx.signUpContainer}>
               <Typography variant="body1">Already have account?</Typography>
-              <Link>Log in</Link>
+              <Link onClick={loginOnClick}>Log in</Link>
             </Stack>
           </Paper>
         </Container>

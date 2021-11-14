@@ -3,7 +3,7 @@ import { ThemeProvider } from '@mui/system';
 import React from 'react';
 
 type ThemeCtxProps = {
-  children: React.ReactElement;
+  children: any;
   themeConfig: any;
 };
 
