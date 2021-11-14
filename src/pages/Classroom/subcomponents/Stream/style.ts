@@ -17,7 +17,10 @@ export const bannerSx: MultipleSxTypes = {
   },
   header: {
     color: '#fff',
-    width: '90%',
+    width: {
+      xs: '80%',
+      md: '90%',
+    },
     p: 2,
     '& .MuiBox-root': {
       textOverflow: 'ellipsis',
@@ -33,5 +36,11 @@ export const bannerSx: MultipleSxTypes = {
   },
   content: {
     p: 3,
+  },
+  expand_row: {
+    gap: 1,
+    '& .MuiTypography-root:first-child': {
+      fontWeight: 500,
+    },
   },
 };

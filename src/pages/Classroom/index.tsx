@@ -4,7 +4,7 @@ import { Navbar, ProfileBtn, TabPanel } from 'components';
 import { drawerItemConfigs } from 'configs';
 import { Box, Typography, Tab, Tabs, LinearProgress, Link, Container } from '@mui/material';
 import { navSx, mainSx } from './style';
-import { ClassworkTab, PeopleTab, StreamTab } from './Tabs';
+import { ClassroomSetting, ClassworkTab, PeopleTab, StreamTab } from './subcomponents';
 
 const ClassroomBoard = () => {
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -38,6 +38,7 @@ const ClassroomBoard = () => {
         </Typography>
 
         <Box>
+          <ClassroomSetting />
           <ProfileBtn />
         </Box>
       </Navbar>

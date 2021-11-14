@@ -12,8 +12,18 @@ const validationSchema = yup.object({
     .min(1, 'Classroom Title should be of 1-100 characters length')
     .max(100, 'Classroom Title should be of 1-100 characters length')
     .required('Classroom Title is required'),
-  section: yup.string().min(1, 'Section should be of 1-50 characters length').max(50, 'Section should be of 1-50 characters length'),
-  subject: yup.string().min(1, 'Subject should be of 1-50 characters length').max(50, 'Subject should be of 1-50 characters length'),
+  section: yup
+    .string()
+    .min(1, 'Section should be of 1-50 characters length')
+    .max(50, 'Section should be of 1-50 characters length'),
+  subject: yup
+    .string()
+    .min(1, 'Subject should be of 1-50 characters length')
+    .max(50, 'Subject should be of 1-50 characters length'),
+  room: yup
+    .string()
+    .min(1, 'Room should be of 1-50 characters length')
+    .max(50, 'Room should be of 1-50 characters length'),
 });
 
 export const FormModal = ({ open, handleClose, onSubmit }: FormModalProps) => {

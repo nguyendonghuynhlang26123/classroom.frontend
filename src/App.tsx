@@ -6,7 +6,7 @@ import appRoutes from './pages/route';
 
 function App() {
   const { isAuthenticated } = useAuth();
-  const routes = useRoutes(appRoutes(isAuthenticated));
+  const routes = useRoutes(appRoutes(true));
 
   return (
     <React.Fragment>
