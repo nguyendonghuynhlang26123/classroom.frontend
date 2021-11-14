@@ -1,8 +1,5 @@
 import React from 'react';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import { Box, CardActions, IconButton, Stack } from '@mui/material';
+import { Box, CardActions, IconButton, Stack, CardMedia, CardContent, Card } from '@mui/material';
 import { cardSx } from './style';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -13,7 +10,12 @@ import { ClassCardProps } from './type';
 export const ClassCard = ({ title, section, onClick }: ClassCardProps) => {
   return (
     <Card sx={cardSx.card} elevation={0}>
-      <CardMedia component="img" height="100" image="https://www.gstatic.com/classroom/themes/img_breakfast.jpg" alt="bg" />
+      <CardMedia
+        component="img"
+        height="100"
+        image="https://www.gstatic.com/classroom/themes/img_breakfast.jpg"
+        alt="bg"
+      />
       <Stack spacing={2} direction="row" sx={cardSx.header}>
         <Box width={200} onClick={onClick}>
           <Box sx={cardSx.header_title} component="div">

@@ -7,11 +7,23 @@ export const navSx: MultipleSxTypes = {
     flexGrow: 1,
     display: 'flex',
     justifyContent: 'center',
-    mt: -8,
+    mt: {
+      xs: 0,
+      md: -8,
+    },
+    mb: '-2px',
     '& .MuiTab-root': {
       height: 64,
       justifyContent: 'center',
       alignItems: 'center',
+      textTransform: 'capitalize',
+      fontWeight: 'semibold',
+      fontSize: 14,
+      px: 3,
+      transition: 'background-color 400ms ease-in-out',
+      ':hover': {
+        bgcolor: 'grey.100',
+      },
     },
   },
   link: {
@@ -20,5 +32,13 @@ export const navSx: MultipleSxTypes = {
   },
   progressBar: {
     mt: '-3px',
+  },
+};
+
+export const mainSx: MultipleSxTypes = {
+  container: {
+    mt: 4,
+    p: '0 !important',
+    maxWidth: '1000px',
   },
 };

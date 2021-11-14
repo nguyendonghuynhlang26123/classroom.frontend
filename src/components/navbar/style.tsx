@@ -1,7 +1,7 @@
 export const navbarSx = {
   bgcolor: 'background.paper',
   color: 'text.primary',
-  borderBottom: 2,
+  borderBottom: 1,
   borderColor: 'divider',
 };
 

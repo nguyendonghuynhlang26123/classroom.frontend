@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { Navbar, ProfileBtn } from 'components';
+import { Navbar, ProfileBtn, TabPanel } from 'components';
 import { drawerItemConfigs } from 'configs';
-import { Box, Typography, Tab, Tabs, LinearProgress, Link } from '@mui/material';
-import { navSx } from './style';
+import { Box, Typography, Tab, Tabs, LinearProgress, Link, Container } from '@mui/material';
+import { navSx, mainSx } from './style';
+import { ClassworkTab, PeopleTab, StreamTab } from './Tabs';
 
 const ClassroomBoard = () => {
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -21,9 +22,9 @@ const ClassroomBoard = () => {
           <>
             <Box sx={navSx.tabsContainer}>
               <Tabs value={tabValue} onChange={handleChange} aria-label="basic tabs example">
-                <Tab label="Item One" id="one" />
-                <Tab label="Item Two" id="two" />
-                <Tab label="Item Three" id="three" />
+                <Tab label="Stream" id="one" />
+                <Tab label="Classwork" id="two" />
+                <Tab label="People" id="three" />
               </Tabs>
             </Box>
             {loading && <LinearProgress sx={navSx.progressBar} />}
@@ -40,6 +41,17 @@ const ClassroomBoard = () => {
           <ProfileBtn />
         </Box>
       </Navbar>
+      <Container maxWidth={false} sx={mainSx.container}>
+        <TabPanel value={tabValue} index={0}>
+          <StreamTab />
+        </TabPanel>
+        <TabPanel value={tabValue} index={1}>
+          <ClassworkTab />
+        </TabPanel>
+        <TabPanel value={tabValue} index={2}>
+          <PeopleTab />
+        </TabPanel>
+      </Container>
     </React.Fragment>
   );
 };

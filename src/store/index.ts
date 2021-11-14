@@ -1,6 +1,5 @@
-import { compose } from '@reduxjs/toolkit';
-import { combineReducers, createStore, applyMiddleware } from 'redux';
-import { loadingReducer, messageReducer, themeReducer, languageReducer } from './slices';
+import { combineReducers, createStore } from 'redux';
+import { languageReducer, loadingReducer, messageReducer, themeReducer } from './slices';
 
 //Utils functions such as dialog state, loading state, ....
 const staticReducer = {
