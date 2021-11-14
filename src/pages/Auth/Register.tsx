@@ -4,8 +4,7 @@ import { sharedStyleSx } from './style';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
-
-const GG_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY as string;
+import { useAuth } from 'components';
 
 const validationSchema = yup.object({
   email: yup.string().email('This field should be a valid email').required('Please enter email'),
@@ -13,13 +12,14 @@ const validationSchema = yup.object({
     .string()
     .required('Please Enter your password')
     .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-      'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character',
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
+      'Must Contain 6 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character',
     ),
   passwordConfirm: yup.string().oneOf([yup.ref('password'), null], 'Passwords must match'),
 });
 
 const RegisterPage = () => {
+  const { register } = useAuth();
   const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
@@ -28,7 +28,9 @@ const RegisterPage = () => {
       passwordConfirm: '',
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {},
+    onSubmit: (values) => {
+      if (register) register(values).then(() => navigate('/'));
+    },
   });
 
   const loginOnClick = () => {
@@ -73,7 +75,7 @@ const RegisterPage = () => {
                 id="passwordConfirm"
                 name="passwordConfirm"
                 label="Confirm password"
-                type="passwordConfirm"
+                type="password"
                 fullWidth
                 value={formik.values.passwordConfirm}
                 onChange={formik.handleChange}

@@ -7,6 +7,7 @@ import GoogleIcon from 'assets/images/gg.svg';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from 'components/context';
 
 const GG_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY as string;
 
@@ -17,7 +18,9 @@ const validationSchema = yup.object({
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { signIn, loaded } = useGoogleLogin({
+  const { signIn } = useAuth();
+
+  const { signIn: loginWithGg, loaded } = useGoogleLogin({
     clientId: GG_API_KEY,
     isSignedIn: true,
     cookiePolicy: 'single_host_origin',
@@ -30,7 +33,9 @@ const LoginPage = () => {
       password: '',
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {},
+    onSubmit: (values) => {
+      signIn(values).then(() => navigate('/'));
+    },
   });
 
   const onGoogleResponse = (success = true) => {

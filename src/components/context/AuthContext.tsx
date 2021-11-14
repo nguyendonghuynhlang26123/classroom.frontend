@@ -1,16 +1,26 @@
 import { AuthData, User } from 'common/interfaces';
 import { JwtAuthService } from 'services/jwt.service';
+import axios from 'axios';
 import React from 'react';
-const baseURL = '';
-
-const AuthContext = React.createContext(null);
+const baseURL = 'http://localhost:3001/api/v1';
 
 export type AuthProps = {
-  signIn: (data: AuthData, other: any) => Promise<any>;
+  signIn: (data: AuthData) => Promise<any>;
+  register: (data: AuthData) => Promise<any>;
   logOut: (type: any) => void;
   isAuthenticated: boolean;
   userData: User | undefined;
 };
+
+const defaultValue: AuthProps = {
+  signIn: () => new Promise(() => {}),
+  register: () => new Promise(() => {}),
+  logOut: () => {},
+  isAuthenticated: false,
+  userData: undefined,
+};
+
+const AuthContext = React.createContext<AuthProps>(defaultValue);
 
 export const AuthProvider = ({ children }: { children: any }) => {
   const jwtService = new JwtAuthService();
@@ -18,6 +28,11 @@ export const AuthProvider = ({ children }: { children: any }) => {
   const [isAuthen, setIsAuthen] = React.useState(false);
   React.useEffect(() => {
     console.log('Auth check - ', isAuthen);
+    axios
+      .get(baseURL, { withCredentials: true }) // Send get request to get CSRF token once site is visited.
+      .then((res) => {
+        console.log('log ~ file: AuthContext.tsx ~ line 32 ~ .then ~ res', res);
+      });
     checkJWT();
   }, []);
 
@@ -40,15 +55,39 @@ export const AuthProvider = ({ children }: { children: any }) => {
   };
 
   const logIn = (body: AuthData) => {
+    console.log('AuthContext.tsx ~ line 50 ~ logIn');
     const onLoginSucceed = (data: AuthData) => {
       setIsAuthen(true);
       alert('Logged In');
     };
     return new Promise((resolve, reject) => {
+      console.log('log ~ file: AuthContext.tsx ~ line 50 ~ logIn ~ body', body);
+
       jwtService
         .logIn(body)
         .then((response: any) => {
           onLoginSucceed(body);
+          resolve(response);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  };
+
+  const register = (body: AuthData) => {
+    console.log('AuthContext.tsx ~ line 50 ~ logIn');
+    const onRegisterSucceed = (data: AuthData) => {
+      setIsAuthen(true);
+      alert('Logged In');
+    };
+    return new Promise((resolve, reject) => {
+      console.log('log ~ file: AuthContext.tsx ~ line 50 ~ logIn ~ body', body);
+
+      jwtService
+        .register(body)
+        .then((response: any) => {
+          onRegisterSucceed(body);
           resolve(response);
         })
         .catch((err) => {
@@ -65,13 +104,15 @@ export const AuthProvider = ({ children }: { children: any }) => {
   };
 
   const defaultProps: AuthProps = {
+    ...defaultValue,
     signIn: logIn,
+    register: register,
     logOut: logOut,
     isAuthenticated: isAuthen,
     userData: infor,
   };
 
-  return <AuthContext.Provider value={defaultProps as any}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={defaultProps}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

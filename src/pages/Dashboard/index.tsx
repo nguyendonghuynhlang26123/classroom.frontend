@@ -15,10 +15,10 @@ const Dashboard = () => {
 
   React.useEffect(() => {
     setLoading(true);
-    repository.get().then((data: ClassData[]) => {
-      setClasses(data);
-      setLoading(false);
-    });
+    // repository.get().then((data: ClassData[]) => {
+    //   setClasses(data);
+    //   setLoading(false);
+    // });
   }, []);
 
   const handleCreateClass = (form: FormData) => {

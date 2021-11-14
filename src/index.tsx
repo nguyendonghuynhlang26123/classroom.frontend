@@ -8,15 +8,18 @@ import { CssBaseline } from '@mui/material';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from 'components';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <CssBaseline />
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </Provider>
+    <AuthProvider>
+      <Provider store={store}>
+        <CssBaseline />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </Provider>
+    </AuthProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );

@@ -11,12 +11,19 @@ const RegisterPage = React.lazy(() => import('./Auth/Register'));
 
 const Classroom = React.lazy(() => import('./Classroom'));
 
+// Public routes
 const Wrapper = ({ children }: { children: any }) => (
   <React.Suspense fallback={<LinearProgress />}>{children}</React.Suspense>
 );
 
+// Authed routes
 const AuthWrapped = ({ isAuthed, children }: { isAuthed: boolean; children: any }) => {
   return isAuthed ? <Wrapper>{children}</Wrapper> : <Navigate to="/auth/login" />;
+};
+
+//Allow only not authed routes
+const NotAuthWrapped = ({ isAuthed, children }: { isAuthed: boolean; children: any }) => {
+  return !isAuthed ? <Wrapper>{children}</Wrapper> : <Navigate to="/" />;
 };
 
 const appRoutes = (isAuthed: boolean): RouteConfigs => {
@@ -33,17 +40,17 @@ const appRoutes = (isAuthed: boolean): RouteConfigs => {
     {
       path: '/auth/login',
       element: (
-        <Wrapper>
+        <NotAuthWrapped isAuthed={isAuthed}>
           <LoginPage />
-        </Wrapper>
+        </NotAuthWrapped>
       ),
     },
     {
       path: '/auth/register',
       element: (
-        <Wrapper>
+        <NotAuthWrapped isAuthed={isAuthed}>
           <RegisterPage />
-        </Wrapper>
+        </NotAuthWrapped>
       ),
     },
     {

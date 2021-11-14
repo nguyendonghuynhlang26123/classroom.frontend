@@ -1,4 +1,5 @@
-import axios from 'axios';
+import { repository } from './repository';
+import { JWT_SESSION_KEY } from './../common/constants/index';
 import { AuthData } from 'common/interfaces';
 import jwtDecode from 'jwt-decode';
 
@@ -13,10 +14,9 @@ export class JwtAuthService {
   setOnAutoLogIn(fn: () => void) {
     this._onAutoLogIn = fn;
   }
-
   init() {
     //Set interceptors when failing
-    axios.interceptors.response.use(
+    repository.interceptors.response.use(
       (response) => response,
       (err) => {
         if (err.response.status === 401 && err.config && !err.config.__isRetryRequest) {
@@ -26,7 +26,8 @@ export class JwtAuthService {
       },
     );
 
-    let access_token = window.localStorage.getItem('jwt_access_token');
+    let access_token = localStorage.getItem(JWT_SESSION_KEY);
+    console.log('log ~ file: jwt.service.ts ~ line 36 ~ JwtAuthService ~ init ~ access_token', access_token);
     if (!access_token) return;
 
     if (this.isAuthTokenValid(access_token)) {
@@ -40,20 +41,35 @@ export class JwtAuthService {
 
   logIn(body: AuthData) {
     return new Promise((resolve, reject) => {
-      //TODO: call login api here
-      axios
-        .post('/api/login', {
-          data: body,
-        })
-        .then((response: any) => {
-          if (response.data) {
-            //eslint disable
-            this._setSession(response.data.access_token);
-            resolve(response.data);
-          } else {
-            reject(response.data.error);
-          }
-        });
+      //TODO: Check again
+      repository.post(`/auth/login`, body).then((response: any) => {
+        if (response.data) {
+          //eslint disable
+          const token = response.data.access_token;
+          this._setSession(token);
+
+          resolve(response.data);
+        } else {
+          reject(response.data.error);
+        }
+      });
+    });
+  }
+
+  register(body: AuthData) {
+    return new Promise((resolve, reject) => {
+      //TODO: Check again
+      repository.post(`/auth/login`, body).then((response: any) => {
+        if (response.data) {
+          //eslint disable
+          const token = response.data.access_token;
+          this._setSession(token);
+
+          resolve(response.data);
+        } else {
+          reject(response.data.error);
+        }
+      });
     });
   }
 
@@ -63,29 +79,13 @@ export class JwtAuthService {
 
   loginWithExistingToken() {
     //TODO: change api here
-    const token = window.localStorage.getItem('jwt_access_token');
-    return new Promise((resolve, reject) => {
-      axios
-        .post('/api/auth/access_token', {
-          data: token,
-        })
-        .then((response: any) => {
-          if (response.data) {
-            this._setSession(response.data.access_token);
-            resolve(response.data);
-          } else {
-            reject(response.data.error);
-          }
-        });
-    });
-  }
+    const token = localStorage.getItem(JWT_SESSION_KEY);
 
-  register(data: AuthData) {
     return new Promise((resolve, reject) => {
-      axios.post('/api/auth/register', data).then((response: any) => {
-        if (response.data.user) {
+      repository.get(`/users/:userId`).then((response: any) => {
+        if (response.data) {
           this._setSession(response.data.access_token);
-          resolve(response.data.user);
+          resolve(response.data);
         } else {
           reject(response.data.error);
         }
@@ -111,10 +111,10 @@ export class JwtAuthService {
   _setSession = (access_token: string | null) => {
     if (access_token) {
       localStorage.setItem('access_token', access_token);
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + access_token;
+      repository.defaults.headers.common['Authorization'] = 'Bearer ' + access_token;
     } else {
-      localStorage.removeItem('access_token');
-      delete axios.defaults.headers.common['Authorization'];
+      sessionStorage.removeItem('access_token');
+      delete repository.defaults.headers.common['Authorization'];
     }
   };
 }
