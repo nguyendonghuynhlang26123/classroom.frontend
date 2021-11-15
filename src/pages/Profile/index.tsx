@@ -1,44 +1,45 @@
 import React from 'react';
-import { Box, Typography, Container, TextField, Button, LinearProgress } from '@mui/material';
-import { Navbar } from 'components';
+import { Box, Typography, Container, TextField, Button, LinearProgress, Stack } from '@mui/material';
+import { Navbar, useAuth } from 'components';
 import { profileSx } from './style';
 import CloseIcon from '@mui/icons-material/Close';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { drawerItemConfigs } from 'configs';
+import { User } from 'common/interfaces';
+import { NAME_REGEX, STUDENT_ID_REGEX } from 'common/constants/regex';
+
 const validationSchema = yup.object({
-  first_name: yup
-    .string()
-    .min(1, 'Classroom Title should be of 1-100 characters length')
-    .max(100, 'Classroom Title should be of 1-100 characters length')
-    .required('Classroom Title is required'),
-  last_name: yup
-    .string()
-    .min(1, 'Section should be of 1-50 characters length')
-    .max(50, 'Section should be of 1-50 characters length'),
-  avatar: yup
-    .string()
-    .min(1, 'Subject should be of 1-50 characters length')
-    .max(50, 'Subject should be of 1-50 characters length'),
-  studentId: yup
-    .string()
-    .min(1, 'Room should be of 1-50 characters length')
-    .max(50, 'Room should be of 1-50 characters length'),
+  first_name: yup.string().matches(NAME_REGEX, 'Invalid name').required('Firstname is required'),
+  last_name: yup.string().matches(NAME_REGEX, 'Invalid name').required('Lastname is rquired'),
+  avatar: yup.string(),
+  studentId: yup.string().matches(STUDENT_ID_REGEX),
 });
+
+const defaultData: User = {
+  first_name: '',
+  last_name: '',
+  avatar: '',
+  studentId: '',
+  email: '',
+};
+
 const UserProfile = () => {
-  const formik = useFormik({
+  const { userData } = useAuth();
+
+  const formik = useFormik<User>({
     initialValues: {
-      title: '',
-      room: '',
-      section: '',
-      subject: '',
+      ...defaultData,
+      ...userData,
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
       console.log('log ~ file: index.tsx ~ line 39 ~ ClassroomSetting ~ values', values);
     },
   });
+
   const [loading, setLoading] = React.useState<boolean>(false);
+  const checkIfDataChanged = () => {};
 
   return (
     <Box sx={profileSx.root}>
@@ -52,49 +53,49 @@ const UserProfile = () => {
       <Container maxWidth={false} sx={profileSx.container}>
         <Box sx={profileSx.form} component="form" noValidate autoComplete="off" onSubmit={formik.handleSubmit}>
           <Typography color="primary">Profile</Typography>
+
+          <TextField id="email" name="email" label="Email" fullWidth disabled value={formik.values.email} />
+          <Stack direction="row" sx={profileSx.stack}>
+            <TextField
+              id="first_name"
+              name="first_name"
+              label="First name (required)"
+              fullWidth
+              value={formik.values.first_name}
+              onChange={formik.handleChange}
+              error={formik.touched.first_name && Boolean(formik.errors.first_name)}
+              helperText={formik.touched.first_name && formik.errors.first_name}
+            />
+            <TextField
+              id="last_name"
+              name="last_name"
+              label="Lastname (required)"
+              fullWidth
+              onChange={formik.handleChange}
+              value={formik.values.last_name}
+              error={formik.touched.last_name && Boolean(formik.errors.last_name)}
+              helperText={formik.touched.last_name && formik.errors.last_name}
+            />
+          </Stack>
           <TextField
-            id="title"
-            name="title"
-            label="Class name (required)"
-            variant="filled"
+            id="studentId"
+            name="studentId"
+            label="Student id"
             fullWidth
-            value={formik.values.title}
+            value={formik.values.studentId}
             onChange={formik.handleChange}
-            error={formik.touched.title && Boolean(formik.errors.title)}
-            helperText={formik.touched.title && formik.errors.title}
+            error={formik.touched.studentId && Boolean(formik.errors.studentId)}
+            helperText={formik.touched.studentId && formik.errors.studentId}
           />
           <TextField
-            id="section"
-            name="section"
-            label="Section"
-            variant="filled"
+            id="avatar"
+            name="avatar"
+            label="Avatar URL"
             fullWidth
             onChange={formik.handleChange}
-            value={formik.values.section}
-            error={formik.touched.section && Boolean(formik.errors.section)}
-            helperText={formik.touched.section && formik.errors.section}
-          />
-          <TextField
-            id="subject"
-            name="subject"
-            label="Subject"
-            variant="filled"
-            fullWidth
-            onChange={formik.handleChange}
-            value={formik.values.subject}
-            error={formik.touched.subject && Boolean(formik.errors.subject)}
-            helperText={formik.touched.subject && formik.errors.subject}
-          />
-          <TextField
-            id="room"
-            name="room"
-            label="Room"
-            variant="filled"
-            fullWidth
-            onChange={formik.handleChange}
-            value={formik.values.room}
-            error={formik.touched.room && Boolean(formik.errors.room)}
-            helperText={formik.touched.room && formik.errors.room}
+            value={formik.values.avatar}
+            error={formik.touched.avatar && Boolean(formik.errors.avatar)}
+            helperText={formik.touched.avatar && formik.errors.avatar}
           />
         </Box>
       </Container>

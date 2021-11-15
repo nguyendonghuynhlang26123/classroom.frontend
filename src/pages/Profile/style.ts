@@ -18,6 +18,10 @@ export const profileSx: MultipleSxTypes = {
     maxWidth: '700px',
   },
 
+  stack: {
+    gap: 3,
+  },
+
   form: {
     mt: 3,
     p: 3,
@@ -30,6 +34,10 @@ export const profileSx: MultipleSxTypes = {
     },
     '& .MuiTextField-root': {
       my: 1,
+    },
+    '& .Mui-disabled .MuiInputBase-input': {
+      bgcolor: 'grey.200',
+      fontWeight: 500,
     },
   },
 };

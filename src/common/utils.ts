@@ -1,1 +1,141 @@
-export const a = {};
+class Utils {
+  static filterArrayByString(mainArr: any[], searchText: string): any[] {
+    if (searchText === '') {
+      return mainArr;
+    }
+
+    searchText = searchText.toLowerCase();
+
+    return mainArr.filter((itemObj) => {
+      return this.searchInObj(itemObj, searchText);
+    });
+  }
+
+  static searchInObj(itemObj: Record<string, any>, searchText: string): boolean {
+    for (const prop in itemObj) {
+      if (!itemObj.hasOwnProperty(prop)) {
+        continue;
+      }
+
+      const value = itemObj[prop];
+
+      if (typeof value === 'string') {
+        if (this.searchInString(value, searchText)) {
+          return true;
+        }
+      } else if (Array.isArray(value)) {
+        if (this.searchInArray(value, searchText)) {
+          return true;
+        }
+      }
+
+      if (typeof value === 'object') {
+        if (this.searchInObj(value, searchText)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  static searchInArray(arr: any[], searchText: string): boolean {
+    for (const value of arr) {
+      if (typeof value === 'string') {
+        if (this.searchInString(value, searchText)) {
+          return true;
+        }
+      }
+
+      if (typeof value === 'object') {
+        if (this.searchInObj(value, searchText)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  static searchInString(value: string, searchText: string): boolean {
+    return value.toLowerCase().includes(searchText);
+  }
+
+  static generateGUID(): string {
+    function S4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+
+    return S4() + S4();
+  }
+
+  static toggleInArray(item: any, array: any[]): void {
+    if (array.indexOf(item) === -1) {
+      array.push(item);
+    } else {
+      array.splice(array.indexOf(item), 1);
+    }
+  }
+
+  static sanitizeString(text: string): string {
+    return text
+      .toString()
+      .toLowerCase()
+      .replace(/\s+/g, '-') // Replace spaces with -
+      .replace(/\W+/g, '') // Remove all non-word chars
+      .replace(/--+/g, '-') // Replace multiple - with single -
+      .replace(/^-+/, '') // Trim - from start of text
+      .replace(/-+$/, ''); // Trim - from end of text
+  }
+
+  static stringToSlug(t: string): string {
+    return t
+      .toLowerCase()
+      .replace(/ /g, '-')
+      .replace(/[^\w-]+/g, '');
+  }
+
+  static findById(o: { id: object; [k: string]: any }, id: object): object | null {
+    //Early return
+    if (o.id === id) {
+      return o;
+    }
+    let result, p;
+    for (p in o) {
+      if (o.hasOwnProperty(p) && typeof o[p] === 'object') {
+        result = this.findById(o[p], id);
+        if (result) {
+          return result;
+        }
+      }
+    }
+    return null;
+  }
+
+  static randomMatColor(hue: string): string[] {
+    hue = hue ? hue : '400';
+    const mainColors = [
+      'red',
+      'pink',
+      'purple',
+      'deepPurple',
+      'indigo',
+      'blue',
+      'lightBlue',
+      'cyan',
+      'teal',
+      'green',
+      'lightGreen',
+      'lime',
+      'yellow',
+      'amber',
+      'orange',
+      'deepOrange',
+      'grey',
+    ];
+    const randomColor = mainColors[Math.floor(Math.random() * mainColors.length)];
+    return [randomColor, hue];
+  }
+}
+
+export default Utils;
