@@ -11,6 +11,8 @@ const RegisterPage = React.lazy(() => import('./Auth/Register'));
 
 const Classroom = React.lazy(() => import('./Classroom'));
 
+const ProfilePage = React.lazy(() => import('./Profile'));
+
 // Public routes
 const Wrapper = ({ children }: { children: any }) => (
   <React.Suspense fallback={<LinearProgress />}>{children}</React.Suspense>
@@ -36,6 +38,22 @@ const appRoutes = (isAuthed: boolean): RouteConfigs => {
         </AuthWrapped>
       ),
     },
+    {
+      path: '/classroom/:id',
+      element: (
+        <AuthWrapped isAuthed={isAuthed}>
+          <Classroom />
+        </AuthWrapped>
+      ),
+    },
+    {
+      path: '/profile',
+      element: (
+        <AuthWrapped isAuthed={isAuthed}>
+          <ProfilePage />
+        </AuthWrapped>
+      ),
+    },
     { path: '/auth', element: <Navigate to="/auth/login" /> },
     {
       path: '/auth/login',
@@ -51,14 +69,6 @@ const appRoutes = (isAuthed: boolean): RouteConfigs => {
         <NotAuthWrapped isAuthed={isAuthed}>
           <RegisterPage />
         </NotAuthWrapped>
-      ),
-    },
-    {
-      path: '/classroom/:id',
-      element: (
-        <AuthWrapped isAuthed={isAuthed}>
-          <Classroom />
-        </AuthWrapped>
       ),
     },
     {

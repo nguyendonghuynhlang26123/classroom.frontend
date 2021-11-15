@@ -34,7 +34,11 @@ const LoginPage = () => {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      signIn(values).then(() => navigate('/'));
+      signIn(values).then(() => {
+        console.log('log ~ file: login.tsx ~ line 40 ~ signIn ~ navigate');
+
+        //navigate('/');
+      });
     },
   });
 

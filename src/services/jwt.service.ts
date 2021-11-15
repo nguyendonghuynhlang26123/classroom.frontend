@@ -4,39 +4,27 @@ import { AuthData } from 'common/interfaces';
 import jwtDecode from 'jwt-decode';
 
 export class JwtAuthService {
-  private _onAutoLogOut: () => void = () => {};
-  private _onAutoLogIn: () => void = () => {};
+  init(loginCallback: VoidFunction, logoutCallback: VoidFunction) {
+    let access_token = localStorage.getItem(JWT_SESSION_KEY);
+    let refresh_token = localStorage.getItem(JWT_REFRESH_SESSION_KEY);
 
-  setOnAutoLogOut(fn: () => void) {
-    this._onAutoLogOut = fn;
-  }
-
-  setOnAutoLogIn(fn: () => void) {
-    this._onAutoLogIn = fn;
-  }
-  init() {
-    //Set interceptors when failing
     repository.interceptors.response.use(
       (response) => response,
       (err) => {
         if (err.response.status === 401 && err.config && !err.config.__isRetryRequest) {
-          if (this._onAutoLogOut) this._onAutoLogOut();
           this._setSession(null, null); //Reset session
+          logoutCallback(); // Callback
         }
       },
     );
 
-    let access_token = localStorage.getItem(JWT_SESSION_KEY);
-    let refresh_token = localStorage.getItem(JWT_REFRESH_SESSION_KEY);
-    if (!access_token) return;
-
     if (this.isAuthTokenValid(access_token)) {
       this._setSession(access_token, refresh_token); // SET for axios.default.header
-      if (this._onAutoLogIn) this._onAutoLogIn();
+      loginCallback();
     } else {
       //TODO: Make use of Refresh token
       this._setSession(null, null); //Reset session
-      if (this._onAutoLogOut) this._onAutoLogOut();
+      logoutCallback();
     }
   }
 
@@ -51,7 +39,6 @@ export class JwtAuthService {
             const access_token = response.data.access_token;
             const refresh_token = response.data.refresh_token;
             this._setSession(access_token, refresh_token);
-            if (this._onAutoLogIn) this._onAutoLogIn();
             resolve(response.data);
           }
         })
@@ -71,7 +58,6 @@ export class JwtAuthService {
             const refresh_token = response.data.refresh_token;
             this._setSession(access_token, refresh_token);
 
-            if (this._onAutoLogIn) this._onAutoLogIn();
             resolve(response.data);
           }
         })
@@ -87,7 +73,7 @@ export class JwtAuthService {
         .post(`/auth/logout`, { refresh_token })
         .then((response: any) => {
           this._setSession(null, null);
-          if (this._onAutoLogOut) this._onAutoLogOut();
+
           resolve(response.data);
         })
         .catch((response) => reject(response));
@@ -127,7 +113,6 @@ export class JwtAuthService {
 
   //HELPER FUNCTIONS
   _setSession = (access_token: string | null, refresh_token: string | null) => {
-    console.log('log ~ file: jwt.service.ts ~ line 128 ~ JwtAuthService ~ _setSession', access_token);
     if (access_token) {
       localStorage.setItem(JWT_SESSION_KEY, access_token);
       repository.defaults.headers.common['Authorization'] = 'Bearer ' + access_token;

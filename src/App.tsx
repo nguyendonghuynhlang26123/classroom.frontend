@@ -1,3 +1,4 @@
+import { LinearProgress } from '@mui/material';
 import { NotificationSnackbar } from 'components';
 import { mainTheme } from 'configs/theme.config';
 import React from 'react';
@@ -10,7 +11,7 @@ import appRoutes from './pages/route';
 function App() {
   const dispatch = useAppDispatch();
   const { message, type } = useAppSelector((state) => state.message);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, pending } = useAuth();
   const routes = useRoutes(appRoutes(isAuthenticated));
 
   return (
@@ -21,7 +22,7 @@ function App() {
         severity={type}
         handleClose={() => dispatch(hideMessage())}
       />
-      <ThemeContext themeConfig={mainTheme}>{routes}</ThemeContext>
+      <ThemeContext themeConfig={mainTheme}>{!pending ? routes : <LinearProgress />}</ThemeContext>
     </React.Fragment>
   );
 }

@@ -3,13 +3,8 @@ import { MultipleSxTypes } from 'common/type';
 export const profileSx: MultipleSxTypes = {
   root: {
     width: '100vw',
-    height: '100vh',
+    minHeight: '100vh',
     bgcolor: 'background.paper',
-  },
-
-  toolbar: {
-    borderBottom: 1,
-    borderColor: 'divider',
     '& .MuiTypography-root': {
       fontWeight: 500,
     },

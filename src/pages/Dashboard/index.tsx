@@ -6,15 +6,18 @@ import { AddBtn, ClassCard } from './subcomponents';
 import { bodyContainer, cardContainer } from './style';
 import { FormData, ClassData } from './type';
 import ClassroomRepository from './service';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { showLoading } from 'store/slices';
 
 const repository = new ClassroomRepository();
 
 const Dashboard = () => {
-  const [loading, setLoading] = React.useState<boolean>(false);
+  const dispatch = useAppDispatch();
+  const { loading } = useAppSelector((state) => state.loading);
   const [classes, setClasses] = React.useState<ClassData[]>([]); //TODO: REPLACE USING REDUX
 
   React.useEffect(() => {
-    setLoading(true);
+    dispatch(showLoading(true));
     // repository.get().then((data: ClassData[]) => {
     //   setClasses(data);
     //   setLoading(false);
@@ -22,10 +25,10 @@ const Dashboard = () => {
   }, []);
 
   const handleCreateClass = (form: FormData) => {
-    setLoading(true);
+    dispatch(showLoading(true));
     repository.create(form).then((d) => {
       console.log(d);
-      setLoading(false);
+      dispatch(showLoading(true));
       setClasses((prv) => [...prv, d]);
     });
   };

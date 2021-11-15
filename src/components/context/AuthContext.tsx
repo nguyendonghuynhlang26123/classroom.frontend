@@ -9,6 +9,7 @@ export type AuthProps = {
   register: (data: AuthData) => Promise<any>;
   logOut: () => void;
   isAuthenticated: boolean;
+  pending: boolean;
   userData: User | undefined;
 };
 
@@ -17,52 +18,66 @@ const defaultValue: AuthProps = {
   register: () => new Promise(() => {}),
   logOut: () => {},
   isAuthenticated: false,
+  pending: true, //Auth in pending
   userData: undefined,
 };
 
 const AuthContext = React.createContext<AuthProps>(defaultValue);
 
 export const AuthProvider = ({ children }: { children: any }) => {
-  const jwtService = new JwtAuthService();
   const [infor, setInfor] = React.useState<User | undefined>(undefined);
-  const [isAuthen, setIsAuthen] = React.useState(false);
+  const [isAuthen, setIsAuthen] = React.useState<boolean>(false);
+  const [pending, setIsPending] = React.useState<boolean>(true);
+  const jwtService = new JwtAuthService();
+
   React.useEffect(() => {
+    console.log('Check Auth');
     axios.get(baseURL, { withCredentials: true }); // Send get request to get CSRF token once site is visited.
     checkJWT();
   }, []);
 
   const checkJWT = () => {
-    jwtService.setOnAutoLogIn(() => {
-      jwtService
-        .getUserData()
-        .then((data: any) => {
-          console.log('log ~ file: AuthContext.tsx ~ line 40 ~ .then ~ data', data);
-          setIsAuthen(true);
-          setInfor(data.user);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    });
-    jwtService.setOnAutoLogOut(() => {
-      setIsAuthen(false);
-      setInfor(undefined);
-    });
-    jwtService.init();
+    jwtService.init(onAutoLogIn, onAutoLogOut);
+  };
+
+  const onAutoLogIn = () => {
+    console.log('~ onAutoLogIn');
+    jwtService
+      .getUserData()
+      .then((data: any) => {
+        setIsAuthen(true);
+        setIsPending(false); //Show that the api has been processed
+        setInfor(data.user);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  const onAutoLogOut = () => {
+    console.log('~ onAutoLogOut');
+    setIsAuthen(false);
+    setIsPending(false); //Show that the api has been processed
+    setInfor(undefined);
   };
 
   const logIn = (body: AuthData) => {
-    return jwtService.logIn(body);
+    return new Promise((resolve, reject) => {
+      jwtService.logIn(body).then(onAutoLogIn);
+    });
   };
 
   const register = (body: AuthData) => {
-    return jwtService.register(body);
+    return new Promise((resolve, reject) => {
+      jwtService.register(body).then(onAutoLogIn);
+    });
   };
 
   const logOut = () => {
     setIsAuthen(false);
-    jwtService.logOut();
-    return null;
+    return new Promise((resolve, reject) => {
+      jwtService.logOut().then(onAutoLogOut);
+    });
   };
 
   const defaultProps: AuthProps = {
@@ -71,6 +86,7 @@ export const AuthProvider = ({ children }: { children: any }) => {
     register: register,
     logOut: logOut,
     isAuthenticated: isAuthen,
+    pending: pending,
     userData: infor,
   };
 

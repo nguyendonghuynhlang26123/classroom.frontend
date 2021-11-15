@@ -1,25 +1,26 @@
 import React from 'react';
-import { Box, Grow, IconButton, Modal, Toolbar, Typography, Container, TextField, Button } from '@mui/material';
+import { Box, Typography, Container, TextField, Button, LinearProgress } from '@mui/material';
+import { Navbar } from 'components';
 import { profileSx } from './style';
 import CloseIcon from '@mui/icons-material/Close';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-
+import { drawerItemConfigs } from 'configs';
 const validationSchema = yup.object({
-  title: yup
+  first_name: yup
     .string()
     .min(1, 'Classroom Title should be of 1-100 characters length')
     .max(100, 'Classroom Title should be of 1-100 characters length')
     .required('Classroom Title is required'),
-  section: yup
+  last_name: yup
     .string()
     .min(1, 'Section should be of 1-50 characters length')
     .max(50, 'Section should be of 1-50 characters length'),
-  subject: yup
+  avatar: yup
     .string()
     .min(1, 'Subject should be of 1-50 characters length')
     .max(50, 'Subject should be of 1-50 characters length'),
-  room: yup
+  studentId: yup
     .string()
     .min(1, 'Room should be of 1-50 characters length')
     .max(50, 'Room should be of 1-50 characters length'),
@@ -37,21 +38,20 @@ const UserProfile = () => {
       console.log('log ~ file: index.tsx ~ line 39 ~ ClassroomSetting ~ values', values);
     },
   });
+  const [loading, setLoading] = React.useState<boolean>(false);
 
   return (
     <Box sx={profileSx.root}>
-      <Toolbar sx={profileSx.toolbar}>
-        <IconButton size="large" edge="start" color="inherit" aria-label="close modal" onClick={() => {}}>
-          <CloseIcon sx={{ fontSize: 20 }} />
-        </IconButton>
-        <Typography variant="body1">Classroom setting</Typography>
-
-        <Button variant="contained">Save</Button>
-      </Toolbar>
+      <Navbar items={drawerItemConfigs} toolbarComponents={<>{loading && <LinearProgress />}</>}>
+        <>
+          <Typography variant="body1">Classroom setting</Typography>
+          <Button variant="contained">Save</Button>
+        </>
+      </Navbar>
 
       <Container maxWidth={false} sx={profileSx.container}>
         <Box sx={profileSx.form} component="form" noValidate autoComplete="off" onSubmit={formik.handleSubmit}>
-          <Typography color="primary">Class Details</Typography>
+          <Typography color="primary">Profile</Typography>
           <TextField
             id="title"
             name="title"
