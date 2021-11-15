@@ -2,10 +2,12 @@ import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import useScrollTrigger from '@mui/material/useScrollTrigger';
-import { Drawer, IconButton, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { NavbarProps, DrawerItemType } from './type';
-import { drawerItemSx, drawerListSx, navbarSx } from './style';
+import { drawerSx, navbarSx } from './style';
 import { Menu } from '@mui/icons-material';
+import { HomeOutlined, Settings } from '@mui/icons-material';
+import { useNavigate } from 'react-router';
 
 export const Navbar = ({ children, items, toolbarComponents }: NavbarProps) => {
   const trigger = useScrollTrigger({
@@ -13,6 +15,7 @@ export const Navbar = ({ children, items, toolbarComponents }: NavbarProps) => {
     threshold: 0,
   });
   const [drawer, showDrawer] = React.useState<boolean>(false);
+  const navigate = useNavigate();
 
   const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
     if (
@@ -24,30 +27,33 @@ export const Navbar = ({ children, items, toolbarComponents }: NavbarProps) => {
     showDrawer(open);
   };
 
-  const getListItemByType = (item: DrawerItemType, index: number): React.ReactElement => {
-    switch (item.type) {
-      case 'group':
-        return <>{item?.children?.map((subItem, subIndex) => getListItemByType(subItem, subIndex))}</>;
-      case 'item':
-        return (
-          <ListItemButton selected={index === 1} key={index} sx={drawerItemSx}>
-            <ListItemIcon>{item.icon}</ListItemIcon>
-            <ListItemText sx={{ fontSize: 14, fontWeight: 'bold' }} primary={item.title} />
-          </ListItemButton>
-        );
-      case 'divider':
-        return <div></div>;
-    }
-    return <div></div>;
-  };
-
   return (
     <React.Fragment>
-      {/* <Drawer anchor={'left'} open={drawer} onClose={toggleDrawer(false)}>
-        <List sx={drawerListSx} role="presentation" onKeyDown={toggleDrawer(false)}>
-          {items.map((item, idx) => getListItemByType(item, idx))}
+      <Drawer anchor={'left'} open={drawer} onClose={toggleDrawer(false)}>
+        <List sx={drawerSx.list} role="presentation" onKeyDown={toggleDrawer(false)}>
+          <ListItemButton sx={drawerSx.btnItem} onClick={() => navigate('/')}>
+            <ListItemIcon>
+              <HomeOutlined />
+            </ListItemIcon>
+            <ListItemText primary={'Classes'} />
+          </ListItemButton>
+          <Divider />
+          <ListItem>
+            <ListItemText sx={drawerSx.textItem} primary="Enrolled" />
+          </ListItem>
+          <Divider />
+          <ListItem>
+            <ListItemText sx={drawerSx.textItem} primary="Teaching" />
+          </ListItem>
+          <Divider />
+          <ListItemButton sx={drawerSx.btnItem}>
+            <ListItemIcon>
+              <Settings />
+            </ListItemIcon>
+            <ListItemText primary={'Setting'} onClick={() => navigate('/profile')} />
+          </ListItemButton>
         </List>
-      </Drawer> */}
+      </Drawer>
       <AppBar elevation={trigger ? 4 : 0} sx={navbarSx}>
         <Toolbar>
           <IconButton size="large" edge="start" color="inherit" aria-label="open drawer" onClick={toggleDrawer(true)}>
