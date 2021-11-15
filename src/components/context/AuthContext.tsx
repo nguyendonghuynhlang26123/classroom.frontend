@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: { children: any }) => {
       .then((data: any) => {
         setIsAuthen(true);
         setIsPending(false); //Show that the api has been processed
-        setInfor(data.user);
+        setInfor(data);
       })
       .catch((err) => {
         console.error(err);

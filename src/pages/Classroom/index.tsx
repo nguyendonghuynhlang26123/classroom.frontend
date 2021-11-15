@@ -1,12 +1,13 @@
 import React from 'react';
 
-import { Navbar, ProfileBtn, TabPanel } from 'components';
+import { Navbar, ProfileBtn, TabPanel, useAuth } from 'components';
 import { drawerItemConfigs } from 'configs';
 import { Box, Typography, Tab, Tabs, LinearProgress, Link, Container } from '@mui/material';
 import { navSx, mainSx } from './style';
 import { ClassroomSetting, ClassworkTab, PeopleTab, StreamTab } from './subcomponents';
 
 const ClassroomBoard = () => {
+  const { userData } = useAuth();
   const [loading, setLoading] = React.useState<boolean>(false);
   const [tabValue, setTabValue] = React.useState<number>(0);
 
@@ -39,7 +40,7 @@ const ClassroomBoard = () => {
 
         <Box>
           <ClassroomSetting />
-          <ProfileBtn />
+          {userData && <ProfileBtn fname={userData.first_name} imageUrl={userData.avatar} />}
         </Box>
       </Navbar>
       <Container maxWidth={false} sx={mainSx.container}>

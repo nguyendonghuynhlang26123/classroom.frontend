@@ -1,10 +1,10 @@
-import { AccountCircle } from '@mui/icons-material';
-import { IconButton, Menu, MenuItem } from '@mui/material';
+import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
 import { useAuth } from '../context';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ProfileBtnProps } from './type';
 
-export const ProfileBtn = () => {
+export const ProfileBtn = ({ fname, imageUrl }: ProfileBtnProps) => {
   const { logOut } = useAuth();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -31,7 +31,11 @@ export const ProfileBtn = () => {
         onClick={handleMenu}
         color="inherit"
       >
-        <AccountCircle sx={{ fontSize: 24 }} />
+        {imageUrl ? (
+          <Avatar sx={{ width: 32, height: 32 }} alt={fname} src={imageUrl} />
+        ) : (
+          <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}>{fname.charAt(0)}</Avatar>
+        )}
       </IconButton>
       <Menu
         id="menu-profile"

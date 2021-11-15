@@ -1,6 +1,6 @@
-import { Box, Typography, LinearProgress } from '@mui/material';
+import { Box, Typography, LinearProgress, Avatar } from '@mui/material';
 import React from 'react';
-import { Navbar, ProfileBtn } from 'components';
+import { Navbar, ProfileBtn, useAuth } from 'components';
 import { drawerItemConfigs } from 'configs';
 import { AddBtn, ClassCard } from './subcomponents';
 import { bodyContainer, cardContainer } from './style';
@@ -13,7 +13,8 @@ const repository = new ClassroomRepository();
 
 const Dashboard = () => {
   const dispatch = useAppDispatch();
-  const { loading } = useAppSelector((state) => state.loading);
+  const { userData } = useAuth();
+  const { isLoading } = useAppSelector((state) => state.loading);
   const [classes, setClasses] = React.useState<ClassData[]>([]); //TODO: REPLACE USING REDUX
 
   React.useEffect(() => {
@@ -35,7 +36,7 @@ const Dashboard = () => {
 
   return (
     <React.Fragment>
-      <Navbar items={drawerItemConfigs} toolbarComponents={<>{loading && <LinearProgress />}</>}>
+      <Navbar items={drawerItemConfigs} toolbarComponents={<>{isLoading && <LinearProgress />}</>}>
         <>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             🎓Classroom
@@ -43,11 +44,11 @@ const Dashboard = () => {
 
           <div>
             <AddBtn handleSubmit={handleCreateClass} />
-            <ProfileBtn />
+            {userData && <ProfileBtn fname={userData.first_name} imageUrl={userData.avatar} />}
           </div>
         </>
       </Navbar>
-      {!loading && (
+      {!isLoading && (
         <Box sx={bodyContainer}>
           <Box sx={cardContainer}>
             {classes.map((c: ClassData, index: number) => (
