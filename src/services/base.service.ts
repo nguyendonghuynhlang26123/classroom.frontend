@@ -17,33 +17,34 @@ const defaultQuery: PaginationQuery = {
 
 export class BaseRepository<RequestType, ResponseType> {
   resource: string = '';
+  _repository = repository;
 
   async get(): Promise<ResponseType[]> {
-    return (await repository.get(`${this.resource} `)).data;
+    return (await this._repository.get(`${this.resource} `)).data;
   }
 
   async getWithPagination(query: Partial<PaginationQuery>): Promise<ResponseType[]> {
-    return (await repository.get(`${this.resource}/${objToQuery({ ...defaultQuery, ...query })}`)).data;
+    return (await this._repository.get(`${this.resource}/${objToQuery({ ...defaultQuery, ...query })}`)).data;
   }
 
   async getOne(id: string): Promise<ResponseType> {
-    return (await repository.get(`${this.resource}/${id}`)).data;
+    return (await this._repository.get(`${this.resource}/${id}`)).data;
   }
 
   async getWithCustomQuery(obj: Object): Promise<ResponseType[]> {
-    return (await repository.get(`${this.resource}${objToQuery(obj)}`)).data;
+    return (await this._repository.get(`${this.resource}${objToQuery(obj)}`)).data;
   }
 
   async create(body: RequestType): Promise<any> {
-    return (await repository.post(`${this.resource}`, body)).data;
+    return (await this._repository.post(`${this.resource}`, body)).data;
   }
 
   async update(id: string, data: RequestType): Promise<any> {
-    return (await repository.put(`${this.resource}/${id}`, data)).data;
+    return (await this._repository.put(`${this.resource}/${id}`, data)).data;
   }
 
   async delete(id: string): Promise<any> {
-    return (await repository.delete(`${this.resource}/${id}`)).data;
+    return (await this._repository.delete(`${this.resource}/${id}`)).data;
   }
 
   async customRequest(config: AxiosRequestConfig<any>): Promise<any> {

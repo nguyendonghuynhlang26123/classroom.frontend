@@ -15,6 +15,7 @@ export class JwtAuthService {
           this._setSession(null, null); //Reset session
           logoutCallback(); // Callback
         }
+        return Promise.reject(err.response.data);
       },
     );
 
@@ -48,15 +49,14 @@ export class JwtAuthService {
 
   register(body: AuthData) {
     return new Promise((resolve, reject) => {
-      //TODO: Check again
       repository
         .post(`/auth/register`, body)
         .then((response: any) => {
-          if (response.data) {
-            //eslint disable
-            const access_token = response.data.access_token;
-            const refresh_token = response.data.refresh_token;
-            this._setSession(access_token, refresh_token);
+          if (response) {
+            // TODO: login after registered ?
+            // const access_token = response.data.access_token;
+            // const refresh_token = response.data.refresh_token;
+            // this._setSession(access_token, refresh_token);
 
             resolve(response.data);
           }
@@ -68,7 +68,6 @@ export class JwtAuthService {
   logOut() {
     const refresh_token: any = localStorage.getItem(JWT_REFRESH_SESSION_KEY);
     return new Promise((resolve, reject) => {
-      //TODO: Check again
       repository
         .post(`/auth/logout`, { refresh_token })
         .then((response: any) => {

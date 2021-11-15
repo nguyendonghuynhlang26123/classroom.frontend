@@ -1,4 +1,16 @@
-import { Container, Grow, Paper, Typography, Box, Button, Divider, Link, Stack, TextField } from '@mui/material';
+import {
+  Container,
+  Grow,
+  Paper,
+  Typography,
+  Box,
+  Button,
+  Divider,
+  Link,
+  Stack,
+  TextField,
+  CircularProgress,
+} from '@mui/material';
 import React from 'react';
 import { useGoogleLogin } from 'react-google-login';
 import { sharedStyleSx } from './style';
@@ -8,6 +20,9 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from 'components/context';
+import GoogleValidateService from './service';
+import { useAppDispatch } from 'store/hooks';
+import { showMessage } from 'store/slices';
 
 const GG_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY as string;
 
@@ -17,14 +32,26 @@ const validationSchema = yup.object({
 });
 
 const LoginPage = () => {
+  const dispatch = useAppDispatch();
+  const ggService = new GoogleValidateService();
   const navigate = useNavigate();
+  const [loading, setLoading] = React.useState<boolean>(false);
   const { signIn } = useAuth();
 
   const { signIn: loginWithGg, loaded } = useGoogleLogin({
     clientId: GG_API_KEY,
-    isSignedIn: true,
+    // isSignedIn: true,
     cookiePolicy: 'single_host_origin',
     loginHint: 'Login with google',
+    onSuccess: (response: any) => {
+      console.log(response);
+      setLoading(true);
+      ggService.validateToken(response.tokenId).then((data) => {
+        console.log('log ~ file: login.tsx ~ line 35 ~ ggService.validateToken ~ data', data);
+        setLoading(false);
+        dispatch(showMessage({ message: 'Login successfully' }));
+      });
+    },
   });
 
   const formik = useFormik({
@@ -35,16 +62,10 @@ const LoginPage = () => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       signIn(values).then(() => {
-        console.log('log ~ file: login.tsx ~ line 40 ~ signIn ~ navigate');
-
         //navigate('/');
       });
     },
   });
-
-  const onGoogleResponse = (success = true) => {
-    console.log(success);
-  };
 
   const signUpOnClick = () => {
     navigate('/auth/register');
@@ -84,7 +105,15 @@ const LoginPage = () => {
                 error={formik.touched.password && Boolean(formik.errors.password)}
                 helperText={formik.touched.password && formik.errors.password}
               />
-              <Button fullWidth type="submit" size="large" variant="contained" aria-label="login with credentials">
+              <Button
+                fullWidth
+                type="submit"
+                size="large"
+                variant="contained"
+                aria-label="login with credentials"
+                endIcon={loading && <CircularProgress size={16} />}
+                disabled={loading}
+              >
                 Sign in
               </Button>
             </Box>
@@ -102,6 +131,9 @@ const LoginPage = () => {
               aria-label="Sign in with Google"
               color="error"
               startIcon={<img src={GoogleIcon} alt="Google Icon" />}
+              onClick={() => {
+                loginWithGg();
+              }}
             >
               Login with Google
             </Button>

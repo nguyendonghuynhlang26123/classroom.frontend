@@ -63,21 +63,30 @@ export const AuthProvider = ({ children }: { children: any }) => {
 
   const logIn = (body: AuthData) => {
     return new Promise((resolve, reject) => {
-      jwtService.logIn(body).then(onAutoLogIn);
+      jwtService.logIn(body).then(() => {
+        onAutoLogIn();
+        resolve(body);
+      });
     });
   };
 
   const register = (body: AuthData) => {
     return new Promise((resolve, reject) => {
-      jwtService.register(body).then(onAutoLogIn);
+      jwtService
+        .register(body)
+        .then(() => {
+          //onAutoLogIn();
+          resolve(body);
+        })
+        .catch((res) => {
+          reject(res);
+        });
     });
   };
 
   const logOut = () => {
     setIsAuthen(false);
-    return new Promise((resolve, reject) => {
-      jwtService.logOut().then(onAutoLogOut);
-    });
+    return jwtService.logOut().then(onAutoLogOut);
   };
 
   const defaultProps: AuthProps = {

@@ -8,7 +8,7 @@ export const NotificationSnackbar = ({ open, msg, severity = 'success', handleCl
       open={open}
       autoHideDuration={4000}
       onClose={handleClose}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       TransitionComponent={(props) => <Slide {...props} direction="up" />}
       sx={{ minWidth: '300px' }}
     >
