@@ -1,5 +1,3 @@
-import { ClassroomUser } from './classroomUser.interface';
-
 export interface Classroom {
   _id: string;
   title: string;

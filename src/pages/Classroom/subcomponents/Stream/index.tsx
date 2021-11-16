@@ -1,13 +1,11 @@
 import { InfoOutlined, Info } from '@mui/icons-material';
 import { Box, Card, CardContent, CardMedia, IconButton, Stack, Collapse, Typography } from '@mui/material';
-import { ROLE_STUDENT, ROLE_TEACHER } from 'common/constants';
-import { Classroom } from 'common/interfaces/classes';
+import { Classroom, UserRole } from 'common/interfaces';
 import React from 'react';
 import { bannerSx } from './style';
 import { StreamProps } from './type';
-let role = ROLE_TEACHER;
 
-export const StreamTab = ({ classData }: StreamProps) => {
+export const StreamTab = ({ classData, role }: StreamProps) => {
   const [details, showDetails] = React.useState<boolean>(true);
 
   const toggleShowDetails = () => {
@@ -18,12 +16,7 @@ export const StreamTab = ({ classData }: StreamProps) => {
     <Box minHeight="100vh">
       {/* BANNER */}
       <Card sx={bannerSx.card} elevation={details ? 4 : 0}>
-        <CardMedia
-          component="img"
-          height="240"
-          image={'https://gstatic.com/classroom/themes/img_backtoschool.jpg'}
-          alt="bg"
-        />
+        <CardMedia component="img" height="240" image={classData.image} alt="bg" />
         <Stack spacing={2} direction="row" sx={bannerSx.card_stack}>
           <Box sx={bannerSx.header}>
             <Box sx={bannerSx.header_title}>{classData.title}</Box>
@@ -35,7 +28,7 @@ export const StreamTab = ({ classData }: StreamProps) => {
 
         <Collapse in={details}>
           <CardContent sx={bannerSx.content}>
-            {role === ROLE_TEACHER && (
+            {role !== UserRole.STUDENT && (
               <Stack direction="row" sx={bannerSx.expand_row}>
                 <Typography variant="body2">Class code</Typography>
                 <Typography variant="body2">{classData.code}</Typography>

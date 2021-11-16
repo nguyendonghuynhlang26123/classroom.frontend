@@ -2,7 +2,6 @@ import React from 'react';
 import { Box, Typography, Container, TextField, Button, LinearProgress, Stack } from '@mui/material';
 import { Navbar, useAuth } from 'components';
 import { profileSx } from './style';
-import CloseIcon from '@mui/icons-material/Close';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { drawerItemConfigs } from 'configs';
@@ -34,6 +33,7 @@ const UserProfile = () => {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
+      setLoading(true);
       console.log('log ~ file: index.tsx ~ line 39 ~ ClassroomSetting ~ values', values);
     },
   });
@@ -58,7 +58,9 @@ const UserProfile = () => {
 
       <Container maxWidth={false} sx={profileSx.container}>
         <Box sx={profileSx.form} component="form" noValidate autoComplete="off" onSubmit={formik.handleSubmit}>
-          <Typography color="primary">Profile</Typography>
+          <Typography sx={profileSx.form_title} color="primary">
+            Profile
+          </Typography>
 
           <TextField id="email" name="email" label="Email" fullWidth disabled value={formik.values.email} />
           <Stack direction="row" sx={profileSx.stack}>
@@ -106,6 +108,12 @@ const UserProfile = () => {
             error={formik.touched.avatar && Boolean(formik.errors.avatar)}
             helperText={formik.touched.avatar && formik.errors.avatar}
           />
+          {userData?.google_id != null && (
+            <Typography sx={profileSx.form_note} variant="body2">
+              *You are linking your account with google, so please update your google account if you want to update your
+              classroom account
+            </Typography>
+          )}
         </Box>
       </Container>
     </Box>

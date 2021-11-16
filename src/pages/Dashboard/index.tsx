@@ -1,4 +1,4 @@
-import { Box, Typography, LinearProgress, Avatar } from '@mui/material';
+import { Box, Typography, LinearProgress } from '@mui/material';
 import React from 'react';
 import { Navbar, ProfileBtn, useAuth } from 'components';
 import { drawerItemConfigs } from 'configs';
@@ -6,7 +6,7 @@ import { AddBtn, ClassCard } from './subcomponents';
 import { bodyContainer, cardContainer } from './style';
 import { FormData } from './type';
 import ClassroomService from './service';
-import { useAppDispatch, useAppSelector } from 'store/hooks';
+// import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { GenericGetAllResponse } from 'common/interfaces/response/generic.interface';
 import { useNavigate } from 'react-router';
 import { Classroom } from 'common/interfaces';
@@ -14,7 +14,7 @@ import { Classroom } from 'common/interfaces';
 const service = new ClassroomService();
 
 const Dashboard = () => {
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { userData } = useAuth();
   const [loading, setLoading] = React.useState<boolean>(false);

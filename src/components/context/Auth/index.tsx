@@ -35,15 +35,15 @@ export const AuthProvider = ({ children }: { children: any }) => {
   const jwtService = new JwtAuthService();
   const ggService = new GoogleValidateService();
 
+  const checkJWT = () => {
+    jwtService.init(onAutoLogIn, onAutoLogOut);
+  };
+  
   React.useEffect(() => {
     console.log('Check Auth');
     axios.get(baseURL, { withCredentials: true }); // Send get request to get CSRF token once site is visited.
     checkJWT();
   }, []);
-
-  const checkJWT = () => {
-    jwtService.init(onAutoLogIn, onAutoLogOut);
-  };
 
   const onAutoLogIn = () => {
     console.log('~ onAutoLogIn');

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Classroom } from 'common/interfaces';
+import { Classroom, UserRole } from 'common/interfaces';
 import { Navbar, ProfileBtn, TabPanel, useAuth } from 'components';
 import { drawerItemConfigs } from 'configs';
 import { Box, Typography, Tab, Tabs, LinearProgress, Link, Container } from '@mui/material';
@@ -10,23 +10,28 @@ import ClassroomService from './service';
 
 const ClassroomBoard = () => {
   const { id } = useParams();
-  console.log('log ~ file: index.tsx ~ line 13 ~ ClassroomBoard ~ id', id);
   const classService = new ClassroomService();
   const { userData } = useAuth();
   const [loading, setLoading] = React.useState<boolean>(true);
   const [tabValue, setTabValue] = React.useState<number>(0);
   const [classData, setClassData] = React.useState<Classroom | null>(null);
+  const [role, setMyRole] = React.useState<UserRole>(UserRole.STUDENT);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
   React.useEffect(() => {
-    if (id)
+    if (id) {
       classService.getOne(id).then((data: Classroom) => {
         setClassData(data);
         setLoading(false);
       });
+
+      classService.getMyRole(id).then((data: any) => {
+        setMyRole(data.role as UserRole);
+      });
+    }
   }, []);
 
   return (
@@ -57,18 +62,16 @@ const ClassroomBoard = () => {
           {userData && <ProfileBtn fname={userData.first_name} imageUrl={userData.avatar} />}
         </Box>
       </Navbar>
-      {!loading && (
+      {!loading && classData && role && (
         <Container maxWidth={false} sx={mainSx.container}>
-          {classData && (
-            <TabPanel value={tabValue} index={0}>
-              <StreamTab classData={classData} />
-            </TabPanel>
-          )}
+          <TabPanel value={tabValue} index={0}>
+            <StreamTab role={role} classData={classData} />
+          </TabPanel>
           <TabPanel value={tabValue} index={1}>
             <ClassworkTab />
           </TabPanel>
           <TabPanel value={tabValue} index={2}>
-            <PeopleTab />
+            <PeopleTab role={role} />
           </TabPanel>
         </Container>
       )}

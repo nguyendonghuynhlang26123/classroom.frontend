@@ -28,10 +28,6 @@ export const profileSx: MultipleSxTypes = {
     border: 1,
     borderColor: 'divider',
     borderRadius: 2,
-    '& .MuiTypography-root': {
-      fontSize: '24px',
-      mb: 1,
-    },
     '& .MuiTextField-root': {
       my: 1,
     },
@@ -39,5 +35,18 @@ export const profileSx: MultipleSxTypes = {
       bgcolor: 'grey.200',
       fontWeight: 500,
     },
+  },
+
+  form_title: {
+    fontSize: '24px',
+    mb: 1,
+  },
+
+  form_note: {
+    fontSize: '13px',
+    mt: 1,
+    color: 'warning.main',
+    fontWeight: 400,
+    fontStyle: 'italic',
   },
 };

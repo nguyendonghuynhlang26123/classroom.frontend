@@ -3,7 +3,7 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import useScrollTrigger from '@mui/material/useScrollTrigger';
 import { Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import { NavbarProps, DrawerItemType } from './type';
+import { NavbarProps } from './type';
 import { drawerSx, navbarSx } from './style';
 import { Menu } from '@mui/icons-material';
 import { HomeOutlined, Settings } from '@mui/icons-material';
@@ -46,11 +46,11 @@ export const Navbar = ({ children, items, toolbarComponents }: NavbarProps) => {
             <ListItemText sx={drawerSx.textItem} primary="Teaching" />
           </ListItem>
           <Divider />
-          <ListItemButton sx={drawerSx.btnItem}>
+          <ListItemButton sx={drawerSx.btnItem} onClick={() => navigate('/profile')}>
             <ListItemIcon>
               <Settings />
             </ListItemIcon>
-            <ListItemText primary={'Setting'} onClick={() => navigate('/profile')} />
+            <ListItemText primary={'Setting'} />
           </ListItemButton>
         </List>
       </Drawer>

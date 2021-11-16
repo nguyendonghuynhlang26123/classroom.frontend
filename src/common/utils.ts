@@ -1,3 +1,5 @@
+import * as colors from '@mui/material/colors';
+
 class Utils {
   static filterArrayByString(mainArr: any[], searchText: string): any[] {
     if (searchText === '') {
@@ -115,23 +117,26 @@ class Utils {
   static randomMatColor(hue: string): string[] {
     hue = hue ? hue : '400';
     const mainColors = [
-      'red',
-      'pink',
-      'purple',
-      'deepPurple',
-      'indigo',
+      'amber',
       'blue',
-      'lightBlue',
+      'blueGrey',
+      'brown',
+      'common',
       'cyan',
-      'teal',
+      'deepOrange',
+      'deepPurple',
       'green',
+      'grey',
+      'indigo',
+      'lightBlue',
       'lightGreen',
       'lime',
-      'yellow',
-      'amber',
       'orange',
-      'deepOrange',
-      'grey',
+      'pink',
+      'purple',
+      'red',
+      'teal',
+      'yellow',
     ];
     const randomColor = mainColors[Math.floor(Math.random() * mainColors.length)];
     return [randomColor, hue];

@@ -6,7 +6,7 @@ export const TabPanel = ({ children, value, index, ...other }: TabPanelProps) =>
   return (
     <Collapse in={value === index} timeout={500}>
       <div role="tabpanel" id={`tabpanel-${index}`} aria-labelledby={`-tab-${index}`} {...other}>
-        {children}
+        {value === index && children}
       </div>
     </Collapse>
   );

@@ -58,7 +58,7 @@ export const FormModal = ({ open, handleClose, onSubmit }: FormModalProps) => {
         <TextField
           id="section"
           name="section"
-          label="Section"
+          label="Section (required)"
           variant="filled"
           fullWidth
           onChange={formik.handleChange}

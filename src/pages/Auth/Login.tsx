@@ -14,7 +14,6 @@ import {
 import React from 'react';
 import { useGoogleLogin } from 'react-google-login';
 import { sharedStyleSx } from './style';
-import FacebookIcon from 'assets/images/fb.svg';
 import GoogleIcon from 'assets/images/gg.svg';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -36,7 +35,7 @@ const LoginPage = () => {
   const [loading, setLoading] = React.useState<boolean>(false);
   const { signIn, signInWithGG } = useAuth();
 
-  const { signIn: loginWithGg, loaded } = useGoogleLogin({
+  const { signIn: loginWithGg } = useGoogleLogin({
     clientId: GG_API_KEY,
     // isSignedIn: true,
     cookiePolicy: 'single_host_origin',

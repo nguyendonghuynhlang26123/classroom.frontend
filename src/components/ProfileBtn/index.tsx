@@ -3,7 +3,6 @@ import { useAuth } from '../context';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProfileBtnProps } from './type';
-import Utils from 'common/utils';
 
 export const ProfileBtn = ({ fname, imageUrl }: ProfileBtnProps) => {
   const { logOut } = useAuth();

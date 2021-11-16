@@ -8,12 +8,16 @@ export const peopleTabSx: MultipleSxTypes = {
   header: {
     py: 1,
     mt: 3,
+    px: 2,
     borderBottom: 1,
     borderColor: 'primary.main',
     '& .MuiTypography-root': {
-      pl: 2,
       color: 'primary.main',
       fontSize: 32,
+    },
+    '& .MuiButtonBase-root': {
+      color: 'primary.main',
+      width: 48,
     },
   },
 };
