@@ -11,6 +11,7 @@ export type AuthProps = {
   signInWithGG: (tokenId: string) => Promise<any>;
   register: (data: AuthData) => Promise<any>;
   logOut: () => void;
+  reload: () => void;
   isAuthenticated: boolean;
   pending: boolean;
   userData: User | undefined;
@@ -21,6 +22,7 @@ const defaultValue: AuthProps = {
   signInWithGG: () => new Promise(() => {}),
   register: () => new Promise(() => {}),
   logOut: () => {},
+  reload: () => {},
   isAuthenticated: false,
   pending: true, //Auth in pending
   userData: undefined,
@@ -38,7 +40,7 @@ export const AuthProvider = ({ children }: { children: any }) => {
   const checkJWT = () => {
     jwtService.init(onAutoLogIn, onAutoLogOut);
   };
-  
+
   React.useEffect(() => {
     console.log('Check Auth');
     axios.get(baseURL, { withCredentials: true }); // Send get request to get CSRF token once site is visited.
@@ -116,6 +118,7 @@ export const AuthProvider = ({ children }: { children: any }) => {
     signInWithGG: loginWithGoogle,
     register: register,
     logOut: logOut,
+    reload: checkJWT,
     isAuthenticated: isAuthen,
     pending: pending,
     userData: infor,

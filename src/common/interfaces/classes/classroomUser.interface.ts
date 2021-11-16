@@ -1,6 +1,6 @@
 import { User } from './../users/users.interface';
 export interface ClassroomUser {
-  user: User;
+  user_id: User;
   status: 'ACTIVATED' | 'INACTIVATED';
   role: UserRole;
   invite_code?: string;

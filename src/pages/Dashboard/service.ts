@@ -13,6 +13,10 @@ class ClassroomService extends BaseApiService<FormData, Classroom> {
       });
     });
   }
+
+  async joinClassRoom(code: string) {
+    return {};
+  }
 }
 
 export default ClassroomService;

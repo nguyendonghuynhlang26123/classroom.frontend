@@ -2,14 +2,16 @@ import { IconButton, Menu, MenuItem } from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import React from 'react';
 import { Disclaimer } from './Disclaimer';
-import { FormModal } from './FormModal';
+import { CreateForm } from './CreateForm';
+import { JoinForm } from './JoinForm';
 import { AddBtnProps } from './type';
 import { FormData } from '../../type';
 
-export const AddBtn = ({ handleSubmit }: AddBtnProps) => {
+export const AddBtn = ({ handleCreateClass, handleJoinClass }: AddBtnProps) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [disclaimerModal, showDisclamer] = React.useState<boolean>(false);
-  const [formModal, showFormModal] = React.useState<boolean>(false);
+  const [createForm, showCreateForm] = React.useState<boolean>(false);
+  const [joinForm, showJoinForm] = React.useState<boolean>(false);
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -17,12 +19,20 @@ export const AddBtn = ({ handleSubmit }: AddBtnProps) => {
   const hideAll = () => {
     setAnchorEl(null);
     showDisclamer(false);
-    showFormModal(false);
+    showCreateForm(false);
+    showJoinForm(false);
   };
 
   return (
     <>
-      <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleMenu} color="inherit">
+      <IconButton
+        size="large"
+        aria-label="account of current user"
+        aria-controls="menu-appbar"
+        aria-haspopup="true"
+        onClick={handleMenu}
+        color="inherit"
+      >
         <AddRoundedIcon sx={{ fontSize: 24 }} />
       </IconButton>
       <Menu
@@ -43,7 +53,13 @@ export const AddBtn = ({ handleSubmit }: AddBtnProps) => {
         onClose={() => setAnchorEl(null)}
         keepMounted
       >
-        <MenuItem onClick={() => {}}>Join class</MenuItem>
+        <MenuItem
+          onClick={() => {
+            showJoinForm(true);
+          }}
+        >
+          Join class
+        </MenuItem>
         <MenuItem onClick={() => showDisclamer(true)}>Create class</MenuItem>
       </Menu>
 
@@ -53,16 +69,24 @@ export const AddBtn = ({ handleSubmit }: AddBtnProps) => {
         handleClose={hideAll}
         onSubmit={() => {
           hideAll();
-          showFormModal(true);
+          showCreateForm(true);
         }}
       />
 
-      {/* Form */}
-      <FormModal
-        open={formModal}
+      {/* Create Form */}
+      <CreateForm
+        open={createForm}
         handleClose={hideAll}
         onSubmit={(form: FormData) => {
-          handleSubmit(form);
+          handleCreateClass(form);
+          hideAll();
+        }}
+      />
+      <JoinForm
+        open={joinForm}
+        handleClose={hideAll}
+        onSubmit={(data: { code: string }) => {
+          handleJoinClass(data);
           hideAll();
         }}
       />

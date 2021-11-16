@@ -61,6 +61,7 @@ const RegisterPage = () => {
       password: '',
       passwordConfirm: '',
     },
+    validateOnBlur: true,
     validationSchema: validationSchema,
     onSubmit: (values) => {
       setLoading(true);

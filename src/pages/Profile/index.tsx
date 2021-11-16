@@ -5,36 +5,50 @@ import { profileSx } from './style';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { drawerItemConfigs } from 'configs';
-import { User } from 'common/interfaces';
+import { UserDataUpdate } from 'common/interfaces';
 import { NAME_REGEX, STUDENT_ID_REGEX } from 'common/constants/regex';
+import UserService from './service';
+import { useAppDispatch } from 'store/hooks';
+import { showMessage } from 'store/slices';
 
 const validationSchema = yup.object({
   first_name: yup.string().matches(NAME_REGEX, 'Invalid name').required('Firstname is required'),
   last_name: yup.string().matches(NAME_REGEX, 'Invalid name').required('Lastname is rquired'),
   avatar: yup.object().nullable(),
-  studentId: yup.string().matches(STUDENT_ID_REGEX),
+  student_id: yup.string().matches(STUDENT_ID_REGEX),
 });
 
-const defaultData: User = {
-  first_name: '',
-  last_name: '',
-  avatar: '',
-  studentId: '',
-  email: '',
-};
+const service = new UserService();
 
 const UserProfile = () => {
-  const { userData } = useAuth();
+  const { userData, reload } = useAuth();
+  const dispatch = useAppDispatch();
 
-  const formik = useFormik<User>({
+  const formik = useFormik<UserDataUpdate>({
     initialValues: {
-      ...defaultData,
-      ...userData,
+      first_name: userData?.first_name || '',
+      last_name: userData?.last_name || '',
+      avatar: userData?.avatar || '',
+      student_id: userData?.student_id || '',
     },
+    validateOnBlur: true,
     validationSchema: validationSchema,
     onSubmit: (values) => {
       setLoading(true);
       console.log('log ~ file: index.tsx ~ line 39 ~ ClassroomSetting ~ values', values);
+      if (userData)
+        service
+          .update(userData._id, values)
+          .then(() => {
+            dispatch(showMessage({ message: 'Update successfully' }));
+            reload();
+            setLoading(false);
+          })
+          .catch((err) => {
+            if (err.statusCode === 409) dispatch(showMessage({ message: 'Student Id exists!', type: 'error' }));
+            else dispatch(showMessage({ message: 'Update failed!', type: 'error' }));
+            setLoading(false);
+          });
     },
   });
 
@@ -62,7 +76,7 @@ const UserProfile = () => {
             Profile
           </Typography>
 
-          <TextField id="email" name="email" label="Email" fullWidth disabled value={formik.values.email} />
+          <TextField id="email" name="email" label="Email" fullWidth disabled value={userData?.email} />
           <Stack direction="row" sx={profileSx.stack}>
             <TextField
               id="first_name"
@@ -88,14 +102,14 @@ const UserProfile = () => {
             />
           </Stack>
           <TextField
-            id="studentId"
-            name="studentId"
+            id="student_id"
+            name="student_id"
             label="Student id"
             fullWidth
-            value={formik.values.studentId}
+            value={formik.values.student_id}
             onChange={formik.handleChange}
-            error={formik.touched.studentId && Boolean(formik.errors.studentId)}
-            helperText={formik.touched.studentId && formik.errors.studentId}
+            error={formik.touched.student_id && Boolean(formik.errors.student_id)}
+            helperText={formik.touched.student_id && formik.errors.student_id}
           />
           <TextField
             id="avatar"

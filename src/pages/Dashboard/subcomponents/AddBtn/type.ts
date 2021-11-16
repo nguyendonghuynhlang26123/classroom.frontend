@@ -11,6 +11,13 @@ export type FormModalProps = {
   onSubmit: (form: FormData) => void;
 };
 
+export type JoinFormProps = {
+  open: boolean;
+  handleClose: () => void;
+  onSubmit: (form: { code: string }) => void;
+};
+
 export type AddBtnProps = {
-  handleSubmit: (form: FormData) => void;
+  handleCreateClass: (form: FormData) => void;
+  handleJoinClass: (form: { code: string }) => void;
 };

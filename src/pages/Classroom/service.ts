@@ -1,4 +1,4 @@
-import { Classroom, ClassroomUser } from 'common/interfaces';
+import { Classroom, ClassroomUser, InviteUser } from 'common/interfaces';
 import { BaseApiService } from 'services';
 
 class ClassroomService extends BaseApiService<any, Classroom> {
@@ -9,7 +9,12 @@ class ClassroomService extends BaseApiService<any, Classroom> {
   }
 
   async getClassUsers(classId: string): Promise<ClassroomUser[]> {
-    return (await this._repository.get(`${this.resource}/${classId}/people`)).data.users;
+    const data = (await this._repository.get(`${this.resource}/${classId}/people`)).data.users;
+    return data;
+  }
+
+  async submitInvitation(data: InviteUser) {
+    return (await this._repository.post(`${this.resource}/invite`, data)).data;
   }
 }
 

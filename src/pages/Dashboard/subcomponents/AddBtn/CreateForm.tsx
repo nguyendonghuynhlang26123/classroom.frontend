@@ -27,7 +27,7 @@ const validationSchema = yup.object({
     .max(50, 'Room should be of 1-50 characters length'),
 });
 
-export const FormModal = ({ open, handleClose, onSubmit }: FormModalProps) => {
+export const CreateForm = ({ open, handleClose, onSubmit }: FormModalProps) => {
   const formik = useFormik({
     initialValues: {
       title: '',

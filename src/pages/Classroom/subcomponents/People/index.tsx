@@ -1,7 +1,6 @@
 import { Mail, PersonAddOutlined } from '@mui/icons-material';
 import {
   Avatar,
-  Box,
   Container,
   Divider,
   IconButton,
@@ -19,80 +18,17 @@ import React from 'react';
 import { peopleTabSx } from './style';
 import { PeopleTabProps } from './type';
 import { useParams } from 'react-router';
-
-const c: ClassroomUser[] = [
-  {
-    user: {
-      studentId: '',
-      email: 'long@mail.com',
-      avatar: '',
-      last_name: 'Huynh',
-      first_name: 'Long',
-    },
-    status: 'ACTIVATED',
-    role: UserRole.ADMIN,
-  },
-  {
-    user: {
-      studentId: '',
-      email: 'long@mail.com',
-      avatar: '',
-      last_name: 'Huynh',
-      first_name: 'Long',
-    },
-    status: 'ACTIVATED',
-    role: UserRole.TEACHER,
-  },
-  {
-    user: {
-      studentId: '',
-      email: 'long@mail.com',
-      avatar: '',
-      last_name: 'Huynh',
-      first_name: 'Long',
-    },
-    status: 'ACTIVATED',
-    role: UserRole.STUDENT,
-  },
-  {
-    user: {
-      studentId: '',
-      email: 'long@mail.com',
-      avatar: '',
-      last_name: 'Huynh',
-      first_name: 'Long',
-    },
-    status: 'ACTIVATED',
-    role: UserRole.STUDENT,
-  },
-  {
-    user: {
-      studentId: '',
-      email: 'long@mail.com',
-      avatar: '',
-      last_name: 'Huynh',
-      first_name: 'Long',
-    },
-    status: 'ACTIVATED',
-    role: UserRole.STUDENT,
-  },
-  {
-    user: {
-      studentId: '',
-      email: 'long@mail.com',
-      avatar: '',
-      last_name: 'Huynh',
-      first_name: 'Long',
-    },
-    status: 'ACTIVATED',
-    role: UserRole.STUDENT,
-  },
-];
+import { InviteForm } from './InviteForm';
+import { useAppDispatch } from 'store/hooks';
+import { showMessage } from 'store/slices';
 
 export const PeopleTab = ({ role }: PeopleTabProps) => {
   const { id } = useParams();
   const service = new ClassroomService();
+  const dispatch = useAppDispatch();
   const [data, setData] = React.useState<ClassroomUser[]>([]);
+  const [inviteTeacher, showTeacherInviteForm] = React.useState<boolean>(false);
+  const [inviteStudent, showStudentInviteForm] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (id) {
@@ -101,86 +37,113 @@ export const PeopleTab = ({ role }: PeopleTabProps) => {
         setData(users);
       });
     }
-  });
+  }, []);
+
+  const checkRole = (role: UserRole, type: 'Teachers' | 'Students') => {
+    if (type === 'Teachers') return role !== UserRole.STUDENT;
+    else return role === UserRole.STUDENT;
+  };
+
+  const inviteBtnHandler = (type: 'Teachers' | 'Students') => {
+    console.log('log ~ file: index.tsx ~ line 48 ~ inviteBtnHandler ~ type', type);
+    if (type === 'Teachers') showTeacherInviteForm(true);
+    else showStudentInviteForm(true);
+  };
+
+  const submitInvite = (invitedRole: UserRole, email: string) => {
+    service
+      .submitInvitation({
+        class_id: id as string,
+        role: invitedRole,
+        email: email,
+      })
+      .then((d) => {
+        console.log(d);
+        dispatch(showMessage({ message: 'Email submited!' }));
+      })
+      .catch((err) => {
+        console.log('log ~ file: index.tsx ~ line 66 ~ .then ~ err', err);
+        dispatch(showMessage({ message: 'Error when submitted invitation!', type: 'error' }));
+      });
+  };
 
   return (
     <Container maxWidth={false} sx={peopleTabSx.root}>
-      <Stack direction="row" justifyContent="space-between" sx={peopleTabSx.header}>
-        <Typography>Teachers</Typography>
-        <IconButton hidden={role !== UserRole.STUDENT}>
-          <PersonAddOutlined />
-        </IconButton>
-      </Stack>
-      <List>
-        {data &&
-          data
-            .filter((u: ClassroomUser) => u.role !== UserRole.STUDENT)
-            .map((u: ClassroomUser, idx: number) => (
-              <>
-                <ListItem alignItems="flex-start" key={idx}>
-                  <ListItemAvatar>
-                    {u.user.avatar ? (
-                      <Avatar alt={u.user.first_name} src={u.user.avatar} sx={{ bgcolor: 'primary.main' }} />
-                    ) : (
-                      <Avatar sx={{ bgcolor: 'primary.main' }}>{u.user.first_name.charAt(0)}</Avatar>
-                    )}
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={u.user.first_name + ' ' + u.user.last_name}
-                    secondary={
-                      <Typography sx={{ display: 'inline' }} component="span" variant="body2" color="text.primary">
-                        {u.user.email}
-                      </Typography>
-                    }
-                  />
-                  <Tooltip title={`Send Mail to ${u.user.email}`}>
-                    <IconButton href={`mailto:${u.user.email}`}>
-                      <Mail />
-                    </IconButton>
-                  </Tooltip>
-                </ListItem>
-                <Divider />
-              </>
-            ))}
-      </List>
-      <Stack direction="row" justifyContent="space-between" sx={peopleTabSx.header}>
-        <Typography>Classmate</Typography>
-        <IconButton hidden={role !== UserRole.STUDENT}>
-          <PersonAddOutlined />
-        </IconButton>
-      </Stack>
-      <List>
-        {data &&
-          data
-            .filter((u: ClassroomUser) => u.role === UserRole.STUDENT)
-            .map((u: ClassroomUser, idx: number) => (
-              <>
-                <ListItem alignItems="center" key={idx}>
-                  <ListItemAvatar>
-                    {u.user.avatar ? (
-                      <Avatar alt={u.user.first_name} src={u.user.avatar} sx={{ bgcolor: 'primary.main' }} />
-                    ) : (
-                      <Avatar sx={{ bgcolor: 'primary.main' }}>{u.user.first_name.charAt(0)}</Avatar>
-                    )}
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={u.user.first_name + ' ' + u.user.last_name}
-                    secondary={
-                      <Typography sx={{ display: 'inline' }} component="span" variant="body2" color="text.primary">
-                        {u.user.email}
-                      </Typography>
-                    }
-                  />
-                  <Tooltip title={`Send Mail to ${u.user.email}`}>
-                    <IconButton href={`mailto:${u.user.email}`}>
-                      <Mail />
-                    </IconButton>
-                  </Tooltip>
-                </ListItem>
-                <Divider />
-              </>
-            ))}
-      </List>
+      {['Teachers', 'Students'].map((t: any) => (
+        <React.Fragment key={t}>
+          <Stack direction="row" justifyContent="space-between" sx={peopleTabSx.header}>
+            <Typography>Teachers</Typography>
+            <IconButton
+              hidden={role !== UserRole.STUDENT}
+              onClick={() => {
+                inviteBtnHandler(t);
+              }}
+            >
+              <PersonAddOutlined />
+            </IconButton>
+          </Stack>
+          <List>
+            {data &&
+              data
+                .filter((u: ClassroomUser) => checkRole(u.role, t))
+                .map((u: ClassroomUser, idx: number) => (
+                  <React.Fragment key={idx}>
+                    <ListItem alignItems="flex-start">
+                      <ListItemAvatar>
+                        {u.user_id.avatar ? (
+                          <Avatar alt={u.user_id.first_name} src={u.user_id.avatar} sx={{ bgcolor: 'primary.main' }} />
+                        ) : (
+                          <Avatar sx={{ bgcolor: 'primary.main' }}>{u.user_id.first_name.charAt(0)}</Avatar>
+                        )}
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={u.user_id.first_name + ' ' + u.user_id.last_name}
+                        secondary={
+                          <>
+                            <Typography
+                              sx={{ display: 'inline' }}
+                              component="span"
+                              variant="body2"
+                              color="text.primary"
+                            >
+                              {u.user_id.email}
+                            </Typography>
+                            {u.status === 'INACTIVATED' && ' - (Inviting)'}
+                          </>
+                        }
+                      />
+                      <Tooltip title={`Send Mail to ${u.user_id.email}`}>
+                        <IconButton href={`mailto:${u.user_id.email}`}>
+                          <Mail />
+                        </IconButton>
+                      </Tooltip>
+                    </ListItem>
+                    <Divider />
+                  </React.Fragment>
+                ))}
+          </List>
+        </React.Fragment>
+      ))}
+
+      <InviteForm
+        title="Invite Teachers"
+        open={inviteTeacher}
+        handleClose={() => showTeacherInviteForm(false)}
+        onSubmit={(email: string) => {
+          submitInvite(UserRole.TEACHER, email);
+          showTeacherInviteForm(false);
+        }}
+      />
+
+      <InviteForm
+        title="Invite students"
+        open={inviteStudent}
+        handleClose={() => showStudentInviteForm(false)}
+        onSubmit={(email: string) => {
+          submitInvite(UserRole.TEACHER, email);
+          showStudentInviteForm(false);
+        }}
+      />
     </Container>
   );
 };

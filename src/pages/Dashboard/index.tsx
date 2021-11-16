@@ -37,6 +37,14 @@ const Dashboard = () => {
     });
   };
 
+  const handleJoinClass = (form: { code: string }) => {
+    setLoading(true);
+    service.joinClassRoom(form.code).then((d) => {
+      console.log(d);
+      setLoading(false);
+    });
+  };
+
   return (
     <React.Fragment>
       <Navbar items={drawerItemConfigs} toolbarComponents={<>{loading && <LinearProgress />}</>}>
@@ -46,7 +54,7 @@ const Dashboard = () => {
           </Typography>
 
           <div>
-            <AddBtn handleSubmit={handleCreateClass} />
+            <AddBtn handleCreateClass={handleCreateClass} handleJoinClass={handleJoinClass} />
             {userData && <ProfileBtn fname={userData.first_name} imageUrl={userData.avatar} />}
           </div>
         </>

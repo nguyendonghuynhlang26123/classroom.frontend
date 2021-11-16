@@ -13,9 +13,9 @@ export const disclaimerStyle: MultipleSxTypes = {
 
 export const formStyle: MultipleSxTypes = {
   container: {
-    mt: 3,
     '& .MuiTextField-root': {
       my: 1,
+      mb: 2,
     },
   },
 };
