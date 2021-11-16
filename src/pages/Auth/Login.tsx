@@ -17,7 +17,7 @@ import { sharedStyleSx } from './style';
 import GoogleIcon from 'assets/images/gg.svg';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from 'components/context';
 import { useAppDispatch } from 'store/hooks';
 import { showMessage } from 'store/slices';
@@ -30,6 +30,7 @@ const validationSchema = yup.object({
 });
 
 const LoginPage = () => {
+  const { search } = useLocation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -65,7 +66,7 @@ const LoginPage = () => {
   });
 
   const signUpOnClick = () => {
-    navigate('/auth/register');
+    navigate('/auth/register' + search);
   };
 
   return (

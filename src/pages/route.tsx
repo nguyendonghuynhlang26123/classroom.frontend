@@ -2,6 +2,7 @@ import { RouteConfigs } from 'common/type';
 import { Navigate } from 'react-router-dom';
 import React from 'react';
 import { LinearProgress } from '@mui/material';
+import Utils from 'common/utils';
 
 // main screen
 const Dashboard = React.lazy(() => import('./Dashboard'));
@@ -19,21 +20,22 @@ const Wrapper = ({ children }: { children: any }) => (
 );
 
 // Authed routes
-const AuthWrapped = ({ isAuthed, children }: { isAuthed: boolean; children: any }) => {
-  return isAuthed ? <Wrapper>{children}</Wrapper> : <Navigate to="/auth/login" />;
+const AuthWrapped = ({ isAuthed, children, search = '' }: { isAuthed: boolean; children: any; search: string }) => {
+  return isAuthed ? <Wrapper>{children}</Wrapper> : <Navigate to={'/auth/login' + search} />;
 };
 
 //Allow only not authed routes
-const NotAuthWrapped = ({ isAuthed, children }: { isAuthed: boolean; children: any }) => {
-  return !isAuthed ? <Wrapper>{children}</Wrapper> : <Navigate to="/" />;
+const NotAuthWrapped = ({ isAuthed, children, search = '' }: { isAuthed: boolean; children: any; search: string }) => {
+  const link = Utils.getParameterByName('redirect', search); // Redirect if needed
+  return !isAuthed ? <Wrapper>{children}</Wrapper> : <Navigate to={link ? link : '/'} />;
 };
 
-const appRoutes = (isAuthed: boolean): RouteConfigs => {
+const appRoutes = (isAuthed: boolean, search: string): RouteConfigs => {
   const routes: RouteConfigs = [
     {
       path: '/',
       element: (
-        <AuthWrapped isAuthed={isAuthed}>
+        <AuthWrapped isAuthed={isAuthed} search={search}>
           <Dashboard />
         </AuthWrapped>
       ),
@@ -41,7 +43,7 @@ const appRoutes = (isAuthed: boolean): RouteConfigs => {
     {
       path: '/classroom/:id',
       element: (
-        <AuthWrapped isAuthed={isAuthed}>
+        <AuthWrapped isAuthed={isAuthed} search={search}>
           <Classroom />
         </AuthWrapped>
       ),
@@ -49,7 +51,7 @@ const appRoutes = (isAuthed: boolean): RouteConfigs => {
     {
       path: '/profile',
       element: (
-        <AuthWrapped isAuthed={isAuthed}>
+        <AuthWrapped isAuthed={isAuthed} search={search}>
           <ProfilePage />
         </AuthWrapped>
       ),
@@ -58,7 +60,7 @@ const appRoutes = (isAuthed: boolean): RouteConfigs => {
     {
       path: '/auth/login',
       element: (
-        <NotAuthWrapped isAuthed={isAuthed}>
+        <NotAuthWrapped isAuthed={isAuthed} search={search}>
           <LoginPage />
         </NotAuthWrapped>
       ),
@@ -66,7 +68,7 @@ const appRoutes = (isAuthed: boolean): RouteConfigs => {
     {
       path: '/auth/register',
       element: (
-        <NotAuthWrapped isAuthed={isAuthed}>
+        <NotAuthWrapped isAuthed={isAuthed} search={search}>
           <RegisterPage />
         </NotAuthWrapped>
       ),

@@ -14,7 +14,7 @@ import React from 'react';
 import { sharedStyleSx } from './style';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from 'components';
 import { NAME_REGEX } from 'common/constants/regex';
 import { RegisterData } from 'common/interfaces';
@@ -49,6 +49,7 @@ type FormType = RegisterData & {
 };
 
 const RegisterPage = () => {
+  const { search } = useLocation();
   const dispatch = useAppDispatch();
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -78,7 +79,7 @@ const RegisterPage = () => {
                 type: 'success',
               }),
             );
-            navigate('/');
+            // navigate('/' + search);
           })
           .catch((response) => {
             setLoading(false);
@@ -88,7 +89,7 @@ const RegisterPage = () => {
   });
 
   const goToLogin = () => {
-    navigate('/auth/login');
+    navigate('/auth/login' + search);
   };
 
   return (

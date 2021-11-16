@@ -7,11 +7,13 @@ import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { hideMessage } from 'store/slices';
 import { ThemeContext, useAuth } from './components/context';
 import appRoutes from './pages/route';
+
 function App() {
   const dispatch = useAppDispatch();
+  const { search } = useLocation(); // for url params
   const { message, type } = useAppSelector((state) => state.message);
   const { isAuthenticated, pending } = useAuth();
-  const routes = useRoutes(appRoutes(isAuthenticated));
+  const routes = useRoutes(appRoutes(isAuthenticated, search));
 
   return (
     <React.Fragment>

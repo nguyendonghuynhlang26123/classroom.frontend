@@ -1,4 +1,4 @@
-import { Classroom } from 'common/interfaces';
+import { Classroom, InviteUser } from 'common/interfaces';
 import { GenericGetAllResponse } from './../../common/interfaces/response/generic.interface';
 import { BaseApiService } from 'services';
 import { FormData } from './type';
@@ -14,8 +14,8 @@ class ClassroomService extends BaseApiService<FormData, Classroom> {
     });
   }
 
-  async joinClassRoom(code: string) {
-    return {};
+  async joinClassRoom(inviteData: InviteUser) {
+    return (await this._repository.post(`${this.resource}/join`, inviteData)).data;
   }
 }
 
