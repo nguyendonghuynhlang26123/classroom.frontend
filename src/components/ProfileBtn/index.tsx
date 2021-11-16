@@ -32,7 +32,7 @@ export const ProfileBtn = ({ fname, imageUrl }: ProfileBtnProps) => {
         onClick={handleMenu}
         color="inherit"
       >
-        {imageUrl ? (
+        {imageUrl && imageUrl !== '' ? (
           <Avatar sx={{ width: 32, height: 32 }} alt={fname} src={imageUrl} />
         ) : (
           <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}>{fname.charAt(0)}</Avatar>

@@ -1,11 +1,14 @@
-import { AuthData, User } from 'common/interfaces';
-import { JwtAuthService } from 'services/jwt.service';
+import { AuthData, AuthResponse, User } from 'common/interfaces';
+import JwtAuthService from './jwt.service';
+import GoogleValidateService from './google.service';
+
 import axios from 'axios';
 import React from 'react';
 const baseURL = 'http://localhost:3001/api/v1';
 
 export type AuthProps = {
   signIn: (data: AuthData) => Promise<any>;
+  signInWithGG: (tokenId: string) => Promise<any>;
   register: (data: AuthData) => Promise<any>;
   logOut: () => void;
   isAuthenticated: boolean;
@@ -15,6 +18,7 @@ export type AuthProps = {
 
 const defaultValue: AuthProps = {
   signIn: () => new Promise(() => {}),
+  signInWithGG: () => new Promise(() => {}),
   register: () => new Promise(() => {}),
   logOut: () => {},
   isAuthenticated: false,
@@ -29,6 +33,7 @@ export const AuthProvider = ({ children }: { children: any }) => {
   const [isAuthen, setIsAuthen] = React.useState<boolean>(false);
   const [pending, setIsPending] = React.useState<boolean>(true);
   const jwtService = new JwtAuthService();
+  const ggService = new GoogleValidateService();
 
   React.useEffect(() => {
     console.log('Check Auth');
@@ -49,7 +54,7 @@ export const AuthProvider = ({ children }: { children: any }) => {
         setIsPending(false); //Show that the api has been processed
         setInfor(data);
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.error(err);
       });
   };
@@ -63,10 +68,26 @@ export const AuthProvider = ({ children }: { children: any }) => {
 
   const logIn = (body: AuthData) => {
     return new Promise((resolve, reject) => {
-      jwtService.logIn(body).then(() => {
+      jwtService.logIn(body).then((response: any) => {
         onAutoLogIn();
-        resolve(body);
+        resolve(response);
       });
+    });
+  };
+
+  const loginWithGoogle = (token: string) => {
+    return new Promise((resolve, reject) => {
+      ggService
+        .validateToken(token)
+        .then((response: AuthResponse) => {
+          setIsAuthen(true);
+          setIsPending(false); //Show that the api has been processed
+          setInfor(response.data);
+          resolve(response);
+        })
+        .catch((err: any) => {
+          reject(err);
+        });
     });
   };
 
@@ -75,7 +96,7 @@ export const AuthProvider = ({ children }: { children: any }) => {
       jwtService
         .register(body)
         .then(() => {
-          //onAutoLogIn();
+          onAutoLogIn();
           resolve(body);
         })
         .catch((res) => {
@@ -92,6 +113,7 @@ export const AuthProvider = ({ children }: { children: any }) => {
   const defaultProps: AuthProps = {
     ...defaultValue,
     signIn: logIn,
+    signInWithGG: loginWithGoogle,
     register: register,
     logOut: logOut,
     isAuthenticated: isAuthen,

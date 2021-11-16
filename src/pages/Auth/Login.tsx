@@ -20,7 +20,6 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from 'components/context';
-import GoogleValidateService from './service';
 import { useAppDispatch } from 'store/hooks';
 import { showMessage } from 'store/slices';
 
@@ -33,10 +32,9 @@ const validationSchema = yup.object({
 
 const LoginPage = () => {
   const dispatch = useAppDispatch();
-  const ggService = new GoogleValidateService();
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState<boolean>(false);
-  const { signIn } = useAuth();
+  const { signIn, signInWithGG } = useAuth();
 
   const { signIn: loginWithGg, loaded } = useGoogleLogin({
     clientId: GG_API_KEY,
@@ -46,7 +44,7 @@ const LoginPage = () => {
     onSuccess: (response: any) => {
       console.log(response);
       setLoading(true);
-      ggService.validateToken(response.tokenId).then((data) => {
+      signInWithGG(response.tokenId).then((data) => {
         console.log('log ~ file: login.tsx ~ line 35 ~ ggService.validateToken ~ data', data);
         setLoading(false);
         dispatch(showMessage({ message: 'Login successfully' }));

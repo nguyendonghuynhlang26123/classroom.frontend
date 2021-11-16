@@ -15,7 +15,8 @@ const validationSchema = yup.object({
   section: yup
     .string()
     .min(1, 'Section should be of 1-50 characters length')
-    .max(50, 'Section should be of 1-50 characters length'),
+    .max(50, 'Section should be of 1-50 characters length')
+    .required('Section is required'),
   subject: yup
     .string()
     .min(1, 'Subject should be of 1-50 characters length')

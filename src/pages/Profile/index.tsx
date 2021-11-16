@@ -12,7 +12,7 @@ import { NAME_REGEX, STUDENT_ID_REGEX } from 'common/constants/regex';
 const validationSchema = yup.object({
   first_name: yup.string().matches(NAME_REGEX, 'Invalid name').required('Firstname is required'),
   last_name: yup.string().matches(NAME_REGEX, 'Invalid name').required('Lastname is rquired'),
-  avatar: yup.string(),
+  avatar: yup.object().nullable(),
   studentId: yup.string().matches(STUDENT_ID_REGEX),
 });
 
@@ -39,14 +39,20 @@ const UserProfile = () => {
   });
 
   const [loading, setLoading] = React.useState<boolean>(false);
-  const checkIfDataChanged = () => {};
 
   return (
     <Box sx={profileSx.root}>
       <Navbar items={drawerItemConfigs} toolbarComponents={<>{loading && <LinearProgress />}</>}>
         <>
           <Typography variant="body1">Classroom setting</Typography>
-          <Button variant="contained">Save</Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              formik.submitForm();
+            }}
+          >
+            Save
+          </Button>
         </>
       </Navbar>
 
@@ -61,6 +67,7 @@ const UserProfile = () => {
               name="first_name"
               label="First name (required)"
               fullWidth
+              disabled={userData?.google_id !== null}
               value={formik.values.first_name}
               onChange={formik.handleChange}
               error={formik.touched.first_name && Boolean(formik.errors.first_name)}
@@ -71,6 +78,7 @@ const UserProfile = () => {
               name="last_name"
               label="Lastname (required)"
               fullWidth
+              disabled={userData?.google_id !== null}
               onChange={formik.handleChange}
               value={formik.values.last_name}
               error={formik.touched.last_name && Boolean(formik.errors.last_name)}
@@ -92,8 +100,9 @@ const UserProfile = () => {
             name="avatar"
             label="Avatar URL"
             fullWidth
+            disabled={userData?.google_id != null}
             onChange={formik.handleChange}
-            value={formik.values.avatar}
+            value={formik.values.avatar || ''}
             error={formik.touched.avatar && Boolean(formik.errors.avatar)}
             helperText={formik.touched.avatar && formik.errors.avatar}
           />

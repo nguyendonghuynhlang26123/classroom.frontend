@@ -15,7 +15,7 @@ const defaultQuery: PaginationQuery = {
   sort_order: 'desc',
 };
 
-export class BaseRepository<RequestType, ResponseType> {
+export class BaseApiService<RequestType, ResponseType> {
   resource: string = '';
   _repository = repository;
 

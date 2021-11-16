@@ -4,21 +4,11 @@ import { ROLE_STUDENT, ROLE_TEACHER } from 'common/constants';
 import { Classroom } from 'common/interfaces/classes';
 import React from 'react';
 import { bannerSx } from './style';
-
-const classData: Partial<Classroom> = {
-  id: '123',
-  title: '[CLC]PTUDWNC - 18KTPM1',
-  section: 'WEB',
-  subject: 'Advance Web',
-  room: '123',
-  image: 'https://www.gstatic.com/classroom/themes/img_breakfast.jpg',
-  code: '4215ad',
-};
-
+import { StreamProps } from './type';
 let role = ROLE_TEACHER;
 
-export const StreamTab = () => {
-  const [details, showDetails] = React.useState<boolean>(false);
+export const StreamTab = ({ classData }: StreamProps) => {
+  const [details, showDetails] = React.useState<boolean>(true);
 
   const toggleShowDetails = () => {
     showDetails((prvState) => !prvState);
@@ -28,7 +18,12 @@ export const StreamTab = () => {
     <Box minHeight="100vh">
       {/* BANNER */}
       <Card sx={bannerSx.card} elevation={details ? 4 : 0}>
-        <CardMedia component="img" height="240" image={classData.image} alt="bg" />
+        <CardMedia
+          component="img"
+          height="240"
+          image={'https://gstatic.com/classroom/themes/img_backtoschool.jpg'}
+          alt="bg"
+        />
         <Stack spacing={2} direction="row" sx={bannerSx.card_stack}>
           <Box sx={bannerSx.header}>
             <Box sx={bannerSx.header_title}>{classData.title}</Box>

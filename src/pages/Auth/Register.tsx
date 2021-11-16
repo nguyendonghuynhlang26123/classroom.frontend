@@ -23,8 +23,14 @@ import { showMessage } from 'store/slices';
 
 const validationSchema = yup.object({
   email: yup.string().email('This field should be a valid email').required('Please enter email'),
-  first_name: yup.string().matches(NAME_REGEX, 'Invalid name').required('Firstname is required'),
-  last_name: yup.string().matches(NAME_REGEX, 'Invalid name').required('Lastname is rquired'),
+  first_name: yup
+    .string()
+    .matches(NAME_REGEX, 'No special characters, and 1 word allow')
+    .required('Firstname is required'),
+  last_name: yup
+    .string()
+    .matches(NAME_REGEX, 'No special characters, and 1 word allow')
+    .required('Lastname is rquired'),
   password: yup
     .string()
     .required('Please Enter your password')
@@ -67,11 +73,11 @@ const RegisterPage = () => {
             setLoading(false);
             dispatch(
               showMessage({
-                message: 'Registeration completed! Please login with your newly created account',
+                message: 'Registeration completed',
                 type: 'success',
               }),
             );
-            goToLogin();
+            navigate('/');
           })
           .catch((response) => {
             setLoading(false);

@@ -1,6 +1,13 @@
+import { User } from './../users/users.interface';
 export interface ClassroomUser {
-  userId: string;
+  user: User;
   status: 'ACTIVATED' | 'INACTIVATED';
-  role: 'TEACHER' | 'STUDENT';
-  invite_code: string;
+  role: UserRole;
+  invite_code?: string;
+}
+
+export enum UserRole {
+  TEACHER = 'TEACHER',
+  STUDENT = 'STUDENT',
+  ADMIN = 'ADMIN',
 }

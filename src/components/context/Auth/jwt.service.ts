@@ -1,10 +1,10 @@
-import { repository } from './repository';
-import { JWT_SESSION_KEY, JWT_REFRESH_SESSION_KEY } from './../common/constants/index';
-import { AuthData } from 'common/interfaces';
+import { repository } from 'services/repository';
+import { JWT_SESSION_KEY, JWT_REFRESH_SESSION_KEY } from 'common/constants';
+import { AuthData, AuthResponse } from 'common/interfaces';
 import jwtDecode from 'jwt-decode';
 
-export class JwtAuthService {
-  init(loginCallback: VoidFunction, logoutCallback: VoidFunction) {
+class JwtAuthService {
+  init(loginCallback: VoidFunction, logoutCallback: VoidFunction): void {
     let access_token = localStorage.getItem(JWT_SESSION_KEY);
     let refresh_token = localStorage.getItem(JWT_REFRESH_SESSION_KEY);
 
@@ -29,7 +29,7 @@ export class JwtAuthService {
     }
   }
 
-  logIn(body: AuthData) {
+  logIn(body: AuthData): Promise<AuthResponse> {
     return new Promise((resolve, reject) => {
       //TODO: Check again
       repository
@@ -47,16 +47,16 @@ export class JwtAuthService {
     });
   }
 
-  register(body: AuthData) {
+  register(body: AuthData): Promise<AuthResponse> {
     return new Promise((resolve, reject) => {
       repository
         .post(`/auth/register`, body)
         .then((response: any) => {
           if (response) {
             // TODO: login after registered ?
-            // const access_token = response.data.access_token;
-            // const refresh_token = response.data.refresh_token;
-            // this._setSession(access_token, refresh_token);
+            const access_token = response.data.access_token;
+            const refresh_token = response.data.refresh_token;
+            this._setSession(access_token, refresh_token);
 
             resolve(response.data);
           }
@@ -65,7 +65,7 @@ export class JwtAuthService {
     });
   }
 
-  logOut() {
+  logOut(): Promise<any> {
     const refresh_token: any = localStorage.getItem(JWT_REFRESH_SESSION_KEY);
     return new Promise((resolve, reject) => {
       repository
@@ -79,7 +79,7 @@ export class JwtAuthService {
     });
   }
 
-  getUserData() {
+  getUserData(): Promise<any> {
     //TODO: change api here
     const token: any = localStorage.getItem(JWT_SESSION_KEY);
     const decoded: any = jwtDecode(token);
@@ -96,7 +96,7 @@ export class JwtAuthService {
     });
   }
 
-  isAuthTokenValid = (access_token: string | null) => {
+  isAuthTokenValid = (access_token: string | null): boolean => {
     if (!access_token) {
       return false;
     }
@@ -111,7 +111,7 @@ export class JwtAuthService {
   };
 
   //HELPER FUNCTIONS
-  _setSession = (access_token: string | null, refresh_token: string | null) => {
+  _setSession = (access_token: string | null, refresh_token: string | null): void => {
     if (access_token) {
       localStorage.setItem(JWT_SESSION_KEY, access_token);
       repository.defaults.headers.common['Authorization'] = 'Bearer ' + access_token;
@@ -125,3 +125,5 @@ export class JwtAuthService {
     } else localStorage.removeItem(JWT_REFRESH_SESSION_KEY);
   };
 }
+
+export default JwtAuthService;

@@ -1,8 +1,18 @@
-import { BaseRepository } from 'services';
-import { ClassData, FormData } from './type';
+import { Classroom } from 'common/interfaces';
+import { GenericGetAllResponse } from './../../common/interfaces/response/generic.interface';
+import { BaseApiService } from 'services';
+import { FormData } from './type';
 
-class ClassroomRepository extends BaseRepository<FormData, ClassData> {
+class ClassroomService extends BaseApiService<FormData, Classroom> {
   resource = 'classes';
+
+  getClassList(): Promise<GenericGetAllResponse<Classroom>> {
+    return new Promise((resolve, reject) => {
+      this.get().then((response: any) => {
+        resolve(response);
+      });
+    });
+  }
 }
 
-export default ClassroomRepository;
+export default ClassroomService;
