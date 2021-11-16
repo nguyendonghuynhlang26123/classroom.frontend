@@ -98,7 +98,7 @@ const RegisterPage = () => {
         <Container sx={sharedStyleSx.container}>
           <Paper elevation={4} square sx={sharedStyleSx.paper}>
             <Typography variant="h2">🎓</Typography>
-            <Typography variant="h5">Classroom</Typography>
+            <Typography variant="h5">Moorssalc</Typography>
             <Typography variant="body1">Sign up</Typography>
 
             <Box component="form" noValidate autoComplete="off" sx={sharedStyleSx.form} onSubmit={formik.handleSubmit}>

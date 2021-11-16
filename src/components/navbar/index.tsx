@@ -37,20 +37,20 @@ export const Navbar = ({ children, items, toolbarComponents }: NavbarProps) => {
             </ListItemIcon>
             <ListItemText primary={'Classes'} />
           </ListItemButton>
-          <Divider />
+          {/* <Divider />
           <ListItem>
             <ListItemText sx={drawerSx.textItem} primary="Enrolled" />
           </ListItem>
           <Divider />
           <ListItem>
             <ListItemText sx={drawerSx.textItem} primary="Teaching" />
-          </ListItem>
+          </ListItem> */}
           <Divider />
           <ListItemButton sx={drawerSx.btnItem} onClick={() => navigate('/profile')}>
             <ListItemIcon>
               <Settings />
             </ListItemIcon>
-            <ListItemText primary={'Setting'} />
+            <ListItemText primary={'Profile Setting'} />
           </ListItemButton>
         </List>
       </Drawer>

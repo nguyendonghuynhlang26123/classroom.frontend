@@ -7,15 +7,10 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import { ClassCardProps } from './type';
 
-export const ClassCard = ({ title, section, onClick }: ClassCardProps) => {
+export const ClassCard = ({ image, title, section, onClick }: ClassCardProps) => {
   return (
     <Card sx={cardSx.card} elevation={0}>
-      <CardMedia
-        component="img"
-        height="100"
-        image="https://www.gstatic.com/classroom/themes/img_breakfast.jpg"
-        alt="bg"
-      />
+      <CardMedia component="img" height="100" image={image} alt="bg" />
       <Stack spacing={2} direction="row" sx={cardSx.header}>
         <Box width={200} onClick={onClick}>
           <Box sx={cardSx.header_title} component="div">

@@ -70,10 +70,13 @@ export const AuthProvider = ({ children }: { children: any }) => {
 
   const logIn = (body: AuthData) => {
     return new Promise((resolve, reject) => {
-      jwtService.logIn(body).then((response: any) => {
-        onAutoLogIn();
-        resolve(response);
-      });
+      jwtService
+        .logIn(body)
+        .then((response: any) => {
+          onAutoLogIn();
+          resolve(response);
+        })
+        .catch((err) => reject(err));
     });
   };
 

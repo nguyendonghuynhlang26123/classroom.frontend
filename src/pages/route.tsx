@@ -14,6 +14,8 @@ const Classroom = React.lazy(() => import('./Classroom'));
 
 const ProfilePage = React.lazy(() => import('./Profile'));
 
+const InvitationPage = React.lazy(() => import('./InvitationPage'));
+
 // Public routes
 const Wrapper = ({ children }: { children: any }) => (
   <React.Suspense fallback={<LinearProgress />}>{children}</React.Suspense>
@@ -53,6 +55,14 @@ const appRoutes = (isAuthed: boolean, search: string): RouteConfigs => {
       element: (
         <AuthWrapped isAuthed={isAuthed} search={search}>
           <ProfilePage />
+        </AuthWrapped>
+      ),
+    },
+    {
+      path: '/classes/join',
+      element: (
+        <AuthWrapped isAuthed={isAuthed} search={search}>
+          <InvitationPage />
         </AuthWrapped>
       ),
     },

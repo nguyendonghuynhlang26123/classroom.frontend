@@ -72,20 +72,24 @@ export const PeopleTab = ({ role }: PeopleTabProps) => {
       {['Teachers', 'Students'].map((t: any) => (
         <React.Fragment key={t}>
           <Stack direction="row" justifyContent="space-between" sx={peopleTabSx.header}>
-            <Typography>Teachers</Typography>
-            <IconButton
-              hidden={role !== UserRole.STUDENT}
-              onClick={() => {
-                inviteBtnHandler(t);
-              }}
-            >
-              <PersonAddOutlined />
-            </IconButton>
+            <Typography>{t}</Typography>
+            {role !== UserRole.STUDENT && (
+              <IconButton
+                onClick={() => {
+                  inviteBtnHandler(t);
+                }}
+              >
+                <PersonAddOutlined />
+              </IconButton>
+            )}
           </Stack>
           <List>
             {data &&
               data
-                .filter((u: ClassroomUser) => checkRole(u.role, t))
+                .filter(
+                  (u: ClassroomUser) =>
+                    checkRole(u.role, t) && (role !== UserRole.STUDENT || u.status !== 'INACTIVATED'),
+                )
                 .map((u: ClassroomUser, idx: number) => (
                   <React.Fragment key={idx}>
                     <ListItem alignItems="flex-start">
