@@ -10,7 +10,6 @@ class InvitationService extends BaseApiService<JoinClass, any> {
       code: code,
       role: role,
     };
-    'log ~ file: service.ts ~ line 13 ~ InvitationService ~ joinClassroom ~ data', data;
     if (UserRole.STUDENT === role) return (await this._repository.post(`${this.resource}/join`, data)).data;
     else return (await this._repository.post(`${this.resource}/invite/accept`, data)).data;
   }

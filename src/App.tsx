@@ -11,7 +11,6 @@ import appRoutes from './pages/route';
 function App() {
   const dispatch = useAppDispatch();
   const { pathname, search } = useLocation(); // for url params
-  'log ~ file: App.tsx ~ line 14 ~ App ~ pathname', pathname, search;
   const { message, type } = useAppSelector((state) => state.message);
   const { isAuthenticated, pending } = useAuth();
   const routes = useRoutes(appRoutes(isAuthenticated, search, pathname));

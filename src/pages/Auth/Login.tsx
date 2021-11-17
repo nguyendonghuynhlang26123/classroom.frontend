@@ -42,7 +42,6 @@ const LoginPage = () => {
     cookiePolicy: 'single_host_origin',
     loginHint: 'Login with google',
     onSuccess: (response: any) => {
-      response;
       setLoading(true);
       signInWithGG(response.tokenId).then((data) => {
         dispatch(showMessage({ message: 'Login successfully' }));

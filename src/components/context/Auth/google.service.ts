@@ -13,10 +13,6 @@ class GoogleValidateService extends BaseApiService<GoogleValidationData, AuthRes
         .post(`${this.resource}`, body)
         .then((response: any) => {
           if (response.data) {
-            (
-              'log ~ file: google.service.ts ~ line 16 ~ GoogleValidateService ~ .then ~ response.data',
-              response.data,
-            );
             //eslint disable
             const access_token = response.data.access_token;
             const refresh_token = response.data.refresh_token;

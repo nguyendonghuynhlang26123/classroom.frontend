@@ -35,7 +35,6 @@ const UserProfile = () => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       setLoading(true);
-      'log ~ file: index.tsx ~ line 39 ~ ClassroomSetting ~ values', values;
       if (userData)
         service
           .update(userData._id, values)

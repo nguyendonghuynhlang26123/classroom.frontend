@@ -34,7 +34,6 @@ const Dashboard = () => {
   const handleCreateClass = (form: FormData) => {
     setLoading(true);
     service.create(form).then((d) => {
-      d;
       setLoading(false);
       setClasses((prv) => [...prv, d]);
     });
@@ -45,7 +44,6 @@ const Dashboard = () => {
     service
       .joinClassRoom({ code: form.code, role: UserRole.STUDENT })
       .then((d) => {
-        d;
         setLoading(false);
         dispatch(showMessage({ message: 'Class enrolled with code = ' + form.code + '!' }));
       })

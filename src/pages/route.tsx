@@ -1,7 +1,7 @@
 import { RouteConfigs } from 'common/type';
 import { Navigate } from 'react-router-dom';
 import React from 'react';
-import { LinearProgress } from '@mui/material';
+// import { LinearProgress } from '@mui/material';
 import Utils from 'common/utils';
 import Dashboard from './Dashboard';
 import LoginPage from './Auth/Login';

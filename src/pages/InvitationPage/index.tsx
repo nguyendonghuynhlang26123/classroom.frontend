@@ -13,7 +13,6 @@ const InvitePage = () => {
   const navigate = useNavigate();
   React.useEffect(() => {
     if (search) {
-      'log ~ file: index.tsx ~ line 14 ~ React.useEffect ~ search', search;
       const params = new URLSearchParams(search);
       const classId = params.get('classId') as string;
       const role = params.get('role') as UserRole;
