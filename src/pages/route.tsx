@@ -8,7 +8,7 @@ import LoginPage from './Auth/Login';
 import RegisterPage from './Auth/Register';
 import Classroom from './Classroom';
 import ProfilePage from './Profile';
-import NotFoundPage from './NotFoundPage';
+import NotFoundPage from './Errors/NotFound';
 import InvitationPage from './InvitationPage';
 
 // main screen
