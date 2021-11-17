@@ -4,8 +4,11 @@ import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import Utils from 'common/utils';
 import { UserRole } from 'common/interfaces';
 import InvitationService from './service';
+import { useAppDispatch } from 'store/hooks';
+import { showMessage } from 'store/slices';
 
 const InvitePage = () => {
+  const dispatch = useAppDispatch();
   const service = new InvitationService();
   const { search } = useLocation();
   const navigate = useNavigate();
@@ -14,15 +17,34 @@ const InvitePage = () => {
       console.log('log ~ file: index.tsx ~ line 14 ~ React.useEffect ~ search', search);
       const params = new URLSearchParams(search);
       const classId = params.get('classId') as string;
-      const role = params.get('role') as string;
-      const code = params.get('code') as UserRole;
-      service.joinClassroom(classId, role, code).then((data) => {
-        navigate('/classroom/' + classId);
-      });
+      const role = params.get('role') as UserRole;
+      const code = params.get('code') as string;
+      service
+        .joinClassroom(classId, code, role)
+        .then((data) => {
+          navigate('/classroom/' + classId);
+        })
+        .catch((err) => {
+          if (err.statusCode === 409) {
+            dispatch(
+              showMessage({
+                message:
+                  'Invited email and your account email is not the same! Please login with the Email you received the invitation code',
+                type: 'error',
+              }),
+            );
+          }
+
+          // navigate('/not-found');
+        });
     } else navigate('/');
   }, []);
 
-  return <LinearProgress />;
+  return (
+    <>
+      <LinearProgress />; Please wait a few moment
+    </>
+  );
 };
 
 export default InvitePage;

@@ -45,8 +45,6 @@ const LoginPage = () => {
       console.log(response);
       setLoading(true);
       signInWithGG(response.tokenId).then((data) => {
-        console.log('log ~ file: login.tsx ~ line 35 ~ ggService.validateToken ~ data', data);
-        setLoading(false);
         dispatch(showMessage({ message: 'Login successfully' }));
       });
     },
@@ -59,11 +57,9 @@ const LoginPage = () => {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      signIn(values)
-        .then(() => {})
-        .catch((e) => {
-          dispatch(showMessage({ message: 'Invalid credentials', type: 'error' }));
-        });
+      signIn(values).catch((e) => {
+        dispatch(showMessage({ message: 'Invalid credentials', type: 'error' }));
+      });
     },
   });
 

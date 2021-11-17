@@ -30,12 +30,16 @@ export const PeopleTab = ({ role }: PeopleTabProps) => {
   const [inviteTeacher, showTeacherInviteForm] = React.useState<boolean>(false);
   const [inviteStudent, showStudentInviteForm] = React.useState<boolean>(false);
 
+  const fetchData = (classId: string) => {
+    service.getClassUsers(classId).then((users: ClassroomUser[]) => {
+      setData(users);
+    });
+  };
+
   React.useEffect(() => {
     if (id) {
-      service.getClassUsers(id).then((users: ClassroomUser[]) => {
-        console.log('log ~ file: index.tsx ~ line 100 ~ service.getClassUsers ~ users', users);
-        setData(users);
-      });
+      console.log('log ~ file: index.tsx ~ line 27 ~ PeopleTab ~ id', id);
+      fetchData(id);
     }
   }, []);
 
@@ -59,11 +63,12 @@ export const PeopleTab = ({ role }: PeopleTabProps) => {
       })
       .then((d) => {
         console.log(d);
+        if (id) fetchData(id);
         dispatch(showMessage({ message: 'Email submited!' }));
       })
       .catch((err) => {
         console.log('log ~ file: index.tsx ~ line 66 ~ .then ~ err', err);
-        dispatch(showMessage({ message: 'Error when submitted invitation!', type: 'error' }));
+        dispatch(showMessage({ message: 'Error when submitted invitation! Reason: ' + err.message, type: 'error' }));
       });
   };
 

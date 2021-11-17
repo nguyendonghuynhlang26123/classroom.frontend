@@ -7,9 +7,14 @@ import { ClassroomSetting, ClassworkTab, PeopleTab, StreamTab } from './subcompo
 import { navSx, mainSx } from './style';
 import { useParams } from 'react-router-dom';
 import ClassroomService from './service';
+import { useAppDispatch } from 'store/hooks';
+import { showMessage } from 'store/slices';
+import { useNavigate } from 'react-router';
 
 const ClassroomBoard = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const classService = new ClassroomService();
   const { userData } = useAuth();
   const [loading, setLoading] = React.useState<boolean>(true);
@@ -23,14 +28,18 @@ const ClassroomBoard = () => {
 
   React.useEffect(() => {
     if (id) {
-      classService.getOne(id).then((data: Classroom) => {
-        setClassData(data);
-        setLoading(false);
-      });
-
-      classService.getMyRole(id).then((data: any) => {
-        setMyRole(data.role as UserRole);
-      });
+      classService
+        .getClassData(id)
+        .then(({ data, myRole }) => {
+          setClassData(data);
+          setMyRole(myRole as UserRole);
+          setLoading(false);
+        })
+        .catch((err) => {
+          dispatch(showMessage({ message: 'Cannot find class', type: 'error' }));
+          setLoading(false);
+          navigate('/not-found');
+        });
     }
   }, []);
 

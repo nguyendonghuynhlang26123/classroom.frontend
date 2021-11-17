@@ -16,6 +16,8 @@ const ProfilePage = React.lazy(() => import('./Profile'));
 
 const InvitationPage = React.lazy(() => import('./InvitationPage'));
 
+const NotFoundPage = React.lazy(() => import('./Errors/NotFound'));
+
 // Public routes
 const Wrapper = ({ children }: { children: any }) => (
   <React.Suspense fallback={<LinearProgress />}>{children}</React.Suspense>
@@ -23,7 +25,11 @@ const Wrapper = ({ children }: { children: any }) => (
 
 // Authed routes
 const AuthWrapped = ({ isAuthed, children, search = '' }: { isAuthed: boolean; children: any; search: string }) => {
-  return isAuthed ? <Wrapper>{children}</Wrapper> : <Navigate to={'/auth/login' + search} />;
+  return isAuthed ? (
+    <Wrapper>{children}</Wrapper>
+  ) : (
+    <Navigate to={'/auth/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search)} />
+  );
 };
 
 //Allow only not authed routes
@@ -84,8 +90,16 @@ const appRoutes = (isAuthed: boolean, search: string): RouteConfigs => {
       ),
     },
     {
+      path: '/not-found',
+      element: (
+        <Wrapper>
+          <NotFoundPage />
+        </Wrapper>
+      ),
+    },
+    {
       path: '*',
-      element: <div>NOT FOUND</div>,
+      element: <Navigate to="/not-found" />,
     },
   ];
 
