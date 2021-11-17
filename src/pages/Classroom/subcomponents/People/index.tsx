@@ -149,7 +149,7 @@ export const PeopleTab = ({ role }: PeopleTabProps) => {
         open={inviteStudent}
         handleClose={() => showStudentInviteForm(false)}
         onSubmit={(email: string) => {
-          submitInvite(UserRole.TEACHER, email);
+          submitInvite(UserRole.STUDENT, email);
           showStudentInviteForm(false);
         }}
       />
