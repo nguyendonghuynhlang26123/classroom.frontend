@@ -1,23 +1,23 @@
 {
   "files": {
     "main.css": "/classroom.frontend/static/css/main.735f8cb3.chunk.css",
-    "main.js": "/classroom.frontend/static/js/main.9f514687.chunk.js",
-    "main.js.map": "/classroom.frontend/static/js/main.9f514687.chunk.js.map",
+    "main.js": "/classroom.frontend/static/js/main.f9cc114e.chunk.js",
+    "main.js.map": "/classroom.frontend/static/js/main.f9cc114e.chunk.js.map",
     "runtime-main.js": "/classroom.frontend/static/js/runtime-main.bd8ae2ce.js",
     "runtime-main.js.map": "/classroom.frontend/static/js/runtime-main.bd8ae2ce.js.map",
-    "static/js/2.13550d3e.chunk.js": "/classroom.frontend/static/js/2.13550d3e.chunk.js",
-    "static/js/2.13550d3e.chunk.js.map": "/classroom.frontend/static/js/2.13550d3e.chunk.js.map",
+    "static/js/2.632fc608.chunk.js": "/classroom.frontend/static/js/2.632fc608.chunk.js",
+    "static/js/2.632fc608.chunk.js.map": "/classroom.frontend/static/js/2.632fc608.chunk.js.map",
     "static/js/3.fa0af4f8.chunk.js": "/classroom.frontend/static/js/3.fa0af4f8.chunk.js",
     "static/js/3.fa0af4f8.chunk.js.map": "/classroom.frontend/static/js/3.fa0af4f8.chunk.js.map",
     "index.html": "/classroom.frontend/index.html",
     "static/css/main.735f8cb3.chunk.css.map": "/classroom.frontend/static/css/main.735f8cb3.chunk.css.map",
-    "static/js/2.13550d3e.chunk.js.LICENSE.txt": "/classroom.frontend/static/js/2.13550d3e.chunk.js.LICENSE.txt",
+    "static/js/2.632fc608.chunk.js.LICENSE.txt": "/classroom.frontend/static/js/2.632fc608.chunk.js.LICENSE.txt",
     "static/media/gg.87be52cb.svg": "/classroom.frontend/static/media/gg.87be52cb.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.bd8ae2ce.js",
-    "static/js/2.13550d3e.chunk.js",
+    "static/js/2.632fc608.chunk.js",
     "static/css/main.735f8cb3.chunk.css",
-    "static/js/main.9f514687.chunk.js"
+    "static/js/main.f9cc114e.chunk.js"
   ]
 }
