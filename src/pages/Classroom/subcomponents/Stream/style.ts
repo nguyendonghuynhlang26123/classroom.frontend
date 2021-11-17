@@ -38,6 +38,7 @@ export const bannerSx: MultipleSxTypes = {
     p: 3,
   },
   expand_row: {
+    alignItems: 'center',
     gap: 1,
     '& .MuiTypography-root:first-of-type': {
       fontWeight: 500,

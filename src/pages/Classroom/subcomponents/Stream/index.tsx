@@ -1,11 +1,14 @@
 import { InfoOutlined, Info } from '@mui/icons-material';
-import { Box, Card, CardContent, CardMedia, IconButton, Stack, Collapse, Typography } from '@mui/material';
+import { Box, Card, CardContent, CardMedia, IconButton, Stack, Collapse, Typography, Tooltip } from '@mui/material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { Classroom, UserRole } from 'common/interfaces';
 import React from 'react';
 import { bannerSx } from './style';
 import { StreamProps } from './type';
+import { useCopyToClipboard } from 'components';
 
 export const StreamTab = ({ classData, role }: StreamProps) => {
+  const [copiedText, copy] = useCopyToClipboard();
   const [details, showDetails] = React.useState<boolean>(true);
 
   const toggleShowDetails = () => {
@@ -32,6 +35,17 @@ export const StreamTab = ({ classData, role }: StreamProps) => {
               <Stack direction="row" sx={bannerSx.expand_row}>
                 <Typography variant="body2">Class code</Typography>
                 <Typography variant="body2">{classData.code}</Typography>
+                <Tooltip title={!copiedText ? 'Copy invitation link' : 'Copied'}>
+                  <IconButton
+                    onClick={() => {
+                      copy(
+                        `${window.location.origin}/#/classes/join?classId=${classData._id}&role=STUDENT&code=${classData.code}`,
+                      );
+                    }}
+                  >
+                    <ContentCopyIcon sx={{ fontSize: 14 }} />
+                  </IconButton>
+                </Tooltip>
               </Stack>
             )}
             {classData?.subject && (
