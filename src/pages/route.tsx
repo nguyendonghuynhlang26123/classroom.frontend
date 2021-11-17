@@ -102,10 +102,10 @@ const appRoutes = (isAuthed: boolean, search: string): RouteConfigs => {
         </Wrapper>
       ),
     },
-    {
-      path: '*',
-      element: <Navigate to="/not-found" />,
-    },
+    // {
+    //   path: '*',
+    //   element: <Navigate to="/not-found" />,
+    // },
   ];
 
   return routes;

@@ -7,7 +7,7 @@ import { CssBaseline } from '@mui/material';
 
 import { Provider } from 'react-redux';
 import { store } from './store';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import { AuthProvider } from 'components';
 
 ReactDOM.render(
@@ -15,9 +15,9 @@ ReactDOM.render(
     <AuthProvider>
       <Provider store={store}>
         <CssBaseline />
-        <BrowserRouter>
+        <HashRouter>
           <App />
-        </BrowserRouter>
+        </HashRouter>
       </Provider>
     </AuthProvider>
   </React.StrictMode>,

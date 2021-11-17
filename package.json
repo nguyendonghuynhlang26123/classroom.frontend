@@ -2,7 +2,7 @@
   "name": "18127136-18127269-moorssalc-frontend",
   "version": "0.1.0",
   "author": "18127136 - Nguyen Dang Huynh Long, 18127269 - Nguyen Thai Tan",
-  "homepage": ".",
+  "homepage": "https://nguyendonghuynhlang26123.github.io/classroom.frontend",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.5.0",
