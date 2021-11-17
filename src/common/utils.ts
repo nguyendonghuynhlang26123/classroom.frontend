@@ -1,5 +1,3 @@
-import * as colors from '@mui/material/colors';
-
 class Utils {
   static filterArrayByString(mainArr: any[], searchText: string): any[] {
     if (searchText === '') {

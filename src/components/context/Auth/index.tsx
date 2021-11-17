@@ -1,10 +1,9 @@
 import { AuthData, AuthResponse, User } from 'common/interfaces';
+import { repository } from 'services/repository';
 import JwtAuthService from './jwt.service';
 import GoogleValidateService from './google.service';
 
-import axios from 'axios';
 import React from 'react';
-const baseURL = 'http://localhost:3001/api/v1';
 
 export type AuthProps = {
   signIn: (data: AuthData) => Promise<any>;
@@ -43,7 +42,7 @@ export const AuthProvider = ({ children }: { children: any }) => {
 
   React.useEffect(() => {
     console.log('Check Auth');
-    axios.get(baseURL, { withCredentials: true }); // Send get request to get CSRF token once site is visited.
+    repository.get('/', { withCredentials: true }); // Send get request to get CSRF token once site is visited.
     checkJWT();
   }, []);
 

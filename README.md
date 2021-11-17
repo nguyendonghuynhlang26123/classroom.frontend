@@ -8,7 +8,7 @@ Deployed: https://nguyendonghuynhlang26123.github.io/classroom.frontend/  \
 [![deployed](https://github.com/nguyendonghuynhlang26123/classroom.frontend/actions/workflows/deploy.yml/badge.svg)](https://github.com/nguyendonghuynhlang26123/classroom.frontend/actions/workflows/deploy.yml)
 # Project information
 - This project is the midterm project for Course: Advanced Web Application Development 
-- This project is built using [ReactJS](https://reactjs.org/docs/hooks-reference.html) & [Typescript](https://www.typescriptlang.org/) and [Github action](https://github.com/features/actions) to automatically deploy project.
+- This project is built using [ReactJS](https://reactjs.org/docs/hooks-reference.html) & [Typescript](https://www.typescriptlang.org/) and [Heroku github sync](https://devcenter.heroku.com/articles/pipelines#github-sync) to automatically deploy project.
 - Library uses: [Formik](https://formik.org/), [Axios](https://axios-http.com/docs/instance), [React Material UI library](https://mui.com/), [React Router v6](https://reactrouter.com/), [Redux toolkit](https://redux-toolkit.js.org/)
 
 ## Available Scripts
@@ -32,10 +32,4 @@ The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn deploy`
-
-Builds the app for production to the `build` folder.\
-Then deploy it to github pages
-
-See [gh-pages](https://www.npmjs.com/package/gh-pages) for more information.
+ 
