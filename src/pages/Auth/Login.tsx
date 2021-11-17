@@ -42,7 +42,7 @@ const LoginPage = () => {
     cookiePolicy: 'single_host_origin',
     loginHint: 'Login with google',
     onSuccess: (response: any) => {
-      console.log(response);
+      response;
       setLoading(true);
       signInWithGG(response.tokenId).then((data) => {
         dispatch(showMessage({ message: 'Login successfully' }));
@@ -57,6 +57,7 @@ const LoginPage = () => {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
+      setLoading(true);
       signIn(values).catch((e) => {
         dispatch(showMessage({ message: 'Invalid credentials', type: 'error' }));
       });

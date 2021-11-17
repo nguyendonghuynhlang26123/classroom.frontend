@@ -37,7 +37,7 @@ export const ClassroomSetting = ({}) => {
     validateOnBlur: true,
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      console.log('log ~ file: index.tsx ~ line 39 ~ ClassroomSetting ~ values', values);
+      'log ~ file: index.tsx ~ line 39 ~ ClassroomSetting ~ values', values;
     },
   });
 

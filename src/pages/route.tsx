@@ -29,11 +29,21 @@ import InvitationPage from './InvitationPage';
 const Wrapper = ({ children }: { children: any }) => <React.Fragment>{children}</React.Fragment>;
 
 // Authed routes
-const AuthWrapped = ({ isAuthed, children, search = '' }: { isAuthed: boolean; children: any; search: string }) => {
+const AuthWrapped = ({
+  isAuthed,
+  children,
+  search = '',
+  pathname = '',
+}: {
+  isAuthed: boolean;
+  children: any;
+  search: string;
+  pathname: string;
+}) => {
   return isAuthed ? (
     <Wrapper>{children}</Wrapper>
   ) : (
-    <Navigate to={'/auth/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search)} />
+    <Navigate to={'/auth/login?redirect=' + encodeURIComponent(pathname + search)} />
   );
 };
 
@@ -43,12 +53,12 @@ const NotAuthWrapped = ({ isAuthed, children, search = '' }: { isAuthed: boolean
   return !isAuthed ? <Wrapper>{children}</Wrapper> : <Navigate to={link ? link : '/'} />;
 };
 
-const appRoutes = (isAuthed: boolean, search: string): RouteConfigs => {
+const appRoutes = (isAuthed: boolean, search: string, pathname: string): RouteConfigs => {
   const routes: RouteConfigs = [
     {
       path: '/',
       element: (
-        <AuthWrapped isAuthed={isAuthed} search={search}>
+        <AuthWrapped isAuthed={isAuthed} search={search} pathname={pathname}>
           <Dashboard />
         </AuthWrapped>
       ),
@@ -56,7 +66,7 @@ const appRoutes = (isAuthed: boolean, search: string): RouteConfigs => {
     {
       path: '/classroom/:id',
       element: (
-        <AuthWrapped isAuthed={isAuthed} search={search}>
+        <AuthWrapped isAuthed={isAuthed} search={search} pathname={pathname}>
           <Classroom />
         </AuthWrapped>
       ),
@@ -64,7 +74,7 @@ const appRoutes = (isAuthed: boolean, search: string): RouteConfigs => {
     {
       path: '/profile',
       element: (
-        <AuthWrapped isAuthed={isAuthed} search={search}>
+        <AuthWrapped isAuthed={isAuthed} search={search} pathname={pathname}>
           <ProfilePage />
         </AuthWrapped>
       ),
@@ -72,7 +82,7 @@ const appRoutes = (isAuthed: boolean, search: string): RouteConfigs => {
     {
       path: '/classes/join',
       element: (
-        <AuthWrapped isAuthed={isAuthed} search={search}>
+        <AuthWrapped isAuthed={isAuthed} search={search} pathname={pathname}>
           <InvitationPage />
         </AuthWrapped>
       ),
@@ -102,10 +112,10 @@ const appRoutes = (isAuthed: boolean, search: string): RouteConfigs => {
         </Wrapper>
       ),
     },
-    // {
-    //   path: '*',
-    //   element: <Navigate to="/not-found" />,
-    // },
+    {
+      path: '/*',
+      element: <Navigate to="/not-found" />,
+    },
   ];
 
   return routes;

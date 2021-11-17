@@ -13,7 +13,7 @@ class GoogleValidateService extends BaseApiService<GoogleValidationData, AuthRes
         .post(`${this.resource}`, body)
         .then((response: any) => {
           if (response.data) {
-            console.log(
+            (
               'log ~ file: google.service.ts ~ line 16 ~ GoogleValidateService ~ .then ~ response.data',
               response.data,
             );

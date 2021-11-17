@@ -38,7 +38,7 @@ export const PeopleTab = ({ role }: PeopleTabProps) => {
 
   React.useEffect(() => {
     if (id) {
-      console.log('log ~ file: index.tsx ~ line 27 ~ PeopleTab ~ id', id);
+      'log ~ file: index.tsx ~ line 27 ~ PeopleTab ~ id', id;
       fetchData(id);
     }
   }, []);
@@ -49,7 +49,7 @@ export const PeopleTab = ({ role }: PeopleTabProps) => {
   };
 
   const inviteBtnHandler = (type: 'Teachers' | 'Students') => {
-    console.log('log ~ file: index.tsx ~ line 48 ~ inviteBtnHandler ~ type', type);
+    'log ~ file: index.tsx ~ line 48 ~ inviteBtnHandler ~ type', type;
     if (type === 'Teachers') showTeacherInviteForm(true);
     else showStudentInviteForm(true);
   };
@@ -62,12 +62,12 @@ export const PeopleTab = ({ role }: PeopleTabProps) => {
         email: email,
       })
       .then((d) => {
-        console.log(d);
+        d;
         if (id) fetchData(id);
         dispatch(showMessage({ message: 'Email submited!' }));
       })
       .catch((err) => {
-        console.log('log ~ file: index.tsx ~ line 66 ~ .then ~ err', err);
+        'log ~ file: index.tsx ~ line 66 ~ .then ~ err', err;
         dispatch(showMessage({ message: 'Error when submitted invitation! Reason: ' + err.message, type: 'error' }));
       });
   };
