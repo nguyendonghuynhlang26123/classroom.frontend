@@ -22,8 +22,9 @@ class JwtAuthService {
     if (this.isAuthTokenValid(access_token)) {
       this._setSession(access_token, refresh_token); // SET for axios.default.header
       loginCallback();
+    } else if (this.isAuthTokenValid(refresh_token)) {
+      this.refresh(refresh_token as string).then(() => loginCallback());
     } else {
-      //TODO: Make use of Refresh token
       this._setSession(null, null); //Reset session
       logoutCallback();
     }
@@ -31,9 +32,25 @@ class JwtAuthService {
 
   logIn(body: AuthData): Promise<AuthResponse> {
     return new Promise((resolve, reject) => {
-      //TODO: Check again
       repository
         .post(`/auth/login`, body)
+        .then((response: any) => {
+          if (response.data) {
+            //eslint disable
+            const access_token = response.data.access_token;
+            const refresh_token = response.data.refresh_token;
+            this._setSession(access_token, refresh_token);
+            resolve(response.data);
+          }
+        })
+        .catch((response) => reject(response));
+    });
+  }
+
+  refresh(refreshToken: string): Promise<AuthResponse> {
+    return new Promise((resolve, reject) => {
+      repository
+        .post(`/auth/refresh`, { refresh_token: refreshToken })
         .then((response: any) => {
           if (response.data) {
             //eslint disable

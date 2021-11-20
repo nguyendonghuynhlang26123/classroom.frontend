@@ -3,30 +3,33 @@ import { Navigate } from 'react-router-dom';
 import React from 'react';
 // import { LinearProgress } from '@mui/material';
 import Utils from 'common/utils';
-import Dashboard from './Dashboard';
-import LoginPage from './Auth/Login';
-import RegisterPage from './Auth/Register';
-import Classroom from './Classroom';
-import ProfilePage from './Profile';
-import NotFoundPage from './Errors/NotFound';
-import InvitationPage from './InvitationPage';
+import { LinearProgress } from '@mui/material';
+// import Dashboard from './Dashboard';
+// import LoginPage from './Auth/Login';
+// import RegisterPage from './Auth/Register';
+// import Classroom from './Classroom';
+// import ProfilePage from './Profile';
+// import NotFoundPage from './Errors/NotFound';
+// import InvitationPage from './InvitationPage';
 
 // main screen
-// const Dashboard = React.lazy(() => import('./Dashboard'));
-// //Auth
-// const LoginPage = React.lazy(() => import('./Auth/Login'));
-// const RegisterPage = React.lazy(() => import('./Auth/Register'));
+const Dashboard = React.lazy(() => import('./Dashboard'));
+//Auth
+const LoginPage = React.lazy(() => import('./Auth/Login'));
+const RegisterPage = React.lazy(() => import('./Auth/Register'));
 
-// const Classroom = React.lazy(() => import('./Classroom'));
+const Classroom = React.lazy(() => import('./Classroom'));
 
-// const ProfilePage = React.lazy(() => import('./Profile'));
+const ProfilePage = React.lazy(() => import('./Profile'));
 
-// const InvitationPage = React.lazy(() => import('./InvitationPage'));
+const InvitationPage = React.lazy(() => import('./InvitationPage'));
 
-// const NotFoundPage = React.lazy(() => import('./Errors/NotFound'));
+const NotFoundPage = React.lazy(() => import('./Errors/NotFound'));
 
 // Public routes
-const Wrapper = ({ children }: { children: any }) => <React.Fragment>{children}</React.Fragment>;
+const Wrapper = ({ children }: { children: any }) => (
+  <React.Suspense fallback={<LinearProgress />}>{children}</React.Suspense>
+);
 
 // Authed routes
 const AuthWrapped = ({
@@ -40,6 +43,10 @@ const AuthWrapped = ({
   search: string;
   pathname: string;
 }) => {
+  if (pathname === '/') {
+    pathname = '';
+    search = '';
+  }
   return isAuthed ? (
     <Wrapper>{children}</Wrapper>
   ) : (
