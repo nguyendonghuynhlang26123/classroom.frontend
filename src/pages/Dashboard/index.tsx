@@ -4,57 +4,37 @@ import { Navbar, ProfileBtn, useAuth } from 'components';
 import { drawerItemConfigs } from 'configs';
 import { AddBtn, ClassCard } from './subcomponents';
 import { bodyContainer, cardContainer } from './style';
-import { FormData } from './type';
-import ClassroomService from './service';
-// import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { GenericGetAllResponse } from 'common/interfaces/response/generic.interface';
+import type { CreateClassroom } from 'common/interfaces';
+import Utils from 'common/utils';
 import { useNavigate } from 'react-router';
 import { Classroom, UserRole } from 'common/interfaces';
 import { useAppDispatch } from 'store/hooks';
-import { showMessage } from 'store/slices';
-
-const service = new ClassroomService();
+import { showMessage, showSuccessMessage } from 'store/slices';
+import { useCreateClassMutation, useGetAllClassesQuery, useJoinClassMutation } from 'services/api';
 
 const Dashboard = () => {
   // const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { userData } = useAuth();
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const [classes, setClasses] = React.useState<Classroom[]>([]); //TODO: REPLACE USING REDUX
+  const { data, error, isLoading } = useGetAllClassesQuery();
+  const [createClass, { isLoading: isUpdating }] = useCreateClassMutation();
+  const [joinClass, { isLoading: isJoining }] = useJoinClassMutation();
 
-  React.useEffect(() => {
-    setLoading(true);
-    service.getClassList().then((response: GenericGetAllResponse<Classroom>) => {
-      setClasses(response?.data);
-      setLoading(false);
-    });
-  }, []);
-
-  const handleCreateClass = (form: FormData) => {
-    setLoading(true);
-    service.create(form).then((d) => {
-      setLoading(false);
-      setClasses((prv) => [...prv, d]);
-    });
+  const handleCreateClass = (form: CreateClassroom) => {
+    createClass(form);
   };
 
   const handleJoinClass = (form: { code: string }) => {
-    setLoading(true);
-    service
-      .joinClassRoom({ code: form.code, role: UserRole.STUDENT })
-      .then((d) => {
-        setLoading(false);
-        dispatch(showMessage({ message: 'Class enrolled with code = ' + form.code + '!' }));
-      })
-      .catch((err) => {
-        dispatch(showMessage({ message: 'Failed to enroll!', type: 'error' }));
-      });
+    joinClass({ code: form.code, role: UserRole.STUDENT });
   };
 
   return (
     <React.Fragment>
-      <Navbar items={drawerItemConfigs} toolbarComponents={<>{loading && <LinearProgress />}</>}>
+      <Navbar
+        items={drawerItemConfigs}
+        toolbarComponents={<>{Utils.isLoading(isLoading, isUpdating, isJoining) && <LinearProgress />}</>}
+      >
         <>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             🎓 Moorssalc
@@ -66,10 +46,10 @@ const Dashboard = () => {
           </div>
         </>
       </Navbar>
-      {!loading && (
+      {!isLoading && data && (
         <Box sx={bodyContainer}>
           <Box sx={cardContainer}>
-            {classes.map((c: Classroom, index: number) => (
+            {data.map((c: Classroom, index: number) => (
               <ClassCard
                 key={index}
                 title={c.title}

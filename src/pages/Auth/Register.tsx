@@ -19,7 +19,7 @@ import { useAuth } from 'components';
 import { NAME_REGEX } from 'common/constants/regex';
 import { RegisterData } from 'common/interfaces';
 import { useAppDispatch } from 'store/hooks';
-import { showMessage } from 'store/slices';
+import { showMessage, showSuccessMessage } from 'store/slices';
 
 const validationSchema = yup.object({
   email: yup.string().email('This field should be a valid email').required('Please enter email'),
@@ -73,12 +73,7 @@ const RegisterPage = () => {
         register(bodyData)
           .then(() => {
             setLoading(false);
-            dispatch(
-              showMessage({
-                message: 'Registeration completed',
-                type: 'success',
-              }),
-            );
+            dispatch(showSuccessMessage('Registeration completed'));
             // navigate('/' + search);
           })
           .catch((response) => {

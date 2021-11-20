@@ -1,4 +1,4 @@
-import { FormData } from '../../type';
+import { CreateClassroom } from './../../../../common/interfaces/classes/classroom.interface';
 export type DisclaimerProps = {
   open: boolean;
   handleClose: () => void;
@@ -8,7 +8,7 @@ export type DisclaimerProps = {
 export type FormModalProps = {
   open: boolean;
   handleClose: () => void;
-  onSubmit: (form: FormData) => void;
+  onSubmit: (form: CreateClassroom) => void;
 };
 
 export type JoinFormProps = {
@@ -18,6 +18,6 @@ export type JoinFormProps = {
 };
 
 export type AddBtnProps = {
-  handleCreateClass: (form: FormData) => void;
+  handleCreateClass: (form: CreateClassroom) => void;
   handleJoinClass: (form: { code: string }) => void;
 };

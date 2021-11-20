@@ -7,3 +7,10 @@ export interface Classroom {
   image: string;
   code: string;
 }
+
+export interface CreateClassroom {
+  title: string;
+  section: string;
+  subject?: string;
+  room?: string;
+}

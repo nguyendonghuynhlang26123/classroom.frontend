@@ -3,7 +3,7 @@ import { UserRole } from 'common/interfaces';
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppDispatch } from 'store/hooks';
-import { showMessage } from 'store/slices';
+import { showMessage, showSuccessMessage } from 'store/slices';
 import InvitationService from './service';
 
 const InvitePage = () => {

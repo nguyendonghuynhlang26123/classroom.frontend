@@ -8,7 +8,7 @@ import { navSx, mainSx } from './style';
 import { useParams } from 'react-router-dom';
 import ClassroomService from './service';
 import { useAppDispatch } from 'store/hooks';
-import { showMessage } from 'store/slices';
+import { showMessage, showSuccessMessage } from 'store/slices';
 import { useNavigate } from 'react-router';
 
 const ClassroomBoard = () => {

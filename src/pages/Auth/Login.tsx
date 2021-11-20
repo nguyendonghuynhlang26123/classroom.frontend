@@ -20,7 +20,7 @@ import * as yup from 'yup';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from 'components/context';
 import { useAppDispatch } from 'store/hooks';
-import { showMessage } from 'store/slices';
+import { showMessage, showSuccessMessage } from 'store/slices';
 
 const GG_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY as string;
 
@@ -44,7 +44,7 @@ const LoginPage = () => {
     onSuccess: (response: any) => {
       setLoading(true);
       signInWithGG(response.tokenId).then((data) => {
-        dispatch(showMessage({ message: 'Login successfully' }));
+        dispatch(showSuccessMessage('Login successfully'));
       });
     },
   });

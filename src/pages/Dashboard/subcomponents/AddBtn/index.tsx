@@ -5,7 +5,7 @@ import { Disclaimer } from './Disclaimer';
 import { CreateForm } from './CreateForm';
 import { JoinForm } from './JoinForm';
 import { AddBtnProps } from './type';
-import { FormData } from '../../type';
+import { CreateClassroom } from 'common/interfaces';
 
 export const AddBtn = ({ handleCreateClass, handleJoinClass }: AddBtnProps) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -77,7 +77,7 @@ export const AddBtn = ({ handleCreateClass, handleJoinClass }: AddBtnProps) => {
       <CreateForm
         open={createForm}
         handleClose={hideAll}
-        onSubmit={(form: FormData) => {
+        onSubmit={(form: CreateClassroom) => {
           handleCreateClass(form);
           hideAll();
         }}

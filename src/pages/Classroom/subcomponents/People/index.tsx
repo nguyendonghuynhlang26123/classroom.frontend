@@ -20,7 +20,7 @@ import { PeopleTabProps } from './type';
 import { useParams } from 'react-router';
 import { InviteForm } from './InviteForm';
 import { useAppDispatch } from 'store/hooks';
-import { showMessage } from 'store/slices';
+import { showMessage, showSuccessMessage } from 'store/slices';
 
 export const PeopleTab = ({ role }: PeopleTabProps) => {
   const { id } = useParams();
@@ -61,7 +61,7 @@ export const PeopleTab = ({ role }: PeopleTabProps) => {
       })
       .then((d) => {
         if (id) fetchData(id);
-        dispatch(showMessage({ message: 'Email submited!' }));
+        dispatch(showSuccessMessage('Email submited!'));
       })
       .catch((err) => {
         dispatch(showMessage({ message: 'Error when submitted invitation! Reason: ' + err.message, type: 'error' }));

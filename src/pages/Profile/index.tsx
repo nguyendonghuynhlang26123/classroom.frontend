@@ -9,7 +9,7 @@ import { UserDataUpdate } from 'common/interfaces';
 import { NAME_REGEX, STUDENT_ID_REGEX } from 'common/constants/regex';
 import UserService from './service';
 import { useAppDispatch } from 'store/hooks';
-import { showMessage } from 'store/slices';
+import { showMessage, showSuccessMessage } from 'store/slices';
 
 const validationSchema = yup.object({
   first_name: yup.string().matches(NAME_REGEX, 'Invalid name').required('Firstname is required'),
@@ -39,7 +39,7 @@ const UserProfile = () => {
         service
           .update(userData._id, values)
           .then(() => {
-            dispatch(showMessage({ message: 'Update successfully' }));
+            dispatch(showSuccessMessage('Update successfully'));
             reload();
             setLoading(false);
           })

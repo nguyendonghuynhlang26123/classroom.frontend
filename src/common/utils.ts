@@ -148,6 +148,12 @@ class Utils {
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
   }
+
+  // Check if list of arguments are all true
+  static isLoading(...args: boolean[]): boolean {
+    for (var i = 0; i < args.length; ++i) if (!args[i]) return false;
+    return true;
+  }
 }
 
 export default Utils;
