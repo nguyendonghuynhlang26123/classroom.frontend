@@ -1,4 +1,4 @@
-export interface UserDataUpdate {
+export interface IUserBody {
   student_id: string;
   avatar: string;
   last_name: string;

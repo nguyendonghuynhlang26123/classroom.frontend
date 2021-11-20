@@ -1,4 +1,4 @@
-import { User } from '../users';
+import { IUser } from '../users';
 export interface AuthData {
   email: string;
   password: string;
@@ -12,7 +12,7 @@ export interface RegisterData {
 }
 
 export interface AuthResponse {
-  data: User;
+  data: IUser;
   access_token: string;
   refresh_token: string;
 }
