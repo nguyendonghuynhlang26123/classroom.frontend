@@ -1,39 +1,41 @@
 import { _request } from './utils';
-import { GenericGetAllResponse, JoinClass } from 'common/interfaces';
+import { IGenericGetAllResponse, IJoinClassBody } from 'common/interfaces';
 // Need to use the React-specific entry point to allow generating React hooks
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from '../repository';
 
-import type { Classroom, CreateClassroom } from 'common/interfaces';
+import type { IClassroom, IClassroomBody } from 'common/interfaces';
 
 // Define a service using a base URL and expected endpoints
 export const CLASSROOM_API_REDUCER_KEY = 'classroomApi';
+export const CLASSROOM_TAG = 'Classes';
 export const classroomApi = createApi({
   reducerPath: CLASSROOM_API_REDUCER_KEY,
   baseQuery: baseQuery,
-  tagTypes: ['Classes'],
+  tagTypes: [CLASSROOM_TAG],
   endpoints: (builder) => ({
-    getAllClasses: builder.query<Classroom[], void>({
+    getAllClasses: builder.query<IClassroom[], void>({
       query: () => _request.get('classes'),
-      transformResponse: (response: GenericGetAllResponse<Classroom>) => response.data,
-      providesTags: (result: Classroom[] | undefined) =>
-        // is result available?
+      transformResponse: (response: IGenericGetAllResponse<IClassroom>) => response.data,
+      providesTags: (result: IClassroom[] | undefined) =>
         result
           ? // successful query
-            [...result.map(({ _id }) => ({ type: 'Classes', id: _id } as const)), { type: 'Classes', id: 'LIST' }]
+            [
+              ...result.map(({ _id }) => ({ type: CLASSROOM_TAG, id: _id } as const)),
+              { type: CLASSROOM_TAG, id: 'LIST' },
+            ]
           : // an error occurred, but we still want to refetch this query when `{ type: 'Posts', id: 'LIST' }` is invalidated
-            [{ type: 'Classes', id: 'LIST' }],
-      // highlight-end
+            [{ type: CLASSROOM_TAG, id: 'LIST' }],
     }),
 
-    createClass: builder.mutation<Classroom, CreateClassroom>({
+    createClass: builder.mutation<IClassroom, IClassroomBody>({
       query: (body) => _request.post('classes', body),
-      invalidatesTags: [{ type: 'Classes', id: 'LIST' }],
+      invalidatesTags: [{ type: CLASSROOM_TAG, id: 'LIST' }],
     }),
 
-    joinClass: builder.mutation<any, JoinClass>({
+    joinClass: builder.mutation<any, IJoinClassBody>({
       query: (body) => _request.post('classes/join', body),
-      invalidatesTags: [{ type: 'Classes', id: 'LIST' }],
+      invalidatesTags: [{ type: CLASSROOM_TAG, id: 'LIST' }],
     }),
   }),
 });

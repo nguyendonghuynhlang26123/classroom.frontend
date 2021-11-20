@@ -1,7 +1,7 @@
 import { InfoOutlined, Info } from '@mui/icons-material';
 import { Box, Card, CardContent, CardMedia, IconButton, Stack, Collapse, Typography, Tooltip } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { Classroom, UserRole } from 'common/interfaces';
+import { UserRole } from 'common/interfaces';
 import React from 'react';
 import { bannerSx } from './style';
 import { StreamProps } from './type';

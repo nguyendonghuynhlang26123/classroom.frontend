@@ -1,11 +1,11 @@
-import { JoinClass, UserRole } from 'common/interfaces';
+import { IJoinClassBody, UserRole } from 'common/interfaces';
 import { BaseApiService } from 'services';
 
-class InvitationService extends BaseApiService<JoinClass, any> {
+class InvitationService extends BaseApiService<IJoinClassBody, any> {
   resource = 'classes';
 
   async joinClassroom(classId: string, code: string, role: UserRole): Promise<any> {
-    const data: JoinClass = {
+    const data: IJoinClassBody = {
       class_id: classId,
       code: code,
       role: role,

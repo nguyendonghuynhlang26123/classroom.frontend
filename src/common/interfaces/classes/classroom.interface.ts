@@ -1,4 +1,4 @@
-export interface Classroom {
+export interface IClassroom {
   _id: string;
   title: string;
   section: string;
@@ -8,7 +8,7 @@ export interface Classroom {
   code: string;
 }
 
-export interface CreateClassroom {
+export interface IClassroomBody {
   title: string;
   section: string;
   subject?: string;

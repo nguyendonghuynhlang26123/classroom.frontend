@@ -1,47 +1,36 @@
 import React from 'react';
-import { Classroom, UserRole } from 'common/interfaces';
+import { IClassroom, UserRole } from 'common/interfaces';
 import { Navbar, ProfileBtn, TabPanel, useAuth } from 'components';
 import { drawerItemConfigs } from 'configs';
 import { Box, Typography, Tab, Tabs, LinearProgress, Link, Container } from '@mui/material';
 import { ClassroomSetting, ClassworkTab, PeopleTab, StreamTab } from './subcomponents';
 import { navSx, mainSx } from './style';
 import { useParams } from 'react-router-dom';
-import ClassroomService from './service';
 import { useAppDispatch } from 'store/hooks';
 import { showMessage, showSuccessMessage } from 'store/slices';
 import { useNavigate } from 'react-router';
+import { useGetClassDetailsQuery, useGetMyRoleQuery } from 'services/api';
 
 const ClassroomBoard = () => {
   const { id } = useParams();
+  const { userData } = useAuth();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const classService = new ClassroomService();
-  const { userData } = useAuth();
-  const [loading, setLoading] = React.useState<boolean>(true);
+  const { data, error, isLoading } = useGetClassDetailsQuery(id as string);
+  const { data: role, error: roleError, isLoading: roleIsLoading } = useGetMyRoleQuery(id as string);
   const [tabValue, setTabValue] = React.useState<number>(0);
-  const [classData, setClassData] = React.useState<Classroom | null>(null);
-  const [role, setMyRole] = React.useState<UserRole>(UserRole.STUDENT);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
+  //Error
   React.useEffect(() => {
-    if (id) {
-      classService
-        .getClassData(id)
-        .then(({ data, myRole }) => {
-          setClassData(data);
-          setMyRole(myRole as UserRole);
-          setLoading(false);
-        })
-        .catch((err) => {
-          dispatch(showMessage({ message: 'Cannot find class', type: 'error' }));
-          setLoading(false);
-          navigate('/not-found');
-        });
+    if (error) {
+      dispatch(showMessage({ message: 'Cannot find class', type: 'error' }));
+      navigate('/not-found');
     }
-  }, []);
+  }, [error]);
 
   return (
     <React.Fragment>
@@ -56,13 +45,13 @@ const ClassroomBoard = () => {
                 <Tab label="People" id="three" />
               </Tabs>
             </Box>
-            {loading && <LinearProgress sx={navSx.progressBar} />}
+            {isLoading && <LinearProgress sx={navSx.progressBar} />}
           </>
         }
       >
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           <Link underline="hover" href={'/'} sx={navSx.link}>
-            {classData && classData.title}
+            {data && data.title}
           </Link>
         </Typography>
 
@@ -71,10 +60,10 @@ const ClassroomBoard = () => {
           {userData && <ProfileBtn fname={userData.first_name} imageUrl={userData.avatar} />}
         </Box>
       </Navbar>
-      {!loading && classData && role && (
+      {!isLoading && data && role && (
         <Container maxWidth={false} sx={mainSx.container}>
           <TabPanel value={tabValue} index={0}>
-            <StreamTab role={role} classData={classData} />
+            <StreamTab role={role} classData={data} />
           </TabPanel>
           <TabPanel value={tabValue} index={1}>
             <ClassworkTab />

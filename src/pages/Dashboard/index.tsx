@@ -4,10 +4,10 @@ import { Navbar, ProfileBtn, useAuth } from 'components';
 import { drawerItemConfigs } from 'configs';
 import { AddBtn, ClassCard } from './subcomponents';
 import { bodyContainer, cardContainer } from './style';
-import type { CreateClassroom } from 'common/interfaces';
+import type { IClassroomBody } from 'common/interfaces';
 import Utils from 'common/utils';
 import { useNavigate } from 'react-router';
-import { Classroom, UserRole } from 'common/interfaces';
+import { IClassroom, UserRole } from 'common/interfaces';
 import { useAppDispatch } from 'store/hooks';
 import { showMessage, showSuccessMessage } from 'store/slices';
 import { useCreateClassMutation, useGetAllClassesQuery, useJoinClassMutation } from 'services/api';
@@ -21,7 +21,7 @@ const Dashboard = () => {
   const [createClass, { isLoading: isUpdating }] = useCreateClassMutation();
   const [joinClass, { isLoading: isJoining }] = useJoinClassMutation();
 
-  const handleCreateClass = (form: CreateClassroom) => {
+  const handleCreateClass = (form: IClassroomBody) => {
     createClass(form);
   };
 
@@ -49,7 +49,7 @@ const Dashboard = () => {
       {!isLoading && data && (
         <Box sx={bodyContainer}>
           <Box sx={cardContainer}>
-            {data.map((c: Classroom, index: number) => (
+            {data.map((c: IClassroom, index: number) => (
               <ClassCard
                 key={index}
                 title={c.title}

@@ -1,3 +1,4 @@
+import { IErrorResponse } from './../../common/interfaces/response/errorResponse.interface';
 import { BaseQueryFn } from '@reduxjs/toolkit/query/react';
 import axios, { AxiosError } from 'axios';
 import { omit } from 'lodash';
@@ -10,24 +11,20 @@ export const repository = axios.create({
   withCredentials: true,
 });
 
-const axiosRepository =
-  (): BaseQueryFn =>
-  async (requestOpts, { getState }) => {
-    try {
-      const result = await repository({
-        ...requestOpts,
-        headers: {
-          ...omit(requestOpts.headers, ['user-agent']),
-        },
-      });
-      console.log('log ~ file: index.ts ~ line 23 ~ requestOpts', requestOpts);
-      console.log('log ~ file: index.ts ~ line 23 ~ result', result);
+const axiosRepository = (): BaseQueryFn => async (requestOpts) => {
+  try {
+    const result = await repository({
+      ...requestOpts,
+      headers: {
+        ...omit(requestOpts.headers, ['user-agent']),
+      },
+    });
 
-      return { data: result.data };
-    } catch (axiosError) {
-      const err = axiosError as AxiosError;
-      return { error: { status: err.response?.status, data: err.response?.data } };
-    }
-  };
+    return { data: result.data };
+  } catch (axiosError) {
+    const err = axiosError as IErrorResponse;
+    return { error: { status: err?.statusCode, data: err?.message } };
+  }
+};
 
 export const baseQuery = axiosRepository();

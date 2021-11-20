@@ -1,4 +1,4 @@
-import { Classroom, UserRole } from 'common/interfaces';
+import { UserRole } from 'common/interfaces';
 export type PeopleTabProps = {
   role: UserRole;
 };

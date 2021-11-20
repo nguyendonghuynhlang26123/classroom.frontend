@@ -1,5 +1,5 @@
-import { Classroom, UserRole } from 'common/interfaces/classes';
+import { IClassroom, UserRole } from 'common/interfaces/classes';
 export type StreamProps = {
-  classData: Classroom;
+  classData: IClassroom;
   role: UserRole;
 };

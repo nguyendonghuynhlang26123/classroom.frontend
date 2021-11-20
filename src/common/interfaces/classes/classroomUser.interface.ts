@@ -1,5 +1,5 @@
 import { User } from './../users/users.interface';
-export interface ClassroomUser {
+export interface IClassroomUser {
   user_id: User;
   status: 'ACTIVATED' | 'INACTIVATED';
   role: UserRole;

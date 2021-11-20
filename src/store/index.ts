@@ -1,16 +1,16 @@
-import { classroomApi } from 'services/api';
-import { configureStore, ConfigureStoreOptions } from '@reduxjs/toolkit';
-import { setupListeners } from '@reduxjs/toolkit/query';
+import { classroomApi, classroomDetailsApi } from 'services/api';
+import { configureStore } from '@reduxjs/toolkit';
 import { loadingReducer, messageReducer } from './slices';
-import { Reducer } from 'redux';
 
 export const store = configureStore({
   reducer: {
     loading: loadingReducer,
     message: messageReducer,
     [classroomApi.reducerPath]: classroomApi.reducer,
+    [classroomDetailsApi.reducerPath]: classroomDetailsApi.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(classroomApi.middleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(classroomApi.middleware, classroomDetailsApi.middleware),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
