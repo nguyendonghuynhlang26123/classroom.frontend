@@ -1,12 +1,8 @@
 import { usersApi } from './../services/api/user.api';
 import { classroomApi, classroomDetailsApi } from 'services/api';
 import { configureStore } from '@reduxjs/toolkit';
-import { loadingReducer, messageReducer } from './slices';
-
 export const store = configureStore({
   reducer: {
-    loading: loadingReducer,
-    message: messageReducer,
     [classroomApi.reducerPath]: classroomApi.reducer,
     [classroomDetailsApi.reducerPath]: classroomDetailsApi.reducer,
     [usersApi.reducerPath]: usersApi.reducer,

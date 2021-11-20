@@ -20,7 +20,7 @@ import * as yup from 'yup';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from 'components/context';
 import { useAppDispatch } from 'store/hooks';
-import { showMessage, showSuccessMessage } from 'store/slices';
+import { toast } from 'react-toastify';
 
 const GG_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY as string;
 
@@ -44,7 +44,7 @@ const LoginPage = () => {
     onSuccess: (response: any) => {
       setLoading(true);
       signInWithGG(response.tokenId).then((data) => {
-        dispatch(showSuccessMessage('Login successfully'));
+        toast.success('Login Successfully');
       });
     },
   });
@@ -58,7 +58,7 @@ const LoginPage = () => {
     onSubmit: (values) => {
       setLoading(true);
       signIn(values).catch((e) => {
-        dispatch(showMessage({ message: 'Invalid credentials', type: 'error' }));
+        toast.warning('Invalid credentials');
       });
     },
   });

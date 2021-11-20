@@ -1,11 +1,8 @@
 import { AuthData, AuthResponse, IUser } from 'common/interfaces';
-import { repository } from 'services/repository';
-import JwtAuthService from './jwt.service';
-import GoogleValidateService from './google.service';
-
 import React from 'react';
-import { useGetClassDetailsQuery } from 'services/api';
-import { useGetUserDataQuery } from 'services/api/user.api';
+import { repository } from 'services/repository';
+import GoogleValidateService from './google.service';
+import JwtAuthService from './jwt.service';
 
 export type AuthProps = {
   signIn: (data: AuthData) => Promise<any>;

@@ -1,5 +1,3 @@
-import { UseMutationStateResult } from '@reduxjs/toolkit/dist/query/react/buildHooks';
-
 const get = (url: string) => ({
   url,
 });

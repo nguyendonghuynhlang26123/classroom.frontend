@@ -1,24 +1,23 @@
-import React from 'react';
-import { IClassroom, UserRole } from 'common/interfaces';
+import { Box, Container, LinearProgress, Link, Tab, Tabs, Typography } from '@mui/material';
 import { Navbar, ProfileBtn, TabPanel, useAuth } from 'components';
 import { drawerItemConfigs } from 'configs';
-import { Box, Typography, Tab, Tabs, LinearProgress, Link, Container } from '@mui/material';
-import { ClassroomSetting, ClassworkTab, PeopleTab, StreamTab } from './subcomponents';
-import { navSx, mainSx } from './style';
-import { useParams } from 'react-router-dom';
-import { useAppDispatch } from 'store/hooks';
-import { showMessage, showSuccessMessage } from 'store/slices';
+import React from 'react';
 import { useNavigate } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { useGetClassDetailsQuery, useGetMyRoleQuery } from 'services/api';
+import { mainSx, navSx } from './style';
+import { ClassroomSetting, ClassworkTab, PeopleTab, StreamTab } from './subcomponents';
+import Utils from 'common/utils';
+import { toast } from 'react-toastify';
 
 const ClassroomBoard = () => {
   const { id } = useParams();
   const { userData } = useAuth();
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const [tabValue, setTabValue] = React.useState<number>(0);
+
   const { data, error, isLoading } = useGetClassDetailsQuery(id as string);
   const { data: role, error: roleError, isLoading: roleIsLoading } = useGetMyRoleQuery(id as string);
-  const [tabValue, setTabValue] = React.useState<number>(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -27,7 +26,8 @@ const ClassroomBoard = () => {
   //Error
   React.useEffect(() => {
     if (error) {
-      dispatch(showMessage({ message: 'Cannot find class', type: 'error' }));
+      const err = error as any;
+      toast.error('Not found this class');
       navigate('/not-found');
     }
   }, [error]);
@@ -45,12 +45,12 @@ const ClassroomBoard = () => {
                 <Tab label="People" id="three" />
               </Tabs>
             </Box>
-            {isLoading && <LinearProgress sx={navSx.progressBar} />}
+            {Utils.isLoading(isLoading, roleIsLoading) && <LinearProgress sx={navSx.progressBar} />}
           </>
         }
       >
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          <Link underline="hover" href={'/'} sx={navSx.link}>
+          <Link underline="hover" sx={navSx.link}>
             {data && data.title}
           </Link>
         </Typography>

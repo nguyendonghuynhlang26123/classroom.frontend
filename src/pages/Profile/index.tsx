@@ -8,9 +8,8 @@ import { drawerItemConfigs } from 'configs';
 import { IUserBody } from 'common/interfaces';
 import { NAME_REGEX, STUDENT_ID_REGEX } from 'common/constants/regex';
 import { useAppDispatch } from 'store/hooks';
-import { showMessage, showSuccessMessage } from 'store/slices';
 import { useUpdateProfileMutation } from 'services/api/user.api';
-
+import { toast } from 'react-toastify';
 const validationSchema = yup.object({
   first_name: yup.string().matches(NAME_REGEX, 'Invalid name').required('Firstname is required'),
   last_name: yup.string().matches(NAME_REGEX, 'Invalid name').required('Lastname is rquired'),
@@ -19,9 +18,8 @@ const validationSchema = yup.object({
 });
 
 const UserProfile = () => {
-  const { userData, reload } = useAuth();
-  const dispatch = useAppDispatch();
-  const [updateProfile, { isLoading, isSuccess, error }] = useUpdateProfileMutation();
+  const { userData } = useAuth();
+  const [updateProfile, { isLoading }] = useUpdateProfileMutation();
 
   const formik = useFormik<IUserBody>({
     initialValues: {
@@ -34,22 +32,19 @@ const UserProfile = () => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       if (userData) {
-        updateProfile({ id: userData._id, body: values });
+        updateProfile({ id: userData._id, body: values })
+          .unwrap()
+          .then(() => {
+            toast.success('Update successfully');
+          })
+          .catch((err) => {
+            if (err.status === 409) {
+              formik.setFieldError('student_id', 'Student Id exists!');
+            } else toast.error('Update failed!');
+          });
       }
     },
   });
-
-  React.useEffect(() => {
-    const err = error as any;
-    if (isSuccess) {
-      dispatch(showSuccessMessage('Update successfully'));
-      reload();
-    } else if (err) {
-      if (err.status === 409) {
-        formik.setFieldError('student_id', 'Student Id exists!');
-      } else dispatch(showMessage({ message: 'Update failed!', type: 'error' }));
-    }
-  }, [isSuccess, error]);
 
   return (
     <Box sx={profileSx.root}>

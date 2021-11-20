@@ -14,13 +14,13 @@ import {
 } from '@mui/material';
 import { IClassroomUser, UserRole } from 'common/interfaces';
 import React from 'react';
+import { useParams } from 'react-router';
+import { useGetClassUsersQuery, useInviteUserMutation } from 'services/api';
+import { useAppDispatch } from 'store/hooks';
+import { InviteForm } from './InviteForm';
 import { peopleTabSx } from './style';
 import { PeopleTabProps } from './type';
-import { useParams } from 'react-router';
-import { InviteForm } from './InviteForm';
-import { useAppDispatch } from 'store/hooks';
-import { showMessage, showSuccessMessage } from 'store/slices';
-import { useGetClassUsersQuery, useInviteUserMutation } from 'services/api';
+import { toast } from 'react-toastify';
 
 export const PeopleTab = ({ role }: PeopleTabProps) => {
   const { id } = useParams();
@@ -45,7 +45,14 @@ export const PeopleTab = ({ role }: PeopleTabProps) => {
       class_id: id as string,
       role: invitedRole,
       email: email,
-    });
+    })
+      .unwrap()
+      .then(() => {
+        toast.success('Email submited!');
+      })
+      .catch((err) => {
+        if (err.status === 409) toast.warn('This user has been added to this class');
+      });
     // service
     //   .submitInvitation({
     //     class_id: id as string,
@@ -54,19 +61,12 @@ export const PeopleTab = ({ role }: PeopleTabProps) => {
     //   })
     //   .then((d) => {
     //     if (id) fetchData(id);
-    //     dispatch(showSuccessMessage('Email submited!'));
+    //     dispatch(showSuccessMessage());
     //   })
     //   .catch((err) => {
     //     dispatch(showMessage({ message: 'Error when submitted invitation! Reason: ' + err.message, type: 'error' }));
     //   });
   };
-
-  React.useEffect(() => {
-    const error = submitError as any;
-    if (error?.status === 409) {
-      dispatch(showMessage({ message: 'This user is already in class', type: 'error' }));
-    }
-  }, [submitError]);
 
   return (
     <Container maxWidth={false} sx={peopleTabSx.root}>

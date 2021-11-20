@@ -15,7 +15,7 @@ class JwtAuthService {
           this._setSession(null, null); //Reset session
           logoutCallback(); // Callback
         }
-        return Promise.reject(err.response.data);
+        return Promise.reject(err);
       },
     );
 

@@ -1,28 +1,33 @@
-import { Box, Typography, LinearProgress } from '@mui/material';
-import React from 'react';
+import { Box, LinearProgress, Typography } from '@mui/material';
+import type { IClassroomBody } from 'common/interfaces';
+import { IClassroom, UserRole } from 'common/interfaces';
+import Utils from 'common/utils';
 import { Navbar, ProfileBtn, useAuth } from 'components';
 import { drawerItemConfigs } from 'configs';
-import { AddBtn, ClassCard } from './subcomponents';
-import { bodyContainer, cardContainer } from './style';
-import type { IClassroomBody } from 'common/interfaces';
-import Utils from 'common/utils';
+import React from 'react';
 import { useNavigate } from 'react-router';
-import { IClassroom, UserRole } from 'common/interfaces';
-import { useAppDispatch } from 'store/hooks';
-import { showMessage, showSuccessMessage } from 'store/slices';
 import { useCreateClassMutation, useGetAllClassesQuery, useJoinClassMutation } from 'services/api';
+import { useAppDispatch } from 'store/hooks';
+import { bodyContainer, cardContainer } from './style';
+import { AddBtn, ClassCard } from './subcomponents';
+import { toast } from 'react-toastify';
 
 const Dashboard = () => {
-  // const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const { userData } = useAuth();
   const { data, error, isLoading } = useGetAllClassesQuery();
   const [createClass, { isLoading: isUpdating }] = useCreateClassMutation();
   const [joinClass, { isLoading: isJoining }] = useJoinClassMutation();
 
   const handleCreateClass = (form: IClassroomBody) => {
-    createClass(form);
+    createClass(form)
+      .unwrap()
+      .then(() => {
+        toast.success('Successfully creating a class');
+      })
+      .catch((err) => {
+        toast.error('Failed to create a class');
+      });
   };
 
   const handleJoinClass = (form: { code: string }) => {

@@ -1,9 +1,10 @@
+import { IAcceptInviteUserBody } from './../../common/interfaces/classes/classroomInvite.interface';
 import { _request } from './utils';
 // Need to use the React-specific entry point to allow generating React hooks
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from '../repository';
 
-import type { IClassroom, IClassroomBody, UserRole, IClassroomUser, IInviteUserBody } from 'common/interfaces';
+import { IClassroom, IClassroomBody, UserRole, IClassroomUser, IInviteUserBody } from 'common/interfaces';
 
 // Define a service using a base URL and expected endpoints
 export const CLASSROOM_DETAILS_API_REDUCER_KEY = 'classroomDetailsApi';
@@ -38,6 +39,14 @@ export const classroomDetailsApi = createApi({
       query: (body) => _request.post(`classes/invite`, body),
       invalidatesTags: [{ type: CLASSROOM_DETAILS_TAG, id: 'PEOPLE' }],
     }),
+
+    acceptInvitation: builder.mutation<any, IAcceptInviteUserBody>({
+      query: (body) => {
+        if (UserRole.STUDENT === body.role) return _request.post('classes/join', body);
+        else return _request.post('classes/invite/accept', body);
+      },
+      invalidatesTags: [{ type: CLASSROOM_DETAILS_TAG, id: 'PEOPLE' }],
+    }),
   }),
 });
 
@@ -49,4 +58,5 @@ export const {
   useUpdateClassMutation,
   useGetClassUsersQuery,
   useInviteUserMutation,
+  useAcceptInvitationMutation,
 } = classroomDetailsApi;
