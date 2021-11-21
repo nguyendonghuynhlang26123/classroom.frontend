@@ -1,8 +1,3 @@
-import { UserRole } from 'common/interfaces';
-export type PeopleTabProps = {
-  role: UserRole;
-};
-
 export type InviteFormProps = {
   open: boolean;
   title: string;

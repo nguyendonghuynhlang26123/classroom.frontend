@@ -1,5 +1,5 @@
 import { RouteConfigs } from 'common/type';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import React from 'react';
 // import { LinearProgress } from '@mui/material';
 import Utils from 'common/utils';
@@ -14,16 +14,22 @@ import { LinearProgress } from '@mui/material';
 
 // main screen
 const Dashboard = React.lazy(() => import('./Dashboard'));
+
 //Auth
 const LoginPage = React.lazy(() => import('./Auth/Login'));
 const RegisterPage = React.lazy(() => import('./Auth/Register'));
 
+//Classroom
 const Classroom = React.lazy(() => import('./Classroom'));
+const ClassroomPeople = React.lazy(() => import('./Classroom/children/People'));
+const ClassroomStream = React.lazy(() => import('./Classroom/children/Stream'));
+const ClassroomWork = React.lazy(() => import('./Classroom/children/Classwork'));
 
 const ProfilePage = React.lazy(() => import('./Profile'));
 
 const InvitationPage = React.lazy(() => import('./InvitationPage'));
 
+//Error pages
 const NotFoundPage = React.lazy(() => import('./Errors/NotFound'));
 
 // Public routes
@@ -34,12 +40,10 @@ const Wrapper = ({ children }: { children: any }) => (
 // Authed routes
 const AuthWrapped = ({
   isAuthed,
-  children,
   search = '',
   pathname = '',
 }: {
   isAuthed: boolean;
-  children: any;
   search: string;
   pathname: string;
 }) => {
@@ -48,69 +52,83 @@ const AuthWrapped = ({
     search = '';
   }
   return isAuthed ? (
-    <Wrapper>{children}</Wrapper>
+    <Wrapper>
+      <Outlet />
+    </Wrapper>
   ) : (
     <Navigate to={'/auth/login?redirect=' + encodeURIComponent(pathname + search)} />
   );
 };
 
 //Allow only not authed routes
-const NotAuthWrapped = ({ isAuthed, children, search = '' }: { isAuthed: boolean; children: any; search: string }) => {
+const NotAuthWrapped = ({ isAuthed, search = '' }: { isAuthed: boolean; search: string }) => {
   const link = Utils.getParameterByName('redirect', search); // Redirect if needed
-  return !isAuthed ? <Wrapper>{children}</Wrapper> : <Navigate to={link ? link : '/'} />;
+  return !isAuthed ? (
+    <Wrapper>
+      <Outlet />
+    </Wrapper>
+  ) : (
+    <Navigate to={link ? link : '/'} />
+  );
 };
 
 const appRoutes = (isAuthed: boolean, search: string, pathname: string): RouteConfigs => {
   const routes: RouteConfigs = [
+    /// Authed routes
     {
-      path: '/',
-      element: (
-        <AuthWrapped isAuthed={isAuthed} search={search} pathname={pathname}>
-          <Dashboard />
-        </AuthWrapped>
-      ),
+      element: <AuthWrapped isAuthed={isAuthed} search={search} pathname={pathname} />, //Wrap by auth checking
+      children: [
+        {
+          path: '/',
+          index: true,
+          element: <Dashboard />,
+        },
+        {
+          path: '/classroom/:id',
+          element: <Classroom />,
+          children: [
+            {
+              index: true,
+              element: <ClassroomStream />,
+            },
+            {
+              path: 'people',
+              element: <ClassroomPeople />,
+            },
+            {
+              path: 'work',
+              element: <ClassroomWork />,
+            },
+          ],
+        },
+        {
+          path: '/profile',
+          element: <ProfilePage />,
+        },
+        {
+          path: '/classes/join',
+          element: <InvitationPage />,
+        },
+      ],
     },
-    {
-      path: '/classroom/:id',
-      element: (
-        <AuthWrapped isAuthed={isAuthed} search={search} pathname={pathname}>
-          <Classroom />
-        </AuthWrapped>
-      ),
-    },
-    {
-      path: '/profile',
-      element: (
-        <AuthWrapped isAuthed={isAuthed} search={search} pathname={pathname}>
-          <ProfilePage />
-        </AuthWrapped>
-      ),
-    },
-    {
-      path: '/classes/join',
-      element: (
-        <AuthWrapped isAuthed={isAuthed} search={search} pathname={pathname}>
-          <InvitationPage />
-        </AuthWrapped>
-      ),
-    },
+
+    //Auth routes
     { path: '/auth', element: <Navigate to="/auth/login" /> },
     {
-      path: '/auth/login',
-      element: (
-        <NotAuthWrapped isAuthed={isAuthed} search={search}>
-          <LoginPage />
-        </NotAuthWrapped>
-      ),
+      element: <NotAuthWrapped isAuthed={isAuthed} search={search} />, //Wrap by no auth checking
+      children: [
+        {
+          path: '/auth/login',
+          element: <LoginPage />,
+        },
+        {
+          path: '/auth/register',
+          element: <RegisterPage />,
+        },
+      ],
     },
-    {
-      path: '/auth/register',
-      element: (
-        <NotAuthWrapped isAuthed={isAuthed} search={search}>
-          <RegisterPage />
-        </NotAuthWrapped>
-      ),
-    },
+
+    //Error handler
     {
       path: '/not-found',
       element: (

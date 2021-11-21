@@ -1,20 +1,27 @@
 import { Box, Container, LinearProgress, Link, Tab, Tabs, Typography } from '@mui/material';
-import { Navbar, ProfileBtn, TabPanel, useAuth } from 'components';
+import { ClassroomContextProvider, Navbar, ProfileBtn, useAuth } from 'components';
 import { drawerItemConfigs } from 'configs';
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
 import { useGetClassDetailsQuery, useGetMyRoleQuery } from 'services/api';
 import { mainSx, navSx } from './style';
-import { ClassroomSetting, ClassworkTab, PeopleTab, StreamTab } from './subcomponents';
+import { ClassroomSetting } from './subcomponents';
+import { Outlet, useMatch } from 'react-router';
 import Utils from 'common/utils';
 import { toast } from 'react-toastify';
+
+const getTabState = (checkMatch: (s: string) => any) => {
+  if (checkMatch('/classroom/:id/people')) return 2;
+  if (checkMatch('/classroom/:id/work')) return 1;
+  return 0;
+};
 
 const ClassroomBoard = () => {
   const { id } = useParams();
   const { userData } = useAuth();
   const navigate = useNavigate();
-  const [tabValue, setTabValue] = React.useState<number>(0);
+  const [tabValue, setTabValue] = React.useState<number>(getTabState(useMatch));
 
   const { data, error, isLoading } = useGetClassDetailsQuery(id as string);
   const { data: role, isLoading: roleIsLoading } = useGetMyRoleQuery(id as string);
@@ -39,9 +46,9 @@ const ClassroomBoard = () => {
           <>
             <Box sx={navSx.tabsContainer}>
               <Tabs value={tabValue} onChange={handleChange} aria-label="basic tabs example">
-                <Tab label="Stream" id="one" />
-                <Tab label="Classwork" id="two" />
-                <Tab label="People" id="three" />
+                <Tab label="Stream" id="one" onClick={() => navigate('.')} />
+                <Tab label="Classwork" id="two" onClick={() => navigate('./work')} />
+                <Tab label="People" id="three" onClick={() => navigate('./people')} />
               </Tabs>
             </Box>
             {Utils.isLoading(isLoading, roleIsLoading) && <LinearProgress sx={navSx.progressBar} />}
@@ -61,15 +68,9 @@ const ClassroomBoard = () => {
       </Navbar>
       {!isLoading && data && role && (
         <Container maxWidth={false} sx={mainSx.container}>
-          <TabPanel value={tabValue} index={0}>
-            <StreamTab role={role} classData={data} />
-          </TabPanel>
-          <TabPanel value={tabValue} index={1}>
-            <ClassworkTab />
-          </TabPanel>
-          <TabPanel value={tabValue} index={2}>
-            <PeopleTab role={role} />
-          </TabPanel>
+          <ClassroomContextProvider role={role} classData={data}>
+            <Outlet />
+          </ClassroomContextProvider>
         </Container>
       )}
     </React.Fragment>

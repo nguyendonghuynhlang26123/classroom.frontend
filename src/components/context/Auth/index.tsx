@@ -3,17 +3,7 @@ import React from 'react';
 import { repository } from 'services/repository';
 import GoogleValidateService from './google.service';
 import JwtAuthService from './jwt.service';
-
-export type AuthProps = {
-  signIn: (data: AuthData) => Promise<any>;
-  signInWithGG: (tokenId: string) => Promise<any>;
-  register: (data: AuthData) => Promise<any>;
-  logOut: () => void;
-  reload: () => void;
-  isAuthenticated: boolean;
-  pending: boolean;
-  userData: IUser | undefined;
-};
+import { AuthProps } from './type';
 
 const defaultValue: AuthProps = {
   signIn: () => new Promise(() => {}),
