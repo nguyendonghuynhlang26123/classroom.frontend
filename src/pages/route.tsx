@@ -24,6 +24,9 @@ const Classroom = React.lazy(() => import('./Classroom'));
 const ClassroomPeople = React.lazy(() => import('./Classroom/children/People'));
 const ClassroomStream = React.lazy(() => import('./Classroom/children/Stream'));
 const ClassroomWork = React.lazy(() => import('./Classroom/children/Classwork'));
+const ClassroomCreateAssignment = React.lazy(
+  () => import('./Classroom/children/Classwork/children/AssignmentCreation'),
+);
 
 const ProfilePage = React.lazy(() => import('./Profile'));
 
@@ -97,7 +100,16 @@ const appRoutes = (isAuthed: boolean, search: string, pathname: string): RouteCo
             },
             {
               path: 'work',
-              element: <ClassroomWork />,
+              children: [
+                {
+                  index: true,
+                  element: <ClassroomWork />,
+                },
+                {
+                  path: 'create',
+                  element: <ClassroomCreateAssignment />,
+                },
+              ],
             },
           ],
         },

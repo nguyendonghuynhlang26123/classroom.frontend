@@ -3,10 +3,12 @@ import { Button, Collapse, Grid, List, ListItemButton, Stack, Typography } from 
 import { Box } from '@mui/system';
 import { useClassroomCtx, AccordionItem } from 'components';
 import React from 'react';
+import { useNavigate } from 'react-router';
 import { classworkSx } from './style';
 
 const ClassroomWork = () => {
   const { role } = useClassroomCtx();
+  const navigate = useNavigate();
   const [expandItemKey, setExpandKey] = React.useState<string | null>(null);
 
   const toggleExpand = (curExpandKey: string | null, key: string) => {
@@ -17,7 +19,7 @@ const ClassroomWork = () => {
   return (
     <Collapse timeout={500} appear={true} in={true}>
       <Stack justifyContent="flex-end">
-        <Button startIcon={<Add />} sx={classworkSx.addBtn} variant="outlined">
+        <Button startIcon={<Add />} sx={classworkSx.addBtn} variant="outlined" onClick={() => navigate('./create')}>
           Create
         </Button>
       </Stack>

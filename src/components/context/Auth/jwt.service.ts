@@ -12,13 +12,13 @@ class JwtAuthService {
       (response) => response,
       (err) => {
         if (err.response.status === 401 && err.config && !err.config.__isRetryRequest) {
-          if (this.isAuthTokenValid(refresh_token))
-            return this.refresh(refresh_token as string)
-              .then(() => repository(err.config))
-              .catch(() => {
-                this._setSession(null, null); //Reset session
-                logoutCallback(); // Callback
-              });
+          // if (this.isAuthTokenValid(refresh_token))
+          //   return this.refresh(refresh_token as string)
+          //     .then(() => repository(err.config))
+          //     .catch(() => {
+          //       this._setSession(null, null); //Reset session
+          //       logoutCallback(); // Callback
+          //     });
           this._setSession(null, null); //Reset session
           logoutCallback(); // Callback
         }

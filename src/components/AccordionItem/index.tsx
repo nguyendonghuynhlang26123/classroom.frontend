@@ -48,14 +48,14 @@ export const AccordionItem = ({ expanded, onClick }: AccordionItemProps) => {
         <Typography sx={accordionSx.time}>Posted at Nov 12</Typography>
 
         <Grid container spacing={2} width="100%" sx={{ m: 0 }}>
-          <Grid xs={9}>
+          <Grid item xs={9}>
             <Typography>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit
               leo lobortis eget.
             </Typography>
           </Grid>
           <Divider orientation="vertical" flexItem sx={{ ml: 1, mr: 2 }} />
-          <Grid xs={2}>
+          <Grid item xs={2}>
             <Stack direction="column">
               <Typography variant="h4">10</Typography>
               <Typography variant="body2">Turned in</Typography>

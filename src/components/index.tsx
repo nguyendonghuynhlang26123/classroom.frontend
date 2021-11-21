@@ -6,3 +6,5 @@ export * from './TabPanel';
 export * from './ToastController';
 export * from './hooks';
 export * from './AccordionItem';
+export * from './RichEditor';
+export * from './DateTimePicker';
