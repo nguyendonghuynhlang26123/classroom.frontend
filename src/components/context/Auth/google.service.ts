@@ -1,15 +1,14 @@
-import { BaseApiService } from 'services';
+import { repository } from 'services/repository';
 import { GoogleValidationData, AuthResponse } from 'common/interfaces';
 import { JWT_REFRESH_SESSION_KEY, JWT_SESSION_KEY } from 'common/constants';
 
-class GoogleValidateService extends BaseApiService<GoogleValidationData, AuthResponse> {
+class GoogleValidateService {
   resource = '/auth/google-activate';
 
   async validateToken(token: string): Promise<AuthResponse> {
     const body: GoogleValidationData = { token_id: token };
     return new Promise((resolve, reject) => {
-      //TODO: Check again
-      this._repository
+      repository
         .post(`${this.resource}`, body)
         .then((response: any) => {
           if (response.data) {
@@ -28,10 +27,10 @@ class GoogleValidateService extends BaseApiService<GoogleValidationData, AuthRes
   _setSession = (access_token: string | null, refresh_token: string | null) => {
     if (access_token) {
       localStorage.setItem(JWT_SESSION_KEY, access_token);
-      this._repository.defaults.headers.common['Authorization'] = 'Bearer ' + access_token;
+      repository.defaults.headers.common['Authorization'] = 'Bearer ' + access_token;
     } else {
       localStorage.removeItem(JWT_SESSION_KEY);
-      delete this._repository.defaults.headers.common['Authorization'];
+      delete repository.defaults.headers.common['Authorization'];
     }
 
     if (refresh_token) {
