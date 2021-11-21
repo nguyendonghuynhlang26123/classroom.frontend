@@ -19,7 +19,6 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from 'components/context';
-import { useAppDispatch } from 'store/hooks';
 import { toast } from 'react-toastify';
 
 const GG_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY as string;
@@ -31,7 +30,6 @@ const validationSchema = yup.object({
 
 const LoginPage = () => {
   const { search } = useLocation();
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState<boolean>(false);
   const { signIn, signInWithGG } = useAuth();

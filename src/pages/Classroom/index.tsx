@@ -17,7 +17,7 @@ const ClassroomBoard = () => {
   const [tabValue, setTabValue] = React.useState<number>(0);
 
   const { data, error, isLoading } = useGetClassDetailsQuery(id as string);
-  const { data: role, error: roleError, isLoading: roleIsLoading } = useGetMyRoleQuery(id as string);
+  const { data: role, isLoading: roleIsLoading } = useGetMyRoleQuery(id as string);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -26,7 +26,6 @@ const ClassroomBoard = () => {
   //Error
   React.useEffect(() => {
     if (error) {
-      const err = error as any;
       toast.error('Not found this class');
       navigate('/not-found');
     }

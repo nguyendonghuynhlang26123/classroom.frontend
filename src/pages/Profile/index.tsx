@@ -7,9 +7,9 @@ import * as yup from 'yup';
 import { drawerItemConfigs } from 'configs';
 import { IUserBody } from 'common/interfaces';
 import { NAME_REGEX, STUDENT_ID_REGEX } from 'common/constants/regex';
-import { useAppDispatch } from 'store/hooks';
 import { useUpdateProfileMutation } from 'services/api/user.api';
 import { toast } from 'react-toastify';
+
 const validationSchema = yup.object({
   first_name: yup.string().matches(NAME_REGEX, 'Invalid name').required('Firstname is required'),
   last_name: yup.string().matches(NAME_REGEX, 'Invalid name').required('Lastname is rquired'),

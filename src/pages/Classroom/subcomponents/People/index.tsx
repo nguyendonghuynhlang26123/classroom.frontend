@@ -16,7 +16,6 @@ import { IClassroomUser, UserRole } from 'common/interfaces';
 import React from 'react';
 import { useParams } from 'react-router';
 import { useGetClassUsersQuery, useInviteUserMutation } from 'services/api';
-import { useAppDispatch } from 'store/hooks';
 import { InviteForm } from './InviteForm';
 import { peopleTabSx } from './style';
 import { PeopleTabProps } from './type';
@@ -24,11 +23,10 @@ import { toast } from 'react-toastify';
 
 export const PeopleTab = ({ role }: PeopleTabProps) => {
   const { id } = useParams();
-  const dispatch = useAppDispatch();
   const [inviteTeacher, showTeacherInviteForm] = React.useState<boolean>(false);
   const [inviteStudent, showStudentInviteForm] = React.useState<boolean>(false);
-  const { data, error, isLoading } = useGetClassUsersQuery(id as string);
-  const [submitInvitation, { isLoading: submitSucceed, error: submitError }] = useInviteUserMutation();
+  const { data, isLoading } = useGetClassUsersQuery(id as string);
+  const [submitInvitation] = useInviteUserMutation();
 
   const checkRole = (role: UserRole, type: 'Teachers' | 'Students') => {
     if (type === 'Teachers') return role !== UserRole.STUDENT;
@@ -53,19 +51,6 @@ export const PeopleTab = ({ role }: PeopleTabProps) => {
       .catch((err) => {
         if (err.status === 409) toast.warn('This user has been added to this class');
       });
-    // service
-    //   .submitInvitation({
-    //     class_id: id as string,
-    //     role: invitedRole,
-    //     email: email,
-    //   })
-    //   .then((d) => {
-    //     if (id) fetchData(id);
-    //     dispatch(showSuccessMessage());
-    //   })
-    //   .catch((err) => {
-    //     dispatch(showMessage({ message: 'Error when submitted invitation! Reason: ' + err.message, type: 'error' }));
-    //   });
   };
 
   return (

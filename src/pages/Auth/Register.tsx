@@ -18,7 +18,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from 'components';
 import { NAME_REGEX } from 'common/constants/regex';
 import { RegisterData } from 'common/interfaces';
-import { useAppDispatch } from 'store/hooks';
 import { toast } from 'react-toastify';
 
 const validationSchema = yup.object({
@@ -50,7 +49,6 @@ type FormType = RegisterData & {
 
 const RegisterPage = () => {
   const { search } = useLocation();
-  const dispatch = useAppDispatch();
   const { register } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState<boolean>(false);

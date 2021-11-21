@@ -3,11 +3,9 @@ import { UserRole } from 'common/interfaces';
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAcceptInvitationMutation } from 'services/api';
-import { useAppDispatch } from 'store/hooks';
 import { toast } from 'react-toastify';
 
 const InvitePage = () => {
-  const dispatch = useAppDispatch();
   const { search } = useLocation();
   const navigate = useNavigate();
   const [acceptInvitationSubmit, { data, isSuccess, error }] = useAcceptInvitationMutation();

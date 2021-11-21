@@ -7,7 +7,6 @@ import { drawerItemConfigs } from 'configs';
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useCreateClassMutation, useGetAllClassesQuery, useJoinClassMutation } from 'services/api';
-import { useAppDispatch } from 'store/hooks';
 import { bodyContainer, cardContainer } from './style';
 import { AddBtn, ClassCard } from './subcomponents';
 import { toast } from 'react-toastify';
@@ -15,7 +14,7 @@ import { toast } from 'react-toastify';
 const Dashboard = () => {
   const navigate = useNavigate();
   const { userData } = useAuth();
-  const { data, error, isLoading } = useGetAllClassesQuery();
+  const { data, isLoading } = useGetAllClassesQuery();
   const [createClass, { isLoading: isUpdating }] = useCreateClassMutation();
   const [joinClass, { isLoading: isJoining }] = useJoinClassMutation();
 
