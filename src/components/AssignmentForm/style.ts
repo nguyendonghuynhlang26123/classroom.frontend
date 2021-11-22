@@ -59,3 +59,57 @@ export const formSx: MultipleSxTypes = {
     mt: 1,
   },
 };
+
+export const gradeStructureSx: MultipleSxTypes = {
+  root: {},
+  cardContainer: {
+    bgcolor: 'grey.100',
+    px: 2,
+    py: 1,
+    mt: 2,
+    borderRadius: 2,
+  },
+
+  dragZone: {
+    textAlign: 'center',
+    cursor: 'move',
+    color: 'grey.500',
+    py: '0 !important',
+    display: 'flex',
+    position: 'relative',
+    justifyContent: 'flex-end',
+    '& .dragIcon': {
+      position: 'absolute',
+      opacity: 0,
+      left: '50%',
+      transform: 'rotate(90deg)',
+      translate: '-100%',
+    },
+  },
+
+  criteriaCard: {
+    my: 1,
+    bgcolor: 'background.paper',
+    mx: 0,
+    px: 1,
+    border: 1,
+    borderColor: 'divider',
+    borderRadius: 2,
+
+    ':hover': {
+      boxShadow: 1,
+      '.dragIcon': {
+        opacity: 1,
+      },
+    },
+
+    '& .MuiGrid-item': {
+      p: 1,
+    },
+    '& .MuiGrid-item:first-of-type': {
+      borderRight: 0,
+    },
+
+    '& .MuiTypography-root': { fontSize: 14 },
+  },
+};
