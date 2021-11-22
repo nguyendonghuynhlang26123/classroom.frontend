@@ -3,13 +3,18 @@ import { MultipleSxTypes } from 'common/type';
 export const formSx: MultipleSxTypes = {
   root: {
     width: '100vw',
-    height: '100vh',
+    minHeight: '100vh',
     bgcolor: 'background.paper',
+    position: 'relative',
+    overflow: 'auto',
   },
 
   toolbar: {
+    bgcolor: 'background.paper',
+    color: 'text.primary',
     borderBottom: 1,
     borderColor: 'divider',
+    width: '100%',
     '& .MuiTypography-root': {
       fontWeight: 500,
     },
@@ -19,6 +24,7 @@ export const formSx: MultipleSxTypes = {
   },
 
   grid: {
+    mt: '64px',
     px: 4,
     py: 2,
     maxWidth: 1200,

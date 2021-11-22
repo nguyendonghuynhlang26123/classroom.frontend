@@ -10,7 +10,17 @@ export interface IAssignment extends IBase {
   topic: IAssignmentTopic;
   title: string;
   instructions: string;
+  grade_criterias: IGradeCriteria[];
   total_points: number;
   due_date: number;
+}
+
+export interface IAssignmentBody {
+  class_id: string;
+  topic?: IAssignmentTopic;
+  title: string;
+  instructions: string;
   grade_criterias: IGradeCriteria[];
+  total_points?: number;
+  due_date?: number;
 }

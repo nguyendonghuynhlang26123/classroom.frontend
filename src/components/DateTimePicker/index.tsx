@@ -12,8 +12,8 @@ export const MyTimePicker = ({ label, value, handleChange, ...other }: MyTimePic
         renderInput={(props) => <TextField {...props} {...other} />}
         label=""
         value={value}
-        onChange={(newValue) => {
-          handleChange(newValue as number);
+        onChange={(newValue: any) => {
+          handleChange(newValue);
         }}
       />
     </LocalizationProvider>

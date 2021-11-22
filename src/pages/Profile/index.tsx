@@ -32,7 +32,7 @@ const UserProfile = () => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       if (userData) {
-        updateProfile({ id: userData._id, body: values })
+        updateProfile({ id: userData._id as string, body: values })
           .unwrap()
           .then(() => {
             toast.success('Update successfully');

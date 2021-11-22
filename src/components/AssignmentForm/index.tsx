@@ -14,20 +14,28 @@ import {
   Checkbox,
   Select,
   MenuItem,
+  useScrollTrigger,
+  AppBar,
 } from '@mui/material';
 import { RichEditor, MyTimePicker } from 'components';
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 
 import { useNavigate } from 'react-router';
 import { formSx } from './style';
 import { GradeStructure } from './GradeStructure';
+import { AssignmentFormProps } from './type';
+import { IAssignmentBody } from 'common/interfaces';
 
-export const AssignmentForm = ({}) => {
+export const AssignmentForm = ({ formData, handleChange, onSubmit, onReset }: AssignmentFormProps) => {
   const navigate = useNavigate();
   const [description, setDescription] = React.useState<string>();
   const [isCreatingTopic, setIsCreatingTopic] = React.useState<boolean>(false);
   const [disableGrading, setDisableGrading] = React.useState<boolean>(false);
   const [disableDueDate, setDisableDueDate] = React.useState<boolean>(false);
+  const trigger = useScrollTrigger({
+    disableHysteresis: true,
+    threshold: 0,
+  });
 
   const handleSelectTopic = (ev: any) => {
     const value = ev?.target?.value;
@@ -36,53 +44,102 @@ export const AssignmentForm = ({}) => {
     }
   };
 
+  const submitData = () => {
+    const submission: IAssignmentBody = {
+      ...formData,
+      total_points: disableGrading ? undefined : formData.total_points,
+      due_date: disableDueDate ? undefined : formData.due_date,
+    };
+  };
+
+  const handleChangeEvent = (ev: any) => {
+    const property = ev.currentTarget.name;
+    const value = ev.currentTarget.value;
+    handleChange(property, value);
+  };
+
+  const toggleGrading = (ev: any) => {
+    setDisableGrading((prv) => !prv);
+  };
+
+  const toggleDueDate = (ev: any) => {
+    setDisableDueDate((prv) => !prv);
+  };
+
+  const getTommorrowDate = (): number => {
+    var day = new Date();
+    day.setDate(day.getDate() + 1);
+    return day.getTime();
+  };
+
   return (
     <Modal open={true} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
       <Grow in={true} appear={true} timeout={300}>
         <Box sx={formSx.root}>
-          <Toolbar sx={formSx.toolbar}>
-            <IconButton size="large" edge="start" color="inherit" aria-label="close modal" onClick={() => navigate(-1)}>
-              <Close sx={{ fontSize: 20 }} />
-            </IconButton>
-            <Typography variant="body1">Create an assignment</Typography>
+          <AppBar elevation={trigger ? 4 : 0}>
+            <Toolbar sx={formSx.toolbar}>
+              <IconButton
+                size="large"
+                edge="start"
+                color="inherit"
+                aria-label="close modal"
+                onClick={() => navigate(-1)}
+              >
+                <Close sx={{ fontSize: 20 }} />
+              </IconButton>
+              <Typography variant="body1">Create an assignment</Typography>
 
-            <Stack direction="row" sx={{ ml: 'auto' }} gap={1}>
-              <Button color="secondary">Reset</Button>
-              <Button variant="outlined">Save</Button>
-            </Stack>
-          </Toolbar>
+              <Stack direction="row" sx={{ ml: 'auto' }} gap={1}>
+                <Button color="secondary" onClick={onReset}>
+                  Reset
+                </Button>
+                <Button variant="outlined" onClick={submitData}>
+                  Save
+                </Button>
+              </Stack>
+            </Toolbar>
+          </AppBar>
 
           <Grid container spacing={2} sx={formSx.grid} minHeight="calc(100vh - 64px)">
             <Grid item xs={8}>
               <Box sx={formSx.form}>
                 <Typography sx={formSx.formHeader}>Display info</Typography>
-                <TextField fullWidth id="title" label="Title" variant="outlined" />
+                <TextField
+                  fullWidth
+                  id="title"
+                  label="Title"
+                  name="title"
+                  variant="outlined"
+                  value={formData.title}
+                  onChange={handleChangeEvent}
+                />
                 <RichEditor
-                  data={description}
-                  handleChange={(value) => setDescription(value)}
+                  data={formData.instructions}
+                  handleChange={(value) => handleChange('instructions', value)}
                   hintText={'Assignment instruction'}
                 />
               </Box>
 
-              <GradeStructure />
+              <GradeStructure
+                criterias={formData.grade_criterias}
+                handleChange={(criterias) => handleChange('grade_criterias', criterias)}
+              />
             </Grid>
+
             <Grid item xs={4}>
               <Box sx={formSx.form}>
                 <Typography sx={formSx.formHeader}>Configuration</Typography>
 
                 <Stack direction="row">
                   <Typography sx={formSx.formTitle}>Total point</Typography>
-                  <Checkbox
-                    size="small"
-                    checked={!disableGrading}
-                    onChange={(ev) => setDisableGrading((prv) => !prv)}
-                  />
+                  <Checkbox size="small" checked={!disableGrading} onChange={toggleGrading} />
                 </Stack>
                 <TextField
                   id="total_points"
                   type="number"
-                  defaultValue={100}
                   name="total_points"
+                  value={formData.total_points || 0}
+                  onChange={handleChangeEvent}
                   fullWidth
                   disabled={disableGrading}
                   InputProps={{
@@ -95,19 +152,15 @@ export const AssignmentForm = ({}) => {
                 />
                 <Stack direction="row">
                   <Typography sx={formSx.formTitle}>Due time</Typography>
-                  <Checkbox
-                    size="small"
-                    checked={!disableDueDate}
-                    onChange={(ev) => setDisableDueDate((prv) => !prv)}
-                  />
+                  <Checkbox size="small" checked={!disableDueDate} onChange={toggleDueDate} />
                 </Stack>
                 <MyTimePicker
                   label="Due time"
-                  value={0}
+                  value={formData.due_date || getTommorrowDate()}
                   fullWidth
                   disabled={disableDueDate}
-                  handleChange={(value) => {
-                    console.log('log ~ file: index.tsx ~ line 81 ~ AssignmentForm ~ value', value);
+                  handleChange={(time: any) => {
+                    handleChange('due_date', time.getTime());
                   }}
                 />
               </Box>
