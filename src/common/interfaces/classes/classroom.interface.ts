@@ -1,5 +1,5 @@
+import { IBase } from './../base';
 export interface IClassroom {
-  _id: string;
   title: string;
   section: string;
   subject: string;
@@ -8,7 +8,7 @@ export interface IClassroom {
   code: string;
 }
 
-export interface IClassroomBody {
+export interface IClassroomBody extends IBase {
   title: string;
   section: string;
   subject?: string;
