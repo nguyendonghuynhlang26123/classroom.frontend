@@ -1,13 +1,18 @@
 import { Add } from '@mui/icons-material';
 import { Button, Collapse, Grid, List, ListItemButton, Stack, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import { useClassroomCtx, AccordionItem } from 'components';
+import { IAssignment } from 'common/interfaces';
+import { useClassroomCtx, AssignmentItem } from 'components';
 import React from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
+import { useGetAssignmentsQuery } from 'services';
 import { classworkSx } from './style';
 
 const ClassroomWork = () => {
   const { role } = useClassroomCtx();
+  const { id } = useParams<'id'>();
+  const { data, isLoading } = useGetAssignmentsQuery(id as string);
+  console.log('log ~ file: index.tsx ~ line 15 ~ ClassroomWork ~ data', data);
   const navigate = useNavigate();
   const [expandItemKey, setExpandKey] = React.useState<string | null>(null);
 
@@ -32,7 +37,7 @@ const ClassroomWork = () => {
         </Grid>
         <Grid item xs={9}>
           <Box>
-            {['', 'Students'].map((t: any) => (
+            {/* {['', 'Students'].map((t: any) => (
               <React.Fragment key={t}>
                 {t !== '' && (
                   <Stack direction="row" justifyContent="space-between" sx={classworkSx.header}>
@@ -48,7 +53,22 @@ const ClassroomWork = () => {
                   </React.Fragment>
                 ))}
               </React.Fragment>
-            ))}
+            ))} */}
+            {!isLoading && data ? (
+              data.map((a: IAssignment, idx: number) => (
+                <React.Fragment key={idx}>
+                  <AssignmentItem
+                    data={a}
+                    expanded={expandItemKey === a._id}
+                    onClick={() => toggleExpand(expandItemKey, a._id || '')}
+                    onEdit={() => navigate(`/classroom/${id}/work/edit/${a._id}`)}
+                    onRemove={() => {}}
+                  />
+                </React.Fragment>
+              ))
+            ) : (
+              <div>Loading...</div>
+            )}
           </Box>
         </Grid>
       </Grid>

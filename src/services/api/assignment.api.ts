@@ -24,18 +24,31 @@ export const assignmentsApi = createApi({
             [{ type: TAG, id: 'LIST' }],
     }),
 
+    getAssignmentById: builder.query<IAssignment, { classId: string; assignmentId: string }>({
+      query: ({ classId, assignmentId }) => _request.get(`classes/${classId}/assignments/${assignmentId}`),
+      providesTags: [{ type: TAG, id: 'DATA' }],
+    }),
+
     createAssignment: builder.mutation<IAssignment, { id: string; body: IAssignmentBody }>({
       query: ({ id, body }) => _request.post(`classes/${id}/assignments`, body),
       invalidatesTags: [{ type: TAG, id: 'LIST' }],
     }),
 
     updateAssignment: builder.mutation<IAssignment, { id: string; assignmentId: string; body: IAssignmentBody }>({
-      query: ({ id, assignmentId, body }) => _request.post(`classes/${id}/assignments/${assignmentId}`, body),
-      invalidatesTags: [{ type: TAG, id: 'LIST' }],
+      query: ({ id, assignmentId, body }) => _request.put(`classes/${id}/assignments/${assignmentId}`, body),
+      invalidatesTags: [
+        { type: TAG, id: 'LIST' },
+        { type: TAG, id: 'DATA' },
+      ],
     }),
   }),
 });
 
 // Export hooks for usage in function components, which are
 // auto-generated based on the defined endpoints
-export const { useGetAssignmentsQuery, useCreateAssignmentMutation, useUpdateAssignmentMutation } = assignmentsApi;
+export const {
+  useGetAssignmentsQuery,
+  useCreateAssignmentMutation,
+  useUpdateAssignmentMutation,
+  useGetAssignmentByIdQuery,
+} = assignmentsApi;

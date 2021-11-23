@@ -13,25 +13,32 @@ import {
   Typography,
 } from '@mui/material';
 import React from 'react';
+import { useNavigate } from 'react-router';
 import { accordionSx } from './style';
 import { AccordionItemProps } from './type';
 
-export const AccordionItem = ({ expanded, onClick }: AccordionItemProps) => {
+export const AssignmentItem = ({ data, expanded, onClick, onEdit, onRemove }: AccordionItemProps) => {
+  const navigate = useNavigate();
+  const isExpired = () => {
+    if (data.due_date === null || Date.now() <= data.due_date) return false;
+    return true;
+  };
+
   return (
     <Accordion elevation={0} sx={accordionSx.root} expanded={expanded} onChange={() => onClick()}>
       <AccordionSummary aria-controls="panel1a-content" id="panel1a-header">
         <Stack direction="row" gap={2} alignItems="center">
-          <Avatar sx={{ bgcolor: 'primary.main' }}>
+          <Avatar sx={{ bgcolor: isExpired() ? 'grey.500' : 'primary.main' }}>
             <AssignmentOutlined />
           </Avatar>
           <Typography component="div" sx={accordionSx.summaryTitle}>
-            {' '}
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit
-            leo lobortis eget.
+            {data.title}
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center" gap={1} sx={{ ml: 'auto' }}>
-          <Typography sx={accordionSx.time}>Test</Typography>
+          <Typography sx={accordionSx.time}>
+            {data.due_date ? new Date(data.due_date).toLocaleString() : 'No due date'}
+          </Typography>
           <IconButton
             edge="end"
             aria-label="delete"
@@ -45,17 +52,14 @@ export const AccordionItem = ({ expanded, onClick }: AccordionItemProps) => {
       </AccordionSummary>
 
       <AccordionDetails>
-        <Typography sx={accordionSx.time}>Posted at Nov 12</Typography>
+        <Typography sx={accordionSx.time}>{new Date(data.created_at as number).toLocaleString()}</Typography>
 
         <Grid container spacing={2} width="100%" sx={{ m: 0 }}>
           <Grid item xs={9}>
-            <Typography>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit
-              leo lobortis eget.
-            </Typography>
+            <div dangerouslySetInnerHTML={{ __html: data.instructions }} />
           </Grid>
           <Divider orientation="vertical" flexItem sx={{ ml: 1, mr: 2 }} />
-          <Grid item xs={2}>
+          <Grid item xs={2} alignItems="end" display="flex">
             <Stack direction="column">
               <Typography variant="h4">10</Typography>
               <Typography variant="body2">Turned in</Typography>
@@ -65,7 +69,7 @@ export const AccordionItem = ({ expanded, onClick }: AccordionItemProps) => {
       </AccordionDetails>
 
       <AccordionActions>
-        <Button>View Assignment</Button>
+        <Button onClick={onEdit}>View Assignment</Button>
       </AccordionActions>
     </Accordion>
   );

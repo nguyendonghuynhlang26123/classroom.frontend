@@ -1,10 +1,11 @@
-import { classroomApi, classroomDetailsApi, usersApi, assignmentsApi } from 'services/api';
+import { classroomApi, classroomDetailsApi, usersApi, assignmentsApi, topicsApi } from 'services/api';
 import { configureStore } from '@reduxjs/toolkit';
 export const store = configureStore({
   reducer: {
     [classroomApi.reducerPath]: classroomApi.reducer,
     [classroomDetailsApi.reducerPath]: classroomDetailsApi.reducer,
     [usersApi.reducerPath]: usersApi.reducer,
+    [topicsApi.reducerPath]: topicsApi.reducer,
     [assignmentsApi.reducerPath]: assignmentsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -12,6 +13,7 @@ export const store = configureStore({
       classroomApi.middleware,
       classroomDetailsApi.middleware,
       usersApi.middleware,
+      topicsApi.middleware,
       assignmentsApi.middleware,
     ),
 });

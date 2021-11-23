@@ -27,6 +27,7 @@ const ClassroomWork = React.lazy(() => import('./Classroom/children/Classwork'))
 const ClassroomCreateAssignment = React.lazy(
   () => import('./Classroom/children/Classwork/children/AssignmentCreation'),
 );
+const ClassroomEditAssignment = React.lazy(() => import('./Classroom/children/Classwork/children/AssignmentEdit'));
 
 const ProfilePage = React.lazy(() => import('./Profile'));
 
@@ -108,6 +109,10 @@ const appRoutes = (isAuthed: boolean, search: string, pathname: string): RouteCo
                 {
                   path: 'create',
                   element: <ClassroomCreateAssignment />,
+                },
+                {
+                  path: 'edit/:assignmentId',
+                  element: <ClassroomEditAssignment />,
                 },
               ],
             },

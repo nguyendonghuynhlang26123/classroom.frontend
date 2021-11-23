@@ -94,8 +94,9 @@ const CriteriaCard = ({ criteria, handleChange, onRemove, onMoveOnBottom, onMove
           fullWidth
           id="points"
           name="points"
+          type="number"
           value={criteria.points}
-          onChange={(ev) => handleChange('points', ev?.target?.value)}
+          onChange={(ev) => handleChange('points', Number(ev?.target?.value))}
           label="Points"
           variant="outlined"
           InputProps={{
@@ -157,22 +158,27 @@ export const GradeStructure = ({ criterias, handleChange }: GradeStructureProps)
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              {criterias.map((c, indx: number) => (
-                <Draggable draggableId={'row-' + indx} index={indx} key={indx}>
-                  {(dragProvided) => (
-                    <div {...dragProvided.draggableProps} {...dragProvided.dragHandleProps} ref={dragProvided.innerRef}>
-                      <CriteriaCard
-                        criteria={c}
-                        handleChange={(property: string, value: any) => onChange(indx, property, value)}
-                        index={indx}
-                        onRemove={() => handleRemoveCriteria(indx)}
-                        onMoveOnBottom={() => handleMoveToBottom(indx)}
-                        onMoveOnTop={() => handleMoveOnTop(indx)}
-                      />
-                    </div>
-                  )}
-                </Draggable>
-              ))}
+              {criterias &&
+                criterias.map((c, indx: number) => (
+                  <Draggable draggableId={'row-' + indx} index={indx} key={indx}>
+                    {(dragProvided) => (
+                      <div
+                        {...dragProvided.draggableProps}
+                        {...dragProvided.dragHandleProps}
+                        ref={dragProvided.innerRef}
+                      >
+                        <CriteriaCard
+                          criteria={c}
+                          handleChange={(property: string, value: any) => onChange(indx, property, value)}
+                          index={indx}
+                          onRemove={() => handleRemoveCriteria(indx)}
+                          onMoveOnBottom={() => handleMoveToBottom(indx)}
+                          onMoveOnTop={() => handleMoveOnTop(indx)}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
               {provided.placeholder}
             </Box>
           )}

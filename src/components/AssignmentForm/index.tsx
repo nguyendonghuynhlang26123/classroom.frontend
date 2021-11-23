@@ -25,14 +25,29 @@ import { useNavigate } from 'react-router';
 import { formSx } from './style';
 import { GradeStructure } from './GradeStructure';
 import { AssignmentFormProps } from './type';
-import { IAssignmentBody } from 'common/interfaces';
+import { IAssignmentBody, IAssignmentTopic } from 'common/interfaces';
 
-export const AssignmentForm = ({ formData, isLoading, handleChange, onSubmit, onReset }: AssignmentFormProps) => {
+const getTommorrowDate = (): number => {
+  var day = new Date();
+  day.setDate(day.getDate() + 1);
+  return day.getTime();
+};
+
+export const AssignmentForm = ({
+  formData,
+  topics,
+  isLoading,
+  handleChange,
+  handleCreateTopic,
+  onSubmit,
+  onReset,
+}: AssignmentFormProps) => {
   const navigate = useNavigate();
-  const [inputTopic, setInputTopic] = React.useState<string>();
+  const [inputTopic, setInputTopic] = React.useState<string>('');
   const [isCreatingTopic, setIsCreatingTopic] = React.useState<boolean>(false);
   const [disableGrading, setDisableGrading] = React.useState<boolean>(false);
   const [disableDueDate, setDisableDueDate] = React.useState<boolean>(false);
+  const [selection, setSelection] = React.useState(-1);
   const trigger = useScrollTrigger({
     disableHysteresis: true,
     threshold: 0,
@@ -40,15 +55,19 @@ export const AssignmentForm = ({ formData, isLoading, handleChange, onSubmit, on
 
   const handleSelectTopic = (ev: any) => {
     const value = ev?.target?.value;
+    setSelection(value);
+    if (value === -1) return;
     if (value === -2) {
       setIsCreatingTopic(true);
+      return;
     }
+    handleChange('topic', topics[value]._id);
   };
 
   const submitData = () => {
     const submission: IAssignmentBody = {
       ...formData,
-      total_points: disableGrading ? undefined : formData.total_points,
+      total_points: disableGrading ? undefined : Number(formData.total_points),
       due_date: disableDueDate ? undefined : formData.due_date,
     };
     onSubmit(submission);
@@ -60,7 +79,14 @@ export const AssignmentForm = ({ formData, isLoading, handleChange, onSubmit, on
     handleChange(property, value);
   };
 
-  const handleCreateTopic = () => {};
+  const createTopicHandle = () => {
+    if (inputTopic !== '') {
+      handleCreateTopic(inputTopic || '');
+      setSelection(topics.length);
+      setIsCreatingTopic(false);
+      setInputTopic('');
+    }
+  };
 
   const toggleGrading = (ev: any) => {
     setDisableGrading((prv) => !prv);
@@ -68,12 +94,6 @@ export const AssignmentForm = ({ formData, isLoading, handleChange, onSubmit, on
 
   const toggleDueDate = (ev: any) => {
     setDisableDueDate((prv) => !prv);
-  };
-
-  const getTommorrowDate = (): number => {
-    var day = new Date();
-    day.setDate(day.getDate() + 1);
-    return day.getTime();
   };
 
   return (
@@ -185,8 +205,7 @@ export const AssignmentForm = ({ formData, isLoading, handleChange, onSubmit, on
                         <InputAdornment position="end">
                           <IconButton
                             aria-label="toggle topic creation"
-                            onClick={() => setIsCreatingTopic(false)}
-                            onMouseDown={() => setIsCreatingTopic(false)}
+                            onClick={createTopicHandle}
                             edge="end"
                             color="success"
                           >
@@ -195,7 +214,6 @@ export const AssignmentForm = ({ formData, isLoading, handleChange, onSubmit, on
                           <IconButton
                             aria-label="toggle topic creation"
                             onClick={() => setIsCreatingTopic(false)}
-                            onMouseDown={() => setIsCreatingTopic(false)}
                             edge="end"
                             color="error"
                           >
@@ -206,8 +224,15 @@ export const AssignmentForm = ({ formData, isLoading, handleChange, onSubmit, on
                     }}
                   />
                 ) : (
-                  <Select id="topic" value={-1} onChange={handleSelectTopic} fullWidth>
+                  <Select id="topic" value={selection} onChange={handleSelectTopic} fullWidth>
                     <MenuItem value={-1}>No topic</MenuItem>
+                    {topics &&
+                      topics.length > 0 &&
+                      topics.map((topic: IAssignmentTopic, index) => (
+                        <MenuItem key={index} value={index}>
+                          {topic.title}
+                        </MenuItem>
+                      ))}
                     <MenuItem value={-2}>Create topic</MenuItem>
                   </Select>
                 )}

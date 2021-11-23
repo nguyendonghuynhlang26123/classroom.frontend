@@ -1,8 +1,10 @@
 import { IGradeCriteria } from './../../common/interfaces/assignments/assignments.interface';
-import { IAssignmentBody } from 'common/interfaces';
+import { IAssignmentBody, IAssignmentTopic } from 'common/interfaces';
 export type AssignmentFormProps = {
   formData: IAssignmentBody;
+  topics: IAssignmentTopic[];
   isLoading: boolean;
+  handleCreateTopic: (title: string) => void;
   handleChange: (property: string, value: any) => void;
   onSubmit: (form: IAssignmentBody) => void;
   onReset: () => void;
