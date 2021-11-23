@@ -7,21 +7,24 @@ import { useParams } from 'react-router-dom';
 import { useGetClassDetailsQuery, useGetMyRoleQuery } from 'services/api';
 import { mainSx, navSx } from './style';
 import { ClassroomSetting } from './subcomponents';
-import { Outlet, useMatch } from 'react-router';
+import { Outlet, useLocation } from 'react-router';
+import { matchPath } from 'react-router-dom';
+
 import Utils from 'common/utils';
 import { toast } from 'react-toastify';
 
-const getTabState = (checkMatch: (s: string) => any) => {
-  if (checkMatch('/classroom/:id/people')) return 2;
-  if (checkMatch('/classroom/:id/work')) return 1;
+const getTabState = (pathName: string) => {
+  if (matchPath(pathName, '/classroom/:id/people')) return 2;
+  if (matchPath(pathName, '/classroom/:id/work')) return 1;
   return 0;
 };
 
 const ClassroomBoard = () => {
   const { id } = useParams();
+  const { pathname } = useLocation();
   const { userData } = useAuth();
   const navigate = useNavigate();
-  const [tabValue, setTabValue] = React.useState<number>(getTabState(useMatch));
+  const [tabValue, setTabValue] = React.useState<number>(getTabState(pathname));
 
   const { data, error, isLoading } = useGetClassDetailsQuery(id as string);
   const { data: role, isLoading: roleIsLoading } = useGetMyRoleQuery(id as string);

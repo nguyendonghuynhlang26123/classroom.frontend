@@ -22,7 +22,9 @@ const AssignmentCreate = () => {
     }));
   };
 
-  const handleSubmit = (form: IAssignmentBody) => {};
+  const handleSubmit = (form: IAssignmentBody) => {
+    console.log('log ~ file: index.tsx ~ line 26 ~ handleSubmit ~ form', form);
+  };
   const handleReset = () => {
     setFormData(defaultData);
   };
@@ -30,6 +32,7 @@ const AssignmentCreate = () => {
   return (
     <div>
       <AssignmentForm
+        isLoading={true}
         formData={formData}
         handleChange={handleFormUpdate}
         onReset={handleReset}

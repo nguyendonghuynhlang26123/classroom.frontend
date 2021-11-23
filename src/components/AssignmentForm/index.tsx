@@ -16,6 +16,7 @@ import {
   MenuItem,
   useScrollTrigger,
   AppBar,
+  LinearProgress,
 } from '@mui/material';
 import { RichEditor, MyTimePicker } from 'components';
 import React, { ChangeEvent } from 'react';
@@ -26,7 +27,7 @@ import { GradeStructure } from './GradeStructure';
 import { AssignmentFormProps } from './type';
 import { IAssignmentBody } from 'common/interfaces';
 
-export const AssignmentForm = ({ formData, handleChange, onSubmit, onReset }: AssignmentFormProps) => {
+export const AssignmentForm = ({ formData, isLoading, handleChange, onSubmit, onReset }: AssignmentFormProps) => {
   const navigate = useNavigate();
   const [description, setDescription] = React.useState<string>();
   const [isCreatingTopic, setIsCreatingTopic] = React.useState<boolean>(false);
@@ -50,6 +51,7 @@ export const AssignmentForm = ({ formData, handleChange, onSubmit, onReset }: As
       total_points: disableGrading ? undefined : formData.total_points,
       due_date: disableDueDate ? undefined : formData.due_date,
     };
+    onSubmit(submission);
   };
 
   const handleChangeEvent = (ev: any) => {
@@ -90,14 +92,15 @@ export const AssignmentForm = ({ formData, handleChange, onSubmit, onReset }: As
               <Typography variant="body1">Create an assignment</Typography>
 
               <Stack direction="row" sx={{ ml: 'auto' }} gap={1}>
-                <Button color="secondary" onClick={onReset}>
+                <Button color="secondary" onClick={onReset} disabled={isLoading}>
                   Reset
                 </Button>
-                <Button variant="outlined" onClick={submitData}>
+                <Button variant="outlined" onClick={submitData} disabled={isLoading}>
                   Save
                 </Button>
               </Stack>
             </Toolbar>
+            {isLoading && <LinearProgress />}
           </AppBar>
 
           <Grid container spacing={2} sx={formSx.grid} minHeight="calc(100vh - 64px)">

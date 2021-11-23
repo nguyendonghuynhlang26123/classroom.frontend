@@ -10,11 +10,21 @@ import {
   Menu,
   MenuItem,
   IconButton,
+  Tooltip,
 } from '@mui/material';
-import { DragDropContext } from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { formSx, gradeStructureSx } from './style';
 import { Add, Close, MoreHorizRounded, DragIndicatorSharp } from '@mui/icons-material';
 import { GradeStructureProps, CriteriaCardProps } from './type';
+
+//A helper function to reorder array
+const reorder = (list: any[], fromIndex: number, toIndex: number): any[] => {
+  const result = Array.from(list);
+  const [removed] = result.splice(fromIndex, 1);
+  result.splice(toIndex, 0, removed);
+
+  return result;
+};
 
 const CriteriaCard = ({ criteria, handleChange, onRemove, onMoveOnBottom, onMoveOnTop }: CriteriaCardProps) => {
   const [anchorMenu, setAnchorMenu] = React.useState<null | HTMLElement>(null);
@@ -24,7 +34,9 @@ const CriteriaCard = ({ criteria, handleChange, onRemove, onMoveOnBottom, onMove
   return (
     <Grid container spacing={2} sx={gradeStructureSx.criteriaCard} width="100%">
       <Grid item xs={12} sx={gradeStructureSx.dragZone}>
-        <DragIndicatorSharp className="dragIcon" />
+        <Tooltip title="Drag to reorder">
+          <DragIndicatorSharp className="dragIcon" />
+        </Tooltip>
         <IconButton size="small" onClick={handleMenuOpen}>
           <MoreHorizRounded />
         </IconButton>
@@ -106,18 +118,24 @@ export const GradeStructure = ({ criterias, handleChange }: GradeStructureProps)
   };
 
   const handleMoveOnTop = (index: number) => {
-    const target = criterias.splice(index, 1);
-    handleChange([...target, ...criterias]);
+    handleChange(reorder(criterias, index, 0));
   };
 
   const handleMoveToBottom = (index: number) => {
-    const target = criterias.splice(index, 1);
-    handleChange([...criterias, ...target]);
+    handleChange(reorder(criterias, index, criterias.length - 1));
   };
 
   const handleRemoveCriteria = (index: number) => {
     criterias.splice(index, 1);
     handleChange([...criterias]);
+  };
+
+  const handleDragEnd = (result: any) => {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+    handleChange(reorder(criterias, result.source.index, result.destination.index));
   };
 
   return (
@@ -130,19 +148,36 @@ export const GradeStructure = ({ criterias, handleChange }: GradeStructureProps)
         </Button>
       </Stack>
 
-      <Box sx={gradeStructureSx.cardContainer}>
-        {criterias.map((c, indx: number) => (
-          <CriteriaCard
-            key={indx}
-            criteria={c}
-            handleChange={(property: string, value: any) => onChange(indx, property, value)}
-            index={indx}
-            onRemove={() => handleRemoveCriteria(indx)}
-            onMoveOnBottom={() => handleMoveToBottom(indx)}
-            onMoveOnTop={() => handleMoveOnTop(indx)}
-          />
-        ))}
-      </Box>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable droppableId={'criteria'}>
+          {(provided) => (
+            <Box
+              component="div"
+              sx={gradeStructureSx.cardContainer}
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              {criterias.map((c, indx: number) => (
+                <Draggable draggableId={'row-' + indx} index={indx} key={indx}>
+                  {(dragProvided) => (
+                    <div {...dragProvided.draggableProps} {...dragProvided.dragHandleProps} ref={dragProvided.innerRef}>
+                      <CriteriaCard
+                        criteria={c}
+                        handleChange={(property: string, value: any) => onChange(indx, property, value)}
+                        index={indx}
+                        onRemove={() => handleRemoveCriteria(indx)}
+                        onMoveOnBottom={() => handleMoveToBottom(indx)}
+                        onMoveOnTop={() => handleMoveOnTop(indx)}
+                      />
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </Box>
+          )}
+        </Droppable>
+      </DragDropContext>
     </Box>
   );
 };

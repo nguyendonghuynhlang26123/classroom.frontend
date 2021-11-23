@@ -11,7 +11,8 @@ class JwtAuthService {
     repository.interceptors.response.use(
       (response) => response,
       (err) => {
-        if (err.response.status === 401 && err.config && !err.config.__isRetryRequest) {
+        console.log('log ~ file: jwt.service.ts ~ line 14 ~ JwtAuthService ~ init ~ err', err);
+        if (err?.response?.status === 401 && err.config && !err.config.__isRetryRequest) {
           // if (this.isAuthTokenValid(refresh_token))
           //   return this.refresh(refresh_token as string)
           //     .then(() => repository(err.config))
@@ -30,7 +31,12 @@ class JwtAuthService {
       this._setSession(access_token, refresh_token); // SET for axios.default.header
       loginCallback();
     } else if (this.isAuthTokenValid(refresh_token)) {
-      this.refresh(refresh_token as string).then(() => loginCallback());
+      this.refresh(refresh_token as string)
+        .then(() => loginCallback())
+        .catch(() => {
+          this._setSession(null, null); //Reset session
+          logoutCallback();
+        });
     } else {
       this._setSession(null, null); //Reset session
       logoutCallback();
