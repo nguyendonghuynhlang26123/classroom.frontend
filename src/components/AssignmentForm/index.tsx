@@ -1,4 +1,4 @@
-import { Close } from '@mui/icons-material';
+import { Close, Check } from '@mui/icons-material';
 import {
   Box,
   Button,
@@ -19,7 +19,7 @@ import {
   LinearProgress,
 } from '@mui/material';
 import { RichEditor, MyTimePicker } from 'components';
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 
 import { useNavigate } from 'react-router';
 import { formSx } from './style';
@@ -29,7 +29,7 @@ import { IAssignmentBody } from 'common/interfaces';
 
 export const AssignmentForm = ({ formData, isLoading, handleChange, onSubmit, onReset }: AssignmentFormProps) => {
   const navigate = useNavigate();
-  const [description, setDescription] = React.useState<string>();
+  const [inputTopic, setInputTopic] = React.useState<string>();
   const [isCreatingTopic, setIsCreatingTopic] = React.useState<boolean>(false);
   const [disableGrading, setDisableGrading] = React.useState<boolean>(false);
   const [disableDueDate, setDisableDueDate] = React.useState<boolean>(false);
@@ -59,6 +59,8 @@ export const AssignmentForm = ({ formData, isLoading, handleChange, onSubmit, on
     const value = ev.currentTarget.value;
     handleChange(property, value);
   };
+
+  const handleCreateTopic = () => {};
 
   const toggleGrading = (ev: any) => {
     setDisableGrading((prv) => !prv);
@@ -174,8 +176,10 @@ export const AssignmentForm = ({ formData, isLoading, handleChange, onSubmit, on
                   <TextField
                     fullWidth
                     autoFocus
-                    variant="filled"
+                    variant="outlined"
                     label="Enter topic title"
+                    value={inputTopic}
+                    onChange={(ev) => setInputTopic(ev.target.value)}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
@@ -184,6 +188,16 @@ export const AssignmentForm = ({ formData, isLoading, handleChange, onSubmit, on
                             onClick={() => setIsCreatingTopic(false)}
                             onMouseDown={() => setIsCreatingTopic(false)}
                             edge="end"
+                            color="success"
+                          >
+                            <Check />
+                          </IconButton>
+                          <IconButton
+                            aria-label="toggle topic creation"
+                            onClick={() => setIsCreatingTopic(false)}
+                            onMouseDown={() => setIsCreatingTopic(false)}
+                            edge="end"
+                            color="error"
                           >
                             <Close />
                           </IconButton>

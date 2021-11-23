@@ -14,8 +14,8 @@ import Utils from 'common/utils';
 import { toast } from 'react-toastify';
 
 const getTabState = (pathName: string) => {
-  if (matchPath(pathName, '/classroom/:id/people')) return 2;
-  if (matchPath(pathName, '/classroom/:id/work')) return 1;
+  if (matchPath('/classroom/:id/people', pathName)) return 2;
+  if (matchPath('/classroom/:id/work', pathName)) return 1;
   return 0;
 };
 
