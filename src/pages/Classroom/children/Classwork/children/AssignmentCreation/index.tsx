@@ -40,7 +40,7 @@ const AssignmentCreate = () => {
       .unwrap()
       .then(() => {
         toast.success('Create Assignment succeed!');
-        navigate(-1);
+        navigate(`/classroom/${id}/work`);
       })
       .catch((err) => {
         toast.error('Cannot create assignment! ' + err.data);

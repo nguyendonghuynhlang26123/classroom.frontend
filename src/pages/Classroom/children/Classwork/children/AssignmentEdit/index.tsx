@@ -46,7 +46,7 @@ const AssignmentEdit = () => {
       .unwrap()
       .then(() => {
         toast.success('Update Assignment succeed!');
-        navigate(-1);
+        navigate(`/classroom/${id}/work`);
       })
       .catch((err) => {
         toast.error('Update create assignment! ' + err.data);

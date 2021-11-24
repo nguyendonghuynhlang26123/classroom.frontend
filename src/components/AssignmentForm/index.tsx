@@ -45,11 +45,13 @@ const validateForm = (form: IAssignmentBody) => {
     const invalidInputIndex = form.grade_criterias.findIndex((c) => c.name === '' || c.points === '');
     if (invalidInputIndex !== -1) return [false, `Please fill both field for grade criteria#${invalidInputIndex}`];
   }
-  if (form.grade_criterias.length > 0 && form.topic === undefined) return [false, 'Total point cannot be disabled'];
+  if (form.grade_criterias.length > 0 && form.total_points === undefined)
+    return [false, 'Total point cannot be disabled'];
 
   let totalPoint = 0;
   for (let criteria of form.grade_criterias) totalPoint += Number(criteria.points);
-  if (form?.total_points && form.total_points < totalPoint) return [false, 'Total point must >= criteria grades'];
+  if (form?.total_points !== undefined && form.total_points < totalPoint)
+    return [false, 'Total point must >= criteria grades'];
   return [true, null];
 };
 
@@ -68,11 +70,16 @@ export const AssignmentForm = ({
   const [isCreatingTopic, setIsCreatingTopic] = React.useState<boolean>(false);
   const [disableGrading, setDisableGrading] = React.useState<boolean>(false);
   const [disableDueDate, setDisableDueDate] = React.useState<boolean>(false);
-  const [selection, setSelection] = React.useState(getSelectedTopic(topics, formData?.topic));
+  const [selection, setSelection] = React.useState<number>(getSelectedTopic(topics, formData?.topic));
   const trigger = useScrollTrigger({
     disableHysteresis: true,
     threshold: 0,
   });
+
+  React.useEffect(() => {
+    setDisableGrading(!Boolean(formData?.total_points));
+    setDisableDueDate(!Boolean(formData?.due_date));
+  }, [formData]);
 
   const handleSelectTopic = (ev: any) => {
     const value = ev?.target?.value;
@@ -88,6 +95,7 @@ export const AssignmentForm = ({
   const submitData = () => {
     const submission: IAssignmentBody = {
       ...formData,
+      topic: selection >= 0 ? topics[selection]._id : undefined,
       total_points: disableGrading ? undefined : Number(formData.total_points),
       due_date: disableDueDate ? undefined : formData.due_date,
     };
