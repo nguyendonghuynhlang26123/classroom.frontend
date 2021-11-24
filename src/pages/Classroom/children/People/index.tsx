@@ -1,6 +1,7 @@
 import { Mail, PersonAddOutlined } from '@mui/icons-material';
 import {
   Avatar,
+  Collapse,
   Container,
   Divider,
   IconButton,
@@ -11,16 +12,15 @@ import {
   Stack,
   Tooltip,
   Typography,
-  Collapse,
 } from '@mui/material';
 import { IClassroomUser, UserRole } from 'common/interfaces';
+import { useClassroomCtx } from 'components';
 import React from 'react';
 import { useParams } from 'react-router';
+import { toast } from 'react-toastify';
 import { useGetClassUsersQuery, useInviteUserMutation } from 'services/api';
 import { InviteForm } from './InviteForm';
 import { peopleTabSx } from './style';
-import { TabPanel, useClassroomCtx } from 'components';
-import { toast } from 'react-toastify';
 
 const ClassroomPeople = () => {
   const { id } = useParams<'id'>();

@@ -1,36 +1,33 @@
-import React from 'react';
-import { useGetAssignmentByIdQuery } from 'services';
-import { useNavigate, useParams } from 'react-router';
+import { Add, AssignmentOutlined, MoreVert } from '@mui/icons-material';
 import {
+  Avatar,
+  Box,
   Button,
   Collapse,
   Divider,
   Grid,
-  LinearProgress,
-  List,
-  ListItemButton,
-  Avatar,
-  Stack,
-  Box,
-  Typography,
   IconButton,
-  Paper,
   Menu,
   MenuItem,
+  Paper,
+  Stack,
+  Typography,
 } from '@mui/material';
-import { CriteriaDetails } from './CriteriaDetails';
-import { Add, AssignmentOutlined, MoreVert } from '@mui/icons-material';
-import { assignmentDetailsSx } from './style';
-import { useClassroomCtx, useCopyToClipboard } from 'components';
 import { UserRole } from 'common/interfaces';
+import { useClassroomCtx, useCopyToClipboard } from 'components';
+import React from 'react';
+import { useNavigate, useParams } from 'react-router';
+import { useGetAssignmentByIdQuery } from 'services';
+import { CriteriaDetails } from './CriteriaDetails';
+import { assignmentDetailsSx } from './style';
 
 const AssignmentDetails = () => {
   const { role } = useClassroomCtx();
   console.log('log ~ file: index.tsx ~ line 29 ~ AssignmentDetails ~ role', role);
   const navigate = useNavigate();
   const { id, assignmentId } = useParams();
-  const [_, copyFn] = useCopyToClipboard();
-  const { data, isLoading } = useGetAssignmentByIdQuery({
+  const [, copyFn] = useCopyToClipboard();
+  const { data } = useGetAssignmentByIdQuery({
     classId: id as string,
     assignmentId: assignmentId as string,
   });

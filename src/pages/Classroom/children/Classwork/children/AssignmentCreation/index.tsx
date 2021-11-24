@@ -1,12 +1,12 @@
-import React from 'react';
-import { AssignmentForm } from 'components/AssignmentForm';
-import { IAssignmentBody, IAssignmentTopic, UserRole } from 'common/interfaces';
-import { useCreateAssignmentMutation, useCreateTopicMutation, useGetAllTopicsQuery } from 'services';
-import { useNavigate, useParams } from 'react-router';
-import { toast } from 'react-toastify';
+import { IAssignmentBody, UserRole } from 'common/interfaces';
 import Utils from 'common/utils';
 import { useClassroomCtx } from 'components';
+import { AssignmentForm } from 'components/AssignmentForm';
+import React from 'react';
+import { useNavigate, useParams } from 'react-router';
 import { Navigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useCreateAssignmentMutation, useCreateTopicMutation, useGetAllTopicsQuery } from 'services';
 
 const defaultData: IAssignmentBody = {
   class_id: '',

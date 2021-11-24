@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { formSx, gradeStructureSx } from './style';
-import { Add, Close, MoreHorizRounded, DragIndicatorSharp } from '@mui/icons-material';
+import { Add, MoreHorizRounded, DragIndicatorSharp } from '@mui/icons-material';
 import { GradeStructureProps, CriteriaCardProps } from './type';
 
 //A helper function to reorder array

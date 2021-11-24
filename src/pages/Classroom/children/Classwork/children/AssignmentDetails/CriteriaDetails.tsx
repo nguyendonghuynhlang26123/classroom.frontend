@@ -1,20 +1,18 @@
-import React from 'react';
-import { IGradeCriteria } from 'common/interfaces';
+import { ExpandMore } from '@mui/icons-material';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Toolbar,
   Typography,
 } from '@mui/material';
-import { ExpandMore } from '@mui/icons-material';
+import { IGradeCriteria } from 'common/interfaces';
+import React from 'react';
 
 export const CriteriaDetails = ({ criterias }: { criterias: IGradeCriteria[] }) => {
   return (
