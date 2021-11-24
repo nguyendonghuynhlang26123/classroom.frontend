@@ -9,6 +9,9 @@ export const classworkSx: MultipleSxTypes = {
       pt: 0,
     },
   },
+  topicContainer: {
+    position: 'sticky',
+  },
 
   addBtn: {
     ml: 'auto',
@@ -17,6 +20,7 @@ export const classworkSx: MultipleSxTypes = {
 
   header: {
     mt: 4,
+    textTransform: 'capitalize',
     '& .MuiTypography-root': {
       fontSize: 24,
       color: 'primary.main',

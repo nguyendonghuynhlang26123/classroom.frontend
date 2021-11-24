@@ -1,10 +1,11 @@
 import React from 'react';
 import { AssignmentForm } from 'components/AssignmentForm';
-import { IAssignmentBody } from 'common/interfaces';
+import { IAssignmentBody, UserRole } from 'common/interfaces';
 import { useGetAllTopicsQuery, useGetAssignmentByIdQuery, useUpdateAssignmentMutation } from 'services';
-import { useNavigate, useParams } from 'react-router';
+import { Navigate, useNavigate, useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import Utils from 'common/utils';
+import { useClassroomCtx } from 'components';
 
 const defaultData: IAssignmentBody = {
   class_id: '',
@@ -17,16 +18,21 @@ const defaultData: IAssignmentBody = {
 };
 
 const AssignmentEdit = () => {
+  const { role } = useClassroomCtx();
   const { id, assignmentId } = useParams();
   const navigate = useNavigate();
   const { data, isLoading } = useGetAssignmentByIdQuery({
     classId: id as string,
     assignmentId: assignmentId as string,
   });
-  const [formData, setFormData] = React.useState<IAssignmentBody>({ ...(data as IAssignmentBody) });
+  const [formData, setFormData] = React.useState<IAssignmentBody>(defaultData);
   const { data: topics, isLoading: fetchingTopic } = useGetAllTopicsQuery(id as string);
 
   const [updateAssignment, { isLoading: isUpdating }] = useUpdateAssignmentMutation();
+
+  React.useEffect(() => {
+    if (data) setFormData(data);
+  }, [data]);
 
   const handleFormUpdate = (property: string, value: any) => {
     setFormData((prv) => ({
@@ -50,18 +56,18 @@ const AssignmentEdit = () => {
     setFormData(defaultData);
   };
 
-  return (
-    <div>
-      <AssignmentForm
-        topics={topics || []}
-        handleCreateTopic={() => {}}
-        isLoading={Utils.isLoading(isLoading, isUpdating, fetchingTopic)}
-        formData={formData}
-        handleChange={handleFormUpdate}
-        onReset={handleReset}
-        onSubmit={handleSubmit}
-      />
-    </div>
+  return role !== UserRole.STUDENT ? (
+    <AssignmentForm
+      topics={topics || []}
+      handleCreateTopic={() => {}}
+      isLoading={Utils.isLoading(isLoading, isUpdating, fetchingTopic)}
+      formData={formData}
+      handleChange={handleFormUpdate}
+      onReset={handleReset}
+      onSubmit={handleSubmit}
+    />
+  ) : (
+    <Navigate to={'/classroom/' + id} />
   );
 };
 

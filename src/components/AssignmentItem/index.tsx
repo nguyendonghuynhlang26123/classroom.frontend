@@ -9,16 +9,26 @@ import {
   Divider,
   Grid,
   IconButton,
+  Menu,
+  MenuItem,
   Stack,
   Typography,
 } from '@mui/material';
 import React from 'react';
-import { useNavigate } from 'react-router';
 import { accordionSx } from './style';
 import { AccordionItemProps } from './type';
 
-export const AssignmentItem = ({ data, expanded, onClick, onEdit, onRemove }: AccordionItemProps) => {
-  const navigate = useNavigate();
+export const AssignmentItem = ({ data, expanded, onClick, onEdit, onView, onRemove }: AccordionItemProps) => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const openModal = (ev: React.MouseEvent<HTMLButtonElement>) => {
+    ev.stopPropagation();
+    setAnchorEl(ev.currentTarget);
+  };
+  const closeModal = () => {
+    setAnchorEl(null);
+  };
+
   const isExpired = () => {
     if (data.due_date === null || Date.now() <= data.due_date) return false;
     return true;
@@ -39,13 +49,7 @@ export const AssignmentItem = ({ data, expanded, onClick, onEdit, onRemove }: Ac
           <Typography sx={accordionSx.time}>
             {data.due_date ? new Date(data.due_date).toLocaleString() : 'No due date'}
           </Typography>
-          <IconButton
-            edge="end"
-            aria-label="delete"
-            onClick={(ev) => {
-              ev.stopPropagation();
-            }}
-          >
+          <IconButton edge="end" aria-label="delete" onClick={openModal}>
             <MoreVert />
           </IconButton>
         </Stack>
@@ -69,8 +73,35 @@ export const AssignmentItem = ({ data, expanded, onClick, onEdit, onRemove }: Ac
       </AccordionDetails>
 
       <AccordionActions>
-        <Button onClick={onEdit}>View Assignment</Button>
+        <Button onClick={onView}>View Assignment</Button>
       </AccordionActions>
+
+      <Menu
+        id="assignment-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={closeModal}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        <MenuItem
+          onClick={() => {
+            closeModal();
+            onEdit();
+          }}
+        >
+          Edit
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            closeModal();
+            onRemove();
+          }}
+        >
+          Remove
+        </MenuItem>
+      </Menu>
     </Accordion>
   );
 };

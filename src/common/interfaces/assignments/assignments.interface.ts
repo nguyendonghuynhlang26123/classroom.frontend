@@ -1,4 +1,3 @@
-import { IAssignmentTopic } from './../topics/topic.interface';
 import { IBase } from '../base';
 export interface IGradeCriteria {
   name: string;
@@ -7,7 +6,7 @@ export interface IGradeCriteria {
 
 export interface IAssignment extends IBase {
   class_id: string;
-  topic: IAssignmentTopic;
+  topic: string;
   title: string;
   instructions: string;
   grade_criterias: IGradeCriteria[];
@@ -17,7 +16,7 @@ export interface IAssignment extends IBase {
 
 export interface IAssignmentBody {
   class_id: string;
-  topic?: IAssignmentTopic;
+  topic?: string;
   title: string;
   instructions: string;
   grade_criterias: IGradeCriteria[];

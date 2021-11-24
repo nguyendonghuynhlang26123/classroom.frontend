@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, Box, Stack, Button, TextField } from '@mui/material';
-import { SimpleDialog } from 'components';
+import { SimpleModal } from 'components';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { JoinFormProps } from './type';
@@ -27,7 +27,7 @@ export const JoinForm = ({ open, handleClose, onSubmit }: JoinFormProps) => {
     },
   });
   return (
-    <SimpleDialog open={open} handleClose={handleClose} title="Join classroom by code" width={300}>
+    <SimpleModal open={open} handleClose={handleClose} title="Join classroom by code" width={300}>
       <Box component="form" noValidate autoComplete="off" onSubmit={formik.handleSubmit} sx={formStyle.container}>
         <Typography variant="body2" gutterBottom component="p" sx={{ pb: 2 }}>
           Ask your teacher for the class code, then enter it here.
@@ -47,6 +47,6 @@ export const JoinForm = ({ open, handleClose, onSubmit }: JoinFormProps) => {
           <Button type="submit">Continue</Button>
         </Stack>
       </Box>
-    </SimpleDialog>
+    </SimpleModal>
   );
 };

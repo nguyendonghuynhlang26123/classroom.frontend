@@ -41,6 +41,11 @@ export const assignmentsApi = createApi({
         { type: TAG, id: 'DATA' },
       ],
     }),
+
+    removeAssignment: builder.mutation<any, { id: string; assignmentId: string }>({
+      query: ({ id, assignmentId }) => _request.delete(`classes/${id}/assignments/${assignmentId}/delete`),
+      invalidatesTags: [{ type: TAG, id: 'LIST' }],
+    }),
   }),
 });
 
@@ -51,4 +56,5 @@ export const {
   useCreateAssignmentMutation,
   useUpdateAssignmentMutation,
   useGetAssignmentByIdQuery,
+  useRemoveAssignmentMutation,
 } = assignmentsApi;

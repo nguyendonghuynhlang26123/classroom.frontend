@@ -1,1 +1,2 @@
-export * from './SimpleDialog';
+export * from './SimpleModal';
+export * from './ConfirmDialog';

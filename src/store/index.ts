@@ -1,5 +1,6 @@
 import { classroomApi, classroomDetailsApi, usersApi, assignmentsApi, topicsApi } from 'services/api';
 import { configureStore } from '@reduxjs/toolkit';
+import { setupListeners } from '@reduxjs/toolkit/dist/query';
 export const store = configureStore({
   reducer: {
     [classroomApi.reducerPath]: classroomApi.reducer,
@@ -17,6 +18,9 @@ export const store = configureStore({
       assignmentsApi.middleware,
     ),
 });
+
+// enable listener behavior for the store
+setupListeners(store.dispatch);
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;

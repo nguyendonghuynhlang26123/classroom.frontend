@@ -1,9 +1,9 @@
 import { Modal, Box, Typography } from '@mui/material';
 import React from 'react';
 import { simpleDialogStyle } from './style';
-import { SimpleDialogPropsType } from './type';
+import { SimpleModalProps } from './type';
 
-export const SimpleDialog = ({ open, handleClose, title, children, ...props }: SimpleDialogPropsType) => {
+export const SimpleModal = ({ open, handleClose, title, children, ...props }: SimpleModalProps) => {
   return (
     <Modal
       open={open}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Stack, Button, TextField } from '@mui/material';
-import { SimpleDialog } from 'components';
+import { SimpleModal } from 'components';
 import { formStyle } from './style';
 import { FormModalProps } from './type';
 import { useFormik } from 'formik';
@@ -42,7 +42,7 @@ export const CreateForm = ({ open, handleClose, onSubmit }: FormModalProps) => {
   });
 
   return (
-    <SimpleDialog open={open} handleClose={handleClose} title="Create class" width={500}>
+    <SimpleModal open={open} handleClose={handleClose} title="Create class" width={500}>
       <Box component="form" noValidate autoComplete="off" sx={formStyle.container} onSubmit={formik.handleSubmit}>
         <TextField
           id="title"
@@ -96,6 +96,6 @@ export const CreateForm = ({ open, handleClose, onSubmit }: FormModalProps) => {
           </Button>
         </Stack>
       </Box>
-    </SimpleDialog>
+    </SimpleModal>
   );
 };

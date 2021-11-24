@@ -1,10 +1,12 @@
 import React from 'react';
 import { AssignmentForm } from 'components/AssignmentForm';
-import { IAssignmentBody, IAssignmentTopic } from 'common/interfaces';
+import { IAssignmentBody, IAssignmentTopic, UserRole } from 'common/interfaces';
 import { useCreateAssignmentMutation, useCreateTopicMutation, useGetAllTopicsQuery } from 'services';
 import { useNavigate, useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import Utils from 'common/utils';
+import { useClassroomCtx } from 'components';
+import { Navigate } from 'react-router-dom';
 
 const defaultData: IAssignmentBody = {
   class_id: '',
@@ -18,6 +20,7 @@ const defaultData: IAssignmentBody = {
 
 const AssignmentCreate = () => {
   const { id } = useParams<'id'>();
+  const { role } = useClassroomCtx();
   const navigate = useNavigate();
   const [formData, setFormData] = React.useState<IAssignmentBody>(defaultData);
   const [createAssignment, { isLoading }] = useCreateAssignmentMutation();
@@ -66,19 +69,18 @@ const AssignmentCreate = () => {
         toast.error('Cannot create assignment! ' + err.data);
       });
   };
-
-  return (
-    <div>
-      <AssignmentForm
-        topics={topics || []}
-        handleCreateTopic={handleCreateTopic}
-        isLoading={Utils.isLoading(isLoading, fetchingTopic)}
-        formData={formData}
-        handleChange={handleFormUpdate}
-        onReset={handleReset}
-        onSubmit={handleSubmit}
-      />
-    </div>
+  return role !== UserRole.STUDENT ? (
+    <AssignmentForm
+      topics={topics || []}
+      handleCreateTopic={handleCreateTopic}
+      isLoading={Utils.isLoading(isLoading, fetchingTopic)}
+      formData={formData}
+      handleChange={handleFormUpdate}
+      onReset={handleReset}
+      onSubmit={handleSubmit}
+    />
+  ) : (
+    <Navigate to={'/classroom/' + id} />
   );
 };
 

@@ -3,7 +3,7 @@ import { MultipleSxTypes } from 'common/type';
 export const accordionSx: MultipleSxTypes = {
   root: {
     borderRadius: 2,
-    my: 1.5,
+    my: 0,
     overflow: 'hidden',
 
     '& .MuiAccordionSummary-root': {
@@ -11,7 +11,7 @@ export const accordionSx: MultipleSxTypes = {
       cursor: 'pointer',
 
       '&.Mui-expanded': {
-        borderBottom: 1,
+        borderBottom: 0.5,
         borderColor: 'divider',
       },
     },

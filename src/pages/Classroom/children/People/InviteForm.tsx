@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, Box, Stack, Button, TextField } from '@mui/material';
-import { SimpleDialog } from 'components';
+import { SimpleModal } from 'components';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { InviteFormProps } from './type';
@@ -22,7 +22,7 @@ export const InviteForm = ({ open, title, handleClose, onSubmit }: InviteFormPro
   });
 
   return (
-    <SimpleDialog open={open} handleClose={handleClose} title={title} width={300}>
+    <SimpleModal open={open} handleClose={handleClose} title={title} width={300}>
       <Box component="form" noValidate autoComplete="off" onSubmit={formik.handleSubmit}>
         <Typography variant="body2" gutterBottom component="p">
           Send an invitation link to this email
@@ -44,6 +44,6 @@ export const InviteForm = ({ open, title, handleClose, onSubmit }: InviteFormPro
           <Button type="submit">Invite</Button>
         </Stack>
       </Box>
-    </SimpleDialog>
+    </SimpleModal>
   );
 };

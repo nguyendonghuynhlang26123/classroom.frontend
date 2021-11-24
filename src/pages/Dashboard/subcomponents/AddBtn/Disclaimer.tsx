@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Typography, Box, Checkbox, Stack, Button } from '@mui/material';
-import { SimpleDialog } from 'components';
+import { SimpleModal } from 'components';
 import { disclaimerStyle } from './style';
 import { DisclaimerProps } from './type';
 
@@ -12,16 +12,16 @@ export const Disclaimer = ({ open, handleClose, onSubmit }: DisclaimerProps) => 
   };
 
   return (
-    <SimpleDialog open={open} handleClose={handleClose} title="Using Classroom at a school with students?" width={300}>
+    <SimpleModal open={open} handleClose={handleClose} title="Using Classroom at a school with students?" width={300}>
       <Box sx={{ pt: 1 }}>
         <Typography variant="body2" gutterBottom component="p" sx={{ pt: 1 }}>
-          If so, your school must sign up for a free Google Workspace for Education account before you can use Classroom.{' '}
-          <Link href="#">privacy and security</Link>
+          If so, your school must sign up for a free Google Workspace for Education account before you can use
+          Classroom. <Link href="#">privacy and security</Link>
         </Typography>
         <Typography variant="body2" gutterBottom component="p" sx={{ pt: 1 }}>
-          Google Workspace for Education lets schools decide which Google services their students can use, and provides additional{' '}
-          <Link href="#">privacy and security</Link> protections that are important in a school setting. Students cannot use Google Classroom at a school with
-          personal accounts.
+          Google Workspace for Education lets schools decide which Google services their students can use, and provides
+          additional <Link href="#">privacy and security</Link> protections that are important in a school setting.
+          Students cannot use Google Classroom at a school with personal accounts.
         </Typography>
         <Box sx={disclaimerStyle.checkboxContainer}>
           <div>
@@ -39,6 +39,6 @@ export const Disclaimer = ({ open, handleClose, onSubmit }: DisclaimerProps) => 
           </Button>
         </Stack>
       </Box>
-    </SimpleDialog>
+    </SimpleModal>
   );
 };

@@ -4,5 +4,6 @@ export type AccordionItemProps = {
   expanded: boolean;
   onClick: () => void;
   onEdit: () => void;
+  onView: () => void;
   onRemove: () => void;
 };

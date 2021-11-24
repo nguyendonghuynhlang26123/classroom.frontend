@@ -21,16 +21,36 @@ import {
 import { RichEditor, MyTimePicker } from 'components';
 import React from 'react';
 
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { formSx } from './style';
 import { GradeStructure } from './GradeStructure';
 import { AssignmentFormProps } from './type';
 import { IAssignmentBody, IAssignmentTopic } from 'common/interfaces';
+import { toast } from 'react-toastify';
 
 const getTommorrowDate = (): number => {
   var day = new Date();
   day.setDate(day.getDate() + 1);
   return day.getTime();
+};
+
+const getSelectedTopic = (topics: IAssignmentTopic[], currentTopicId: string | undefined): number => {
+  if (!currentTopicId) return -1;
+  return topics.findIndex((t: IAssignmentTopic) => t._id?.toString() === currentTopicId);
+};
+
+const validateForm = (form: IAssignmentBody) => {
+  if (form.title === '') return [false, 'Title cannot be empty'];
+  if (form.grade_criterias.length > 0) {
+    const invalidInputIndex = form.grade_criterias.findIndex((c) => c.name === '' || c.points === '');
+    if (invalidInputIndex !== -1) return [false, `Please fill both field for grade criteria#${invalidInputIndex}`];
+  }
+  if (form.grade_criterias.length > 0 && form.topic === undefined) return [false, 'Total point cannot be disabled'];
+
+  let totalPoint = 0;
+  for (let criteria of form.grade_criterias) totalPoint += Number(criteria.points);
+  if (form?.total_points && form.total_points < totalPoint) return [false, 'Total point must >= criteria grades'];
+  return [true, null];
 };
 
 export const AssignmentForm = ({
@@ -42,12 +62,13 @@ export const AssignmentForm = ({
   onSubmit,
   onReset,
 }: AssignmentFormProps) => {
+  const { id } = useParams<'id'>();
   const navigate = useNavigate();
   const [inputTopic, setInputTopic] = React.useState<string>('');
   const [isCreatingTopic, setIsCreatingTopic] = React.useState<boolean>(false);
   const [disableGrading, setDisableGrading] = React.useState<boolean>(false);
   const [disableDueDate, setDisableDueDate] = React.useState<boolean>(false);
-  const [selection, setSelection] = React.useState(-1);
+  const [selection, setSelection] = React.useState(getSelectedTopic(topics, formData?.topic));
   const trigger = useScrollTrigger({
     disableHysteresis: true,
     threshold: 0,
@@ -70,7 +91,11 @@ export const AssignmentForm = ({
       total_points: disableGrading ? undefined : Number(formData.total_points),
       due_date: disableDueDate ? undefined : formData.due_date,
     };
-    onSubmit(submission);
+    const [success, msg] = validateForm(submission);
+    if (success) onSubmit(submission);
+    else {
+      toast.warning(msg);
+    }
   };
 
   const handleChangeEvent = (ev: any) => {
@@ -107,7 +132,7 @@ export const AssignmentForm = ({
                 edge="start"
                 color="inherit"
                 aria-label="close modal"
-                onClick={() => navigate(-1)}
+                onClick={() => navigate(`/classroom/${id}/work`)}
               >
                 <Close sx={{ fontSize: 20 }} />
               </IconButton>
@@ -135,20 +160,22 @@ export const AssignmentForm = ({
                   label="Title"
                   name="title"
                   variant="outlined"
-                  value={formData.title}
+                  value={formData?.title || ''}
                   onChange={handleChangeEvent}
                 />
                 <RichEditor
-                  data={formData.instructions}
+                  data={formData?.instructions || ''}
                   handleChange={(value) => handleChange('instructions', value)}
                   hintText={'Assignment instruction'}
                 />
               </Box>
 
-              <GradeStructure
-                criterias={formData.grade_criterias}
-                handleChange={(criterias) => handleChange('grade_criterias', criterias)}
-              />
+              {!disableGrading && (
+                <GradeStructure
+                  criterias={formData?.grade_criterias || []}
+                  handleChange={(criterias) => handleChange('grade_criterias', criterias)}
+                />
+              )}
             </Grid>
 
             <Grid item xs={4}>
@@ -163,7 +190,7 @@ export const AssignmentForm = ({
                   id="total_points"
                   type="number"
                   name="total_points"
-                  value={formData.total_points || 0}
+                  value={formData?.total_points || 0}
                   onChange={handleChangeEvent}
                   fullWidth
                   disabled={disableGrading}
@@ -181,7 +208,7 @@ export const AssignmentForm = ({
                 </Stack>
                 <MyTimePicker
                   label="Due time"
-                  value={formData.due_date || getTommorrowDate()}
+                  value={formData?.due_date || getTommorrowDate()}
                   fullWidth
                   disabled={disableDueDate}
                   handleChange={(time: any) => {
