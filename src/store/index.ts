@@ -1,35 +1,29 @@
-import { combineReducers, createStore } from 'redux';
-import { loadingReducer, messageReducer, themeReducer } from './slices';
+import { classroomApi, classroomDetailsApi, usersApi, assignmentsApi, topicsApi } from 'services/api';
+import { configureStore } from '@reduxjs/toolkit';
+import { setupListeners } from '@reduxjs/toolkit/dist/query';
+export const store = configureStore({
+  reducer: {
+    [classroomApi.reducerPath]: classroomApi.reducer,
+    [classroomDetailsApi.reducerPath]: classroomDetailsApi.reducer,
+    [usersApi.reducerPath]: usersApi.reducer,
+    [topicsApi.reducerPath]: topicsApi.reducer,
+    [assignmentsApi.reducerPath]: assignmentsApi.reducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(
+      classroomApi.middleware,
+      classroomDetailsApi.middleware,
+      usersApi.middleware,
+      topicsApi.middleware,
+      assignmentsApi.middleware,
+    ),
+});
 
-//Utils functions such as dialog state, loading state, ....
-const staticReducer = {
-  loading: loadingReducer,
-  message: messageReducer,
-  theme: themeReducer,
-};
+// enable listener behavior for the store
+setupListeners(store.dispatch);
 
-function createReducers(asyncReducers: any) {
-  return combineReducers({
-    ...staticReducer,
-    ...asyncReducers,
-  });
-}
-/* eslint-disable no-underscore-dangle */
-const store: any = createStore(
-  createReducers({}),
-  (window as any).__REDUX_DEVTOOLS_EXTENSION__ && (window as any).__REDUX_DEVTOOLS_EXTENSION__(),
-);
-/* eslint-enable */
-store.asyncReducers = {};
-
-const injectReducer = (key: string, reducer: any) => {
-  if (store.asyncReducers[key]) return;
-  store.asyncReducers[key] = reducer;
-  store.replaceReducer(createReducers(store.asyncReducers));
-};
-
-export { store, injectReducer };
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
+
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;

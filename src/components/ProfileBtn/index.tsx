@@ -6,6 +6,7 @@ import { ProfileBtnProps } from './type';
 
 export const ProfileBtn = ({ fname, imageUrl }: ProfileBtnProps) => {
   const { logOut } = useAuth();
+
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -18,6 +19,7 @@ export const ProfileBtn = ({ fname, imageUrl }: ProfileBtnProps) => {
 
   const handleLogOut = () => {
     setAnchorEl(null);
+    navigate('/');
     logOut();
   };
 

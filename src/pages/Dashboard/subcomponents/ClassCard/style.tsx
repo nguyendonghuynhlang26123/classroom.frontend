@@ -35,6 +35,7 @@ export const cardSx: MultipleSxTypes = {
 
   header_title: {
     fontSize: 22,
+    textTransform: 'capitalize',
   },
 
   header_section: {

@@ -11,19 +11,33 @@ class JwtAuthService {
     repository.interceptors.response.use(
       (response) => response,
       (err) => {
-        if (err.response.status === 401 && err.config && !err.config.__isRetryRequest) {
+        console.log('log ~ file: jwt.service.ts ~ line 14 ~ JwtAuthService ~ init ~ err', err);
+        if (err?.response?.status === 401 && err.config && !err.config.__isRetryRequest) {
+          // if (this.isAuthTokenValid(refresh_token))
+          //   return this.refresh(refresh_token as string)
+          //     .then(() => repository(err.config))
+          //     .catch(() => {
+          //       this._setSession(null, null); //Reset session
+          //       logoutCallback(); // Callback
+          //     });
           this._setSession(null, null); //Reset session
           logoutCallback(); // Callback
         }
-        return Promise.reject(err.response.data);
+        return Promise.reject(err);
       },
     );
 
     if (this.isAuthTokenValid(access_token)) {
       this._setSession(access_token, refresh_token); // SET for axios.default.header
       loginCallback();
+    } else if (this.isAuthTokenValid(refresh_token)) {
+      this.refresh(refresh_token as string)
+        .then(() => loginCallback())
+        .catch(() => {
+          this._setSession(null, null); //Reset session
+          logoutCallback();
+        });
     } else {
-      //TODO: Make use of Refresh token
       this._setSession(null, null); //Reset session
       logoutCallback();
     }
@@ -31,9 +45,25 @@ class JwtAuthService {
 
   logIn(body: AuthData): Promise<AuthResponse> {
     return new Promise((resolve, reject) => {
-      //TODO: Check again
       repository
         .post(`/auth/login`, body)
+        .then((response: any) => {
+          if (response.data) {
+            //eslint disable
+            const access_token = response.data.access_token;
+            const refresh_token = response.data.refresh_token;
+            this._setSession(access_token, refresh_token);
+            resolve(response.data);
+          }
+        })
+        .catch((response) => reject(response));
+    });
+  }
+
+  refresh(refreshToken: string): Promise<AuthResponse> {
+    return new Promise((resolve, reject) => {
+      repository
+        .post(`/auth/refresh`, { refresh_token: refreshToken })
         .then((response: any) => {
           if (response.data) {
             //eslint disable

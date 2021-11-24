@@ -19,8 +19,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from 'components/context';
-import { useAppDispatch } from 'store/hooks';
-import { showMessage } from 'store/slices';
+import { toast } from 'react-toastify';
 
 const GG_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY as string;
 
@@ -31,7 +30,6 @@ const validationSchema = yup.object({
 
 const LoginPage = () => {
   const { search } = useLocation();
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState<boolean>(false);
   const { signIn, signInWithGG } = useAuth();
@@ -44,7 +42,7 @@ const LoginPage = () => {
     onSuccess: (response: any) => {
       setLoading(true);
       signInWithGG(response.tokenId).then((data) => {
-        dispatch(showMessage({ message: 'Login successfully' }));
+        toast.success('Login Successfully');
       });
     },
   });
@@ -58,7 +56,7 @@ const LoginPage = () => {
     onSubmit: (values) => {
       setLoading(true);
       signIn(values).catch((e) => {
-        dispatch(showMessage({ message: 'Invalid credentials', type: 'error' }));
+        toast.warning('Invalid credentials');
       });
     },
   });

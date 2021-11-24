@@ -5,11 +5,10 @@ import { profileSx } from './style';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { drawerItemConfigs } from 'configs';
-import { UserDataUpdate } from 'common/interfaces';
+import { IUserBody } from 'common/interfaces';
 import { NAME_REGEX, STUDENT_ID_REGEX } from 'common/constants/regex';
-import UserService from './service';
-import { useAppDispatch } from 'store/hooks';
-import { showMessage } from 'store/slices';
+import { useUpdateProfileMutation } from 'services/api/user.api';
+import { toast } from 'react-toastify';
 
 const validationSchema = yup.object({
   first_name: yup.string().matches(NAME_REGEX, 'Invalid name').required('Firstname is required'),
@@ -18,13 +17,11 @@ const validationSchema = yup.object({
   student_id: yup.string().matches(STUDENT_ID_REGEX),
 });
 
-const service = new UserService();
-
 const UserProfile = () => {
-  const { userData, reload } = useAuth();
-  const dispatch = useAppDispatch();
+  const { userData } = useAuth();
+  const [updateProfile, { isLoading }] = useUpdateProfileMutation();
 
-  const formik = useFormik<UserDataUpdate>({
+  const formik = useFormik<IUserBody>({
     initialValues: {
       first_name: userData?.first_name || '',
       last_name: userData?.last_name || '',
@@ -34,28 +31,24 @@ const UserProfile = () => {
     validateOnBlur: true,
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      setLoading(true);
-      if (userData)
-        service
-          .update(userData._id, values)
+      if (userData) {
+        updateProfile({ id: userData._id as string, body: values })
+          .unwrap()
           .then(() => {
-            dispatch(showMessage({ message: 'Update successfully' }));
-            reload();
-            setLoading(false);
+            toast.success('Update successfully');
           })
           .catch((err) => {
-            if (err.statusCode === 409) dispatch(showMessage({ message: 'Student Id exists!', type: 'error' }));
-            else dispatch(showMessage({ message: 'Update failed!', type: 'error' }));
-            setLoading(false);
+            if (err.status === 409) {
+              formik.setFieldError('student_id', 'Student Id exists!');
+            } else toast.error('Update failed!');
           });
+      }
     },
   });
 
-  const [loading, setLoading] = React.useState<boolean>(false);
-
   return (
     <Box sx={profileSx.root}>
-      <Navbar items={drawerItemConfigs} toolbarComponents={<>{loading && <LinearProgress />}</>}>
+      <Navbar items={drawerItemConfigs} toolbarComponents={<>{isLoading && <LinearProgress />}</>}>
         <>
           <Typography variant="body1">Classroom setting</Typography>
           <Button

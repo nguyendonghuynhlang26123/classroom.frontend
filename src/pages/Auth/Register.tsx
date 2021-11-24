@@ -18,8 +18,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from 'components';
 import { NAME_REGEX } from 'common/constants/regex';
 import { RegisterData } from 'common/interfaces';
-import { useAppDispatch } from 'store/hooks';
-import { showMessage } from 'store/slices';
+import { toast } from 'react-toastify';
 
 const validationSchema = yup.object({
   email: yup.string().email('This field should be a valid email').required('Please enter email'),
@@ -50,7 +49,6 @@ type FormType = RegisterData & {
 
 const RegisterPage = () => {
   const { search } = useLocation();
-  const dispatch = useAppDispatch();
   const { register } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -73,17 +71,12 @@ const RegisterPage = () => {
         register(bodyData)
           .then(() => {
             setLoading(false);
-            dispatch(
-              showMessage({
-                message: 'Registeration completed',
-                type: 'success',
-              }),
-            );
+            toast.success('Registeration completed');
             // navigate('/' + search);
           })
           .catch((response) => {
             setLoading(false);
-            dispatch(showMessage({ message: response.message, type: 'error' }));
+            toast.error(`Register failed! Message: ${response.message}`);
           });
     },
   });

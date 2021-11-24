@@ -1,6 +1,6 @@
-import { User } from './../users/users.interface';
-export interface ClassroomUser {
-  user_id: User;
+import { IUser } from './../users/users.interface';
+export interface IClassroomUser {
+  user_id: IUser;
   status: 'ACTIVATED' | 'INACTIVATED';
   role: UserRole;
   invite_code?: string;

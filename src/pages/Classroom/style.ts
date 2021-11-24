@@ -29,6 +29,7 @@ export const navSx: MultipleSxTypes = {
   link: {
     color: 'text.primary',
     borderColor: 'divider',
+    textTransform: 'capitalize',
   },
   progressBar: {
     mt: '-3px',

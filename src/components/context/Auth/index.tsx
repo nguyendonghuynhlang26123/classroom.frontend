@@ -1,20 +1,9 @@
-import { AuthData, AuthResponse, User } from 'common/interfaces';
-import { repository } from 'services/repository';
-import JwtAuthService from './jwt.service';
-import GoogleValidateService from './google.service';
-
+import { AuthData, AuthResponse, IUser } from 'common/interfaces';
 import React from 'react';
-
-export type AuthProps = {
-  signIn: (data: AuthData) => Promise<any>;
-  signInWithGG: (tokenId: string) => Promise<any>;
-  register: (data: AuthData) => Promise<any>;
-  logOut: () => void;
-  reload: () => void;
-  isAuthenticated: boolean;
-  pending: boolean;
-  userData: User | undefined;
-};
+import { repository } from 'services/repository';
+import GoogleValidateService from './google.service';
+import JwtAuthService from './jwt.service';
+import { AuthProps } from './type';
 
 const defaultValue: AuthProps = {
   signIn: () => new Promise(() => {}),
@@ -30,7 +19,7 @@ const defaultValue: AuthProps = {
 const AuthContext = React.createContext<AuthProps>(defaultValue);
 
 export const AuthProvider = ({ children }: { children: any }) => {
-  const [infor, setInfor] = React.useState<User | undefined>(undefined);
+  const [infor, setInfor] = React.useState<IUser | undefined>(undefined);
   const [isAuthen, setIsAuthen] = React.useState<boolean>(false);
   const [pending, setIsPending] = React.useState<boolean>(true);
   const jwtService = new JwtAuthService();
