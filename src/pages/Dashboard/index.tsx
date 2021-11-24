@@ -14,9 +14,13 @@ import { toast } from 'react-toastify';
 const Dashboard = () => {
   const navigate = useNavigate();
   const { userData } = useAuth();
-  const { data, isLoading } = useGetAllClassesQuery();
+  const { data, refetch, isLoading } = useGetAllClassesQuery();
   const [createClass, { isLoading: isUpdating }] = useCreateClassMutation();
   const [joinClass, { isLoading: isJoining }] = useJoinClassMutation();
+
+  React.useEffect(() => {
+    refetch(); //Reset cache
+  }, []);
 
   const handleCreateClass = (form: IClassroomBody) => {
     createClass(form)

@@ -18,7 +18,15 @@ import React from 'react';
 import { accordionSx } from './style';
 import { AccordionItemProps } from './type';
 
-export const AssignmentItem = ({ data, expanded, onClick, onEdit, onView, onRemove }: AccordionItemProps) => {
+export const AssignmentItem = ({
+  data,
+  expanded,
+  onClick,
+  onEdit,
+  onView,
+  onRemove,
+  isStudent,
+}: AccordionItemProps) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const openModal = (ev: React.MouseEvent<HTMLButtonElement>) => {
@@ -49,9 +57,11 @@ export const AssignmentItem = ({ data, expanded, onClick, onEdit, onView, onRemo
           <Typography sx={accordionSx.time}>
             {data.due_date ? new Date(data.due_date).toLocaleString() : 'No due date'}
           </Typography>
-          <IconButton edge="end" aria-label="delete" onClick={openModal}>
-            <MoreVert />
-          </IconButton>
+          {!isStudent && (
+            <IconButton edge="end" aria-label="delete" onClick={openModal}>
+              <MoreVert />
+            </IconButton>
+          )}
         </Stack>
       </AccordionSummary>
 

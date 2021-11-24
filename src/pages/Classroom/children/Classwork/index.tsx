@@ -103,6 +103,7 @@ const ClassroomWork = () => {
                     <React.Fragment key={a._id}>
                       <AssignmentItem
                         data={a}
+                        isStudent={role === UserRole.STUDENT}
                         expanded={expandItemKey === a._id}
                         onClick={() => toggleExpand(expandItemKey, a._id || '')}
                         onEdit={() => navigate(`/classroom/${id}/work/edit/${a._id}`)}
