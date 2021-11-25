@@ -1,7 +1,6 @@
 import React from 'react';
 import { ClassroomContextProps } from './type';
 import { UserRole } from 'common/interfaces';
-import { number } from 'yup';
 
 const defaultValue: ClassroomContextProps = {
   classData: null,
