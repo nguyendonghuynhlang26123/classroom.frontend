@@ -68,6 +68,23 @@ export const formSx: MultipleSxTypes = {
 
 export const gradeStructureSx: MultipleSxTypes = {
   root: {},
+  form: {
+    p: 3,
+    mb: 2,
+
+    border: 1,
+    borderColor: 'divider',
+    borderRadius: 2,
+    '& .MuiTextField-root, & .MuiSelect-root': {
+      my: 1,
+      fontSize: 14,
+    },
+  },
+
+  formHeader: {
+    fontSize: '24px',
+    mb: 1,
+  },
   cardContainer: {
     bgcolor: 'grey.100',
     px: 2,

@@ -1,7 +1,7 @@
 import React from 'react';
 import { AssignmentForm } from 'components/AssignmentForm';
 import { IAssignmentBody, UserRole } from 'common/interfaces';
-import { useGetAllTopicsQuery, useGetAssignmentByIdQuery, useUpdateAssignmentMutation } from 'services';
+import { useGetAssignmentByIdQuery, useUpdateAssignmentMutation } from 'services';
 import { Navigate, useNavigate, useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import Utils from 'common/utils';
@@ -9,11 +9,9 @@ import { useClassroomCtx } from 'components';
 
 const defaultData: IAssignmentBody = {
   class_id: '',
-  topic: undefined,
   title: '',
   instructions: '',
-  grade_criterias: [],
-  total_points: undefined,
+  total_points: 10,
   due_date: undefined,
 };
 
@@ -26,7 +24,6 @@ const AssignmentEdit = () => {
     assignmentId: assignmentId as string,
   });
   const [formData, setFormData] = React.useState<IAssignmentBody>(defaultData);
-  const { data: topics, isLoading: fetchingTopic } = useGetAllTopicsQuery(id as string);
 
   const [updateAssignment, { isLoading: isUpdating }] = useUpdateAssignmentMutation();
 
@@ -58,9 +55,7 @@ const AssignmentEdit = () => {
 
   return role !== UserRole.STUDENT ? (
     <AssignmentForm
-      topics={topics || []}
-      handleCreateTopic={() => {}}
-      isLoading={Utils.isLoading(isLoading, isUpdating, fetchingTopic)}
+      isLoading={Utils.isLoading(isLoading, isUpdating)}
       formData={formData}
       handleChange={handleFormUpdate}
       onReset={handleReset}

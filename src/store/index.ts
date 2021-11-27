@@ -1,4 +1,4 @@
-import { classroomApi, classroomDetailsApi, usersApi, assignmentsApi, topicsApi } from 'services/api';
+import { classroomApi, classroomDetailsApi, usersApi, assignmentsApi, uploadApi } from 'services/api';
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/dist/query';
 export const store = configureStore({
@@ -6,7 +6,7 @@ export const store = configureStore({
     [classroomApi.reducerPath]: classroomApi.reducer,
     [classroomDetailsApi.reducerPath]: classroomDetailsApi.reducer,
     [usersApi.reducerPath]: usersApi.reducer,
-    [topicsApi.reducerPath]: topicsApi.reducer,
+    [uploadApi.reducerPath]: uploadApi.reducer,
     [assignmentsApi.reducerPath]: assignmentsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -14,7 +14,7 @@ export const store = configureStore({
       classroomApi.middleware,
       classroomDetailsApi.middleware,
       usersApi.middleware,
-      topicsApi.middleware,
+      uploadApi.middleware,
       assignmentsApi.middleware,
     ),
 });

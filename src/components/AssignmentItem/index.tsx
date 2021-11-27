@@ -18,35 +18,17 @@ import React from 'react';
 import { accordionSx } from './style';
 import { AccordionItemProps } from './type';
 
-export const AssignmentItem = ({
-  data,
-  expanded,
-  onClick,
-  onEdit,
-  onView,
-  onRemove,
-  isStudent,
-}: AccordionItemProps) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const openModal = (ev: React.MouseEvent<HTMLButtonElement>) => {
-    ev.stopPropagation();
-    setAnchorEl(ev.currentTarget);
-  };
-  const closeModal = () => {
-    setAnchorEl(null);
-  };
-
+export const AssignmentItem = ({ data, expanded, onClick, actionBtns, colorMode }: AccordionItemProps) => {
   const isExpired = () => {
     if (data.due_date === null || Date.now() <= data.due_date) return false;
     return true;
   };
 
   return (
-    <Accordion elevation={0} sx={accordionSx.root} expanded={expanded} onChange={() => onClick()}>
+    <Accordion elevation={0} sx={accordionSx.root} expanded={expanded} onChange={onClick}>
       <AccordionSummary aria-controls="panel1a-content" id="panel1a-header">
         <Stack direction="row" gap={2} alignItems="center">
-          <Avatar sx={{ bgcolor: isExpired() ? 'grey.500' : 'primary.main' }}>
+          <Avatar sx={{ bgcolor: isExpired() ? 'grey.500' : colorMode + '.main' }}>
             <AssignmentOutlined />
           </Avatar>
           <Typography component="div" sx={accordionSx.summaryTitle}>
@@ -57,11 +39,6 @@ export const AssignmentItem = ({
           <Typography sx={accordionSx.time}>
             {data.due_date ? new Date(data.due_date).toLocaleString() : 'No due date'}
           </Typography>
-          {!isStudent && (
-            <IconButton edge="end" aria-label="delete" onClick={openModal}>
-              <MoreVert />
-            </IconButton>
-          )}
         </Stack>
       </AccordionSummary>
 
@@ -83,35 +60,10 @@ export const AssignmentItem = ({
       </AccordionDetails>
 
       <AccordionActions>
-        <Button onClick={onView}>View Assignment</Button>
+        {actionBtns.map((btn: JSX.Element, key) => {
+          return <React.Fragment key={key}>{btn}</React.Fragment>;
+        })}
       </AccordionActions>
-
-      <Menu
-        id="assignment-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={closeModal}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
-      >
-        <MenuItem
-          onClick={() => {
-            closeModal();
-            onEdit();
-          }}
-        >
-          Edit
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            closeModal();
-            onRemove();
-          }}
-        >
-          Remove
-        </MenuItem>
-      </Menu>
     </Accordion>
   );
 };

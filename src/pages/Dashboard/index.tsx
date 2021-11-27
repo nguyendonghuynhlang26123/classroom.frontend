@@ -19,7 +19,7 @@ const Dashboard = () => {
   const [joinClass, { isLoading: isJoining }] = useJoinClassMutation();
 
   React.useEffect(() => {
-    refetch(); //Reset cache
+    // refetch(); //Reset cache
   }, []);
 
   const handleCreateClass = (form: IClassroomBody) => {

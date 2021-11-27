@@ -18,7 +18,6 @@ import { useClassroomCtx, useCopyToClipboard } from 'components';
 import React from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useGetAssignmentByIdQuery } from 'services';
-import { CriteriaDetails } from './CriteriaDetails';
 import { assignmentDetailsSx } from './style';
 
 const AssignmentDetails = () => {
@@ -88,7 +87,7 @@ const AssignmentDetails = () => {
               <Box className="htmlContainer">
                 <div dangerouslySetInnerHTML={{ __html: data.instructions }} />
               </Box>
-              <CriteriaDetails criterias={data.grade_criterias} />
+              {/* <CriteriaDetails criterias={data.grade_criterias} /> */}
               <Divider className="divider" />
             </Box>
           </Grid>

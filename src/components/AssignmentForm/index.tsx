@@ -23,9 +23,8 @@ import React from 'react';
 
 import { useNavigate, useParams } from 'react-router';
 import { formSx } from './style';
-import { GradeStructure } from './GradeStructure';
 import { AssignmentFormProps } from './type';
-import { IAssignmentBody, IAssignmentTopic } from 'common/interfaces';
+import { IAssignmentBody } from 'common/interfaces';
 import { toast } from 'react-toastify';
 
 const getTommorrowDate = (): number => {
@@ -34,69 +33,28 @@ const getTommorrowDate = (): number => {
   return day.getTime();
 };
 
-const getSelectedTopic = (topics: IAssignmentTopic[], currentTopicId: string | undefined): number => {
-  if (!currentTopicId) return -1;
-  return topics.findIndex((t: IAssignmentTopic) => t._id?.toString() === currentTopicId);
-};
-
 const validateForm = (form: IAssignmentBody) => {
   if (form.title === '') return [false, 'Title cannot be empty'];
-  if (form.grade_criterias.length > 0) {
-    const invalidInputIndex = form.grade_criterias.findIndex((c) => c.name === '' || c.points === '');
-    if (invalidInputIndex !== -1) return [false, `Please fill both field for grade criteria#${invalidInputIndex}`];
-  }
-  if (form.grade_criterias.length > 0 && form.total_points === undefined)
-    return [false, 'Total point cannot be disabled'];
 
-  let totalPoint = 0;
-  for (let criteria of form.grade_criterias) totalPoint += Number(criteria.points);
-  if (form?.total_points !== undefined && form.total_points < totalPoint)
-    return [false, 'Total point must >= criteria grades'];
   return [true, null];
 };
 
-export const AssignmentForm = ({
-  formData,
-  topics,
-  isLoading,
-  handleChange,
-  handleCreateTopic,
-  onSubmit,
-  onReset,
-}: AssignmentFormProps) => {
+export const AssignmentForm = ({ formData, isLoading, handleChange, onSubmit, onReset }: AssignmentFormProps) => {
   const { id } = useParams<'id'>();
   const navigate = useNavigate();
-  const [inputTopic, setInputTopic] = React.useState<string>('');
-  const [isCreatingTopic, setIsCreatingTopic] = React.useState<boolean>(false);
-  const [disableGrading, setDisableGrading] = React.useState<boolean>(false);
   const [disableDueDate, setDisableDueDate] = React.useState<boolean>(false);
-  const [selection, setSelection] = React.useState<number>(getSelectedTopic(topics, formData?.topic));
   const trigger = useScrollTrigger({
     disableHysteresis: true,
     threshold: 0,
   });
 
   React.useEffect(() => {
-    setDisableGrading(!Boolean(formData?.total_points));
     setDisableDueDate(!Boolean(formData?.due_date));
   }, [formData]);
-
-  const handleSelectTopic = (ev: any) => {
-    const value = ev?.target?.value;
-    setSelection(value);
-    if (value === -1) return;
-    if (value === -2) {
-      setIsCreatingTopic(true);
-      return;
-    }
-    handleChange('topic', topics[value]._id);
-  };
 
   const submitData = () => {
     const submission: IAssignmentBody = {
       ...formData,
-      topic: selection >= 0 ? topics[selection]._id : undefined,
-      total_points: disableGrading ? undefined : Number(formData.total_points),
       due_date: disableDueDate ? undefined : formData.due_date,
     };
     const [success, msg] = validateForm(submission);
@@ -110,19 +68,6 @@ export const AssignmentForm = ({
     const property = ev.currentTarget.name;
     const value = ev.currentTarget.value;
     handleChange(property, value);
-  };
-
-  const createTopicHandle = () => {
-    if (inputTopic !== '') {
-      handleCreateTopic(inputTopic || '');
-      setSelection(topics.length);
-      setIsCreatingTopic(false);
-      setInputTopic('');
-    }
-  };
-
-  const toggleGrading = (ev: any) => {
-    setDisableGrading((prv) => !prv);
   };
 
   const toggleDueDate = (ev: any) => {
@@ -177,23 +122,12 @@ export const AssignmentForm = ({
                   hintText={'Assignment instruction'}
                 />
               </Box>
-
-              {!disableGrading && (
-                <GradeStructure
-                  criterias={formData?.grade_criterias || []}
-                  handleChange={(criterias) => handleChange('grade_criterias', criterias)}
-                />
-              )}
             </Grid>
 
             <Grid item xs={4}>
               <Box sx={formSx.form}>
                 <Typography sx={formSx.formHeader}>Configuration</Typography>
 
-                <Stack direction="row">
-                  <Typography sx={formSx.formTitle}>Total point</Typography>
-                  <Checkbox size="small" checked={!disableGrading} onChange={toggleGrading} />
-                </Stack>
                 <TextField
                   id="total_points"
                   type="number"
@@ -201,7 +135,6 @@ export const AssignmentForm = ({
                   value={formData?.total_points || 0}
                   onChange={handleChangeEvent}
                   fullWidth
-                  disabled={disableGrading}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end" sx={{ fontSize: 12 }}>
@@ -223,54 +156,6 @@ export const AssignmentForm = ({
                     handleChange('due_date', time.getTime());
                   }}
                 />
-              </Box>
-
-              <Box sx={formSx.form}>
-                <Typography sx={formSx.formHeader}>Topic</Typography>
-                {isCreatingTopic ? (
-                  <TextField
-                    fullWidth
-                    autoFocus
-                    variant="outlined"
-                    label="Enter topic title"
-                    value={inputTopic}
-                    onChange={(ev) => setInputTopic(ev.target.value)}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle topic creation"
-                            onClick={createTopicHandle}
-                            edge="end"
-                            color="success"
-                          >
-                            <Check />
-                          </IconButton>
-                          <IconButton
-                            aria-label="toggle topic creation"
-                            onClick={() => setIsCreatingTopic(false)}
-                            edge="end"
-                            color="error"
-                          >
-                            <Close />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                ) : (
-                  <Select id="topic" value={selection} onChange={handleSelectTopic} fullWidth>
-                    <MenuItem value={-1}>No topic</MenuItem>
-                    {topics &&
-                      topics.length > 0 &&
-                      topics.map((topic: IAssignmentTopic, index) => (
-                        <MenuItem key={index} value={index}>
-                          {topic.title}
-                        </MenuItem>
-                      ))}
-                    <MenuItem value={-2}>Create topic</MenuItem>
-                  </Select>
-                )}
               </Box>
             </Grid>
           </Grid>
