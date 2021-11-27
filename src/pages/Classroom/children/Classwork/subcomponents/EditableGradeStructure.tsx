@@ -4,7 +4,7 @@ import {
   Collapse,
   Container,
   Divider,
-  Grid,
+  Link as ALink,
   LinearProgress,
   MenuItem,
   Menu,
@@ -16,52 +16,133 @@ import {
   Paper,
 } from '@mui/material';
 import { Box } from '@mui/system';
-import { IAssignment, UserRole } from 'common/interfaces';
+import { IAssignment, IAssignmentBody, UserRole } from 'common/interfaces';
 import Utils from 'common/utils';
 import { AssignmentItem, ConfirmDialog, useClassroomCtx } from 'components';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import React from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { useGetAssignmentsQuery, useRemoveAssignmentMutation } from 'services';
+import { useGetAssignmentsQuery, useRemoveAssignmentMutation, useUpdateAssignmentMutation } from 'services';
 import { gradeStructureSx } from './style';
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
+
+//A list of helper functions
+const reorder = (list: any[], fromIndex: number, toIndex: number): any[] => {
+  const result = Array.from(list);
+  const [removed] = result.splice(fromIndex, 1);
+  result.splice(toIndex, 0, removed);
+
+  return result;
+};
 
 export const EditableGradeStructure = () => {
   const { id } = useParams<'id'>();
-  const containerRef = React.useRef(null);
-  const { data, isLoading } = useGetAssignmentsQuery(id as string);
-  const [removeAssignment, { isLoading: isRemoving }] = useRemoveAssignmentMutation();
   const navigate = useNavigate();
+  const containerRef = React.useRef(null);
+  const { data: assignments, isLoading } = useGetAssignmentsQuery(id as string);
+  const [removeAssignment, { isLoading: isRemoving }] = useRemoveAssignmentMutation();
+  const [updateAssignment, { isLoading: isUpdating }] = useUpdateAssignmentMutation();
   const [expandItemKey, setExpandKey] = React.useState<string | null>(null);
-  const [removingId, setRemovingId] = React.useState<string | null>(null);
   const [sortMode, setSortMode] = React.useState<boolean>(false);
+  const [formData, setFormData] = React.useState<IAssignment[]>([]);
+  const [anchorMenu, setAnchorMenu] = React.useState<null | HTMLElement>(null);
+  const [targetIndex, setCurTargetIndex] = React.useState<number>(-1);
+
+  const [deletedIds, updateDeletedIds] = React.useState<string[]>([]);
+  const [confirmation, showConfirmation] = React.useState<boolean>();
+
+  React.useEffect(() => {
+    if (assignments) setFormData(assignments);
+  }, [assignments]);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, index: number) => {
+    setAnchorMenu(event.currentTarget);
+    setCurTargetIndex(index);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorMenu(null);
+    setCurTargetIndex(-1);
+  };
 
   const toggleExpand = (curExpandKey: string | null, key: string) => {
     if (curExpandKey === key) setExpandKey(null);
     else setExpandKey(key);
   };
 
-  const handleRemoveAssignment = (assignmentId: string) => {
-    removeAssignment({ id: id as string, assignmentId: assignmentId })
-      .unwrap()
-      .then(() => {
-        toast.success('Operation succeed');
-      })
-      .catch((err) => {
-        toast.error('Cannot remove assignment! ' + err.data);
-      });
+  const handleResetForm = () => {
+    setFormData(assignments || []);
+    updateDeletedIds([]);
+  };
+
+  const handleExitOrdering = () => {
+    handleResetForm();
+    setSortMode(false);
   };
 
   const handleDragEnd = (result: any) => {
     // dropped outside the list
-    if (!result.destination) {
-      return;
-    }
+    if (!result.destination) return;
+
+    const source = result.source.index;
+    const dest = result.destination.index;
+
+    //Droppped at the same location
+    if (source === dest) return;
+
+    //Update state
+    setSortMode(true);
+    setFormData((previous) => reorder(previous, source, dest));
+  };
+
+  const handleMoveToTop = (index: number) => {
+    setFormData((prv) => reorder(prv, index, 0));
+    setAnchorMenu(null);
+    setSortMode(true);
+  };
+
+  const handleMoveToBottom = (index: number) => {
+    setFormData((prv) => reorder(prv, index, prv.length - 1));
+    setAnchorMenu(null);
+    setSortMode(true);
+  };
+
+  const handleRemoveAssignment = (index: number) => {
+    updateDeletedIds((prv) => [...prv, formData[index]._id as string]);
+    setFormData((prv) => {
+      const updated = [...prv];
+      updated.splice(index, 1);
+      return updated;
+    });
+    setAnchorMenu(null);
     setSortMode(true);
   };
 
   const handleCreateAssignment = () => {
     navigate(`/classroom/${id}/work/create`);
+  };
+
+  const submitingChanges = async () => {
+    if (!assignments || !formData) return;
+    for (let i = 0; i < formData.length; i++) {
+      if (i < assignments.length && formData[i]._id === assignments[i]._id) continue;
+      console.log({ id: id as string, assignmentId: formData[i]._id as string, body: { ui_index: i } });
+      await updateAssignment({ id: id as string, assignmentId: formData[i]._id as string, body: { ui_index: i } });
+    }
+    for (const assignmentId of deletedIds) await removeAssignment({ id: id as string, assignmentId: assignmentId });
+  };
+
+  const handleSavingReOrder = () => {
+    submitingChanges()
+      .then(() => {
+        toast.success('Operation succeed');
+      })
+      .catch((err) => {
+        toast.error('Cannot Updating! ' + err.data);
+      });
+    showConfirmation(false);
+    setSortMode(false);
   };
 
   return (
@@ -84,21 +165,21 @@ export const EditableGradeStructure = () => {
           <Slide direction="right" in={sortMode} container={containerRef.current}>
             <Stack direction="row" alignItems="center" justifyContent="space-between">
               <Typography sx={gradeStructureSx.formHeader} color="secondary">
-                Reorder assignments
+                Edit mode
               </Typography>
 
               <Stack direction="row" spacing={1}>
-                <Tooltip title="Reset ordering">
-                  <IconButton color="secondary">
-                    <RestartAlt />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Exit re-ordering">
-                  <IconButton color="secondary" onClick={() => setSortMode(false)}>
+                <Tooltip title="Discard changes">
+                  <IconButton color="secondary" onClick={handleExitOrdering}>
                     <Close />
                   </IconButton>
                 </Tooltip>
-                <Button endIcon={<Save />} variant="contained" color="secondary">
+                <Tooltip title="Reset ordering">
+                  <IconButton color="secondary" onClick={handleResetForm}>
+                    <RestartAlt />
+                  </IconButton>
+                </Tooltip>
+                <Button endIcon={<Save />} variant="contained" color="secondary" onClick={() => showConfirmation(true)}>
                   Save
                 </Button>
               </Stack>
@@ -115,8 +196,8 @@ export const EditableGradeStructure = () => {
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
-                {data &&
-                  data.map((a: IAssignment, indx: number) => (
+                {formData.length > 0 ? (
+                  formData.map((a: IAssignment, indx: number) => (
                     <Draggable draggableId={'row-' + indx} index={indx} key={indx}>
                       {(dragProvided) => (
                         <div
@@ -130,7 +211,10 @@ export const EditableGradeStructure = () => {
                                 <Tooltip title="Drag to reorder">
                                   <DragIndicatorSharp className="dragIcon" />
                                 </Tooltip>
-                                <IconButton size="small" onClick={() => {}}>
+                                <IconButton
+                                  size="small"
+                                  onClick={(ev: React.MouseEvent<HTMLElement>) => handleMenuOpen(ev, indx)}
+                                >
                                   <MoreHorizRounded />
                                 </IconButton>
                               </Box>
@@ -140,8 +224,18 @@ export const EditableGradeStructure = () => {
                                 expanded={expandItemKey === a._id}
                                 onClick={() => toggleExpand(expandItemKey, a._id || '')}
                                 actionBtns={[
-                                  <Button color="primary">View assignment</Button>,
-                                  <Button color="secondary">Edit assignment</Button>,
+                                  <Button
+                                    color="primary"
+                                    onClick={() => navigate(`/classroom/${id}/work/details/${a._id}`)}
+                                  >
+                                    View assignment
+                                  </Button>,
+                                  <Button
+                                    color="secondary"
+                                    onClick={() => navigate(`/classroom/${id}/work/edit/${a._id}`)}
+                                  >
+                                    Edit assignment
+                                  </Button>,
                                 ]}
                               />
                             </Box>
@@ -149,7 +243,15 @@ export const EditableGradeStructure = () => {
                         </div>
                       )}
                     </Draggable>
-                  ))}
+                  ))
+                ) : (
+                  <Typography sx={{ fontSize: 14, color: 'grey.400', fontStyle: 'italic' }}>
+                    Not found assignment!
+                    <ALink color={sortMode ? 'secondary' : 'primary'}>
+                      <Link to={`/classroom/${id}/work/create`}>Click here to create assignment</Link>
+                    </ALink>
+                  </Typography>
+                )}
                 {provided.placeholder}
               </Box>
             )}
@@ -157,16 +259,38 @@ export const EditableGradeStructure = () => {
         </DragDropContext>
       </Container>
 
-      <ConfirmDialog
-        open={removingId !== null}
-        handleClose={() => setRemovingId(null)}
-        title={'Deletion alert'}
-        description={'Remove this assignment? Note that you cannot revert this process!'}
-        onConfirm={() => {
-          handleRemoveAssignment(removingId as string);
-          setRemovingId(null);
+      {confirmation && (
+        <ConfirmDialog
+          open={confirmation}
+          handleClose={() => showConfirmation(false)}
+          title={'Proceed updating'}
+          description={
+            deletedIds.length === 0
+              ? 'Finish organizing the assignment order?'
+              : "⚠We detected some some assignments deletion ⚠! Please check again if it was an mistakes! Press 'Agree' to proceed with the update & deletion?"
+          }
+          onConfirm={() => {
+            handleSavingReOrder();
+            // setRemovingId(null);
+          }}
+        />
+      )}
+
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorMenu}
+        open={Boolean(anchorMenu)}
+        onClose={handleMenuClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
         }}
-      />
+      >
+        <MenuItem onClick={() => handleMoveToTop(targetIndex)}>Move to the top</MenuItem>
+        <MenuItem onClick={() => handleMoveToBottom(targetIndex)}>Move to the bottom</MenuItem>
+        <MenuItem onClick={() => handleRemoveAssignment(targetIndex)} sx={{ color: 'error' }}>
+          Remove
+        </MenuItem>
+      </Menu>
     </React.Fragment>
   );
 };

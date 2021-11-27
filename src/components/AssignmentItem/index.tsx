@@ -14,6 +14,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import Utils from 'common/utils';
 import React from 'react';
 import { accordionSx } from './style';
 import { AccordionItemProps } from './type';
@@ -37,13 +38,13 @@ export const AssignmentItem = ({ data, expanded, onClick, actionBtns, colorMode 
         </Stack>
         <Stack direction="row" alignItems="center" gap={1} sx={{ ml: 'auto' }}>
           <Typography sx={accordionSx.time}>
-            {data.due_date ? new Date(data.due_date).toLocaleString() : 'No due date'}
+            {data.due_date ? 'Due at ' + Utils.displayDate(data.due_date) : 'No due date'}
           </Typography>
         </Stack>
       </AccordionSummary>
 
       <AccordionDetails>
-        <Typography sx={accordionSx.time}>{new Date(data.created_at as number).toLocaleString()}</Typography>
+        <Typography sx={accordionSx.time}>{Utils.displayDate(data.created_at as number)}</Typography>
 
         <Grid container spacing={2} width="100%" sx={{ m: 0 }}>
           <Grid item xs={9}>

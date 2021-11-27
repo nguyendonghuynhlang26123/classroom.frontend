@@ -1,3 +1,5 @@
+import { timeStamp } from 'console';
+
 class Utils {
   static filterArrayByString(mainArr: any[], searchText: string): any[] {
     if (searchText === '') {
@@ -153,6 +155,11 @@ class Utils {
   static isLoading(...args: boolean[]): boolean {
     for (var i = 0; i < args.length; ++i) if (!args[i]) return false;
     return true;
+  }
+
+  static displayDate(timestamp: number): string {
+    let d = new Date(timestamp);
+    return [d.getDate(), d.getMonth() + 1, d.getFullYear()].join('/') + ' ' + [d.getHours(), d.getMinutes()].join(':');
   }
 }
 

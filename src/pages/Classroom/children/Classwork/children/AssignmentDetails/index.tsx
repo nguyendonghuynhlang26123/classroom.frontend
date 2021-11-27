@@ -14,6 +14,7 @@ import {
   Typography,
 } from '@mui/material';
 import { UserRole } from 'common/interfaces';
+import Utils from 'common/utils';
 import { useClassroomCtx, useCopyToClipboard } from 'components';
 import React from 'react';
 import { useNavigate, useParams } from 'react-router';
@@ -22,7 +23,6 @@ import { assignmentDetailsSx } from './style';
 
 const AssignmentDetails = () => {
   const { role } = useClassroomCtx();
-  console.log('log ~ file: index.tsx ~ line 29 ~ AssignmentDetails ~ role', role);
   const navigate = useNavigate();
   const { id, assignmentId } = useParams();
   const [, copyFn] = useCopyToClipboard();
@@ -69,15 +69,13 @@ const AssignmentDetails = () => {
               </Stack>
 
               <Box sx={assignmentDetailsSx.subheader}>
-                <Typography sx={assignmentDetailsSx.time}>
-                  {new Date(data.created_at as number).toLocaleString()}
-                </Typography>
+                <Typography sx={assignmentDetailsSx.time}>{Utils.displayDate(data.created_at as number)}</Typography>
                 <Stack direction="row" justifyContent="space-between">
                   <Typography className="total_point">
                     {data.total_points ? `${data.total_points} point` : 'No grading'}
                   </Typography>
                   <Typography className="total_point">
-                    {data.due_date ? new Date(data.due_date as number).toLocaleString() : 'No due date'}
+                    {data.due_date ? 'Due at ' + Utils.displayDate(data.due_date) : 'No due date'}
                   </Typography>
                 </Stack>
                 <Divider className="divider" />
