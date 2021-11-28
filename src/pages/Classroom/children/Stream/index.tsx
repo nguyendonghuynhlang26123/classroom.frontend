@@ -1,5 +1,16 @@
 import { InfoOutlined, Info } from '@mui/icons-material';
-import { Box, Card, CardContent, CardMedia, IconButton, Stack, Collapse, Typography, Tooltip } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  IconButton,
+  Stack,
+  Collapse,
+  Typography,
+  Tooltip,
+  Container,
+} from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { UserRole } from 'common/interfaces';
 import React from 'react';
@@ -19,7 +30,7 @@ const ClassroomStream = () => {
   return (
     <Collapse timeout={500} appear={true} in={true}>
       {classData && role && (
-        <Box minHeight="100vh">
+        <Container>
           {/* BANNER */}
           <Card sx={bannerSx.card} elevation={details ? 4 : 0}>
             <CardMedia component="img" height="240" image={classData.image} alt="bg" />
@@ -64,7 +75,7 @@ const ClassroomStream = () => {
               </CardContent>
             </Collapse>
           </Card>
-        </Box>
+        </Container>
       )}
     </Collapse>
   );

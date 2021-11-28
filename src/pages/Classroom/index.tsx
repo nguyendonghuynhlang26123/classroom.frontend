@@ -54,9 +54,10 @@ const ClassroomBoard = () => {
           <>
             <Box sx={navSx.tabsContainer}>
               <Tabs value={tabValue} onChange={handleChange} aria-label="basic tabs example">
-                <Tab label="Stream" id="one" onClick={() => navigate('.')} />
-                <Tab label="Classwork" id="two" onClick={() => navigate('./work')} />
-                <Tab label="People" id="three" onClick={() => navigate('./people')} />
+                <Tab label="Stream" id="stream" onClick={() => navigate('.')} />
+                <Tab label="Classwork" id="work" onClick={() => navigate('./work')} />
+                <Tab label="People" id="people" onClick={() => navigate('./people')} />
+                <Tab label="Grading" id="people" onClick={() => navigate('./grade')} />
               </Tabs>
             </Box>
             {loading && <LinearProgress sx={navSx.progressBar} />}
@@ -75,11 +76,11 @@ const ClassroomBoard = () => {
         </Box>
       </Navbar>
       {data && role && (
-        <Container maxWidth={false} sx={mainSx.container}>
+        <Box sx={mainSx.container}>
           <ClassroomContextProvider role={role} classData={data}>
             <Outlet />
           </ClassroomContextProvider>
-        </Container>
+        </Box>
       )}
     </React.Fragment>
   );
