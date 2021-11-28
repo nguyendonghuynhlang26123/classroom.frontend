@@ -8,20 +8,7 @@ import { toast } from 'react-toastify';
 const InvitePage = () => {
   const { search } = useLocation();
   const navigate = useNavigate();
-  const [acceptInvitationSubmit, { data, isSuccess, error }] = useAcceptInvitationMutation();
-
-  React.useEffect(() => {
-    navigate('/classroom/' + data._id);
-  }, [isSuccess]);
-
-  React.useEffect(() => {
-    const err = error as any;
-    if (err.status === 409) {
-      toast.warn(
-        'Cannot join process this invitation link! Please check your email again to match the email that received the invitation link ',
-      );
-    }
-  }, [error]);
+  const [acceptInvitationSubmit, { error }] = useAcceptInvitationMutation();
 
   React.useEffect(() => {
     if (search) {
@@ -33,7 +20,21 @@ const InvitePage = () => {
         class_id: classId,
         code,
         role,
-      });
+      })
+        .unwrap()
+        .then(() => {
+          toast.success('Operation suceeed! You are registered in this class!');
+          navigate('/classroom/' + classId);
+        })
+        .catch((error) => {
+          const err = error as any;
+          if (err.status === 409) {
+            toast.warn(
+              'Cannot join this class via this invitation link! Please check your email again to match the email that received the invitation link ',
+            );
+          } else toast.warn('Cannot join process this invitation link! ' + err.data);
+          navigate('/not-found');
+        });
     } else navigate('/');
   }, []);
 

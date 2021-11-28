@@ -3,9 +3,12 @@ import { useAuth } from '../context';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProfileBtnProps } from './type';
+import { useAppDispatch } from 'store/hooks';
+import { cleanUp } from 'store/slices';
 
 export const ProfileBtn = ({ fname, imageUrl }: ProfileBtnProps) => {
   const { logOut } = useAuth();
+  const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -20,6 +23,7 @@ export const ProfileBtn = ({ fname, imageUrl }: ProfileBtnProps) => {
   const handleLogOut = () => {
     setAnchorEl(null);
     navigate('/');
+    dispatch(cleanUp());
     logOut();
   };
 

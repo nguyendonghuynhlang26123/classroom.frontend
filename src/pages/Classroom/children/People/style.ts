@@ -2,25 +2,29 @@ import { MultipleSxTypes } from 'common/type';
 
 export const peopleTabSx: MultipleSxTypes = {
   root: {
-    maxWidth: '650px',
+    '& .MuiList-root': {
+      mb: 5,
+    },
   },
 
-  header: {
-    py: 1,
-    mt: {
-      md: 0,
-      xs: 4,
-    },
+  invite: {
     px: 2,
-    borderBottom: 1,
-    borderColor: 'primary.main',
-    '& .MuiTypography-root': {
-      color: 'primary.main',
-      fontSize: 32,
+    py: 1,
+    border: 1,
+    borderRadius: 2,
+    borderColor: 'divider',
+    '& .MuiBox-root': {
+      whiteSpace: 'nowrap',
+      width: '100%',
+      overflow: 'hidden',
     },
-    '& .MuiButtonBase-root': {
-      color: 'primary.main',
-      width: 48,
+
+    '& .link': {
+      fontSize: 12,
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
+      color: 'grey.500',
+      fontStyle: 'italic',
     },
   },
 };

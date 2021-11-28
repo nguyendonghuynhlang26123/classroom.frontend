@@ -5,6 +5,7 @@ import { UserRole } from 'common/interfaces';
 import React from 'react';
 import { bannerSx } from './style';
 import { useCopyToClipboard, useClassroomCtx } from 'components';
+import Utils from 'common/utils';
 
 const ClassroomStream = () => {
   const { classData, role } = useClassroomCtx();
@@ -40,9 +41,7 @@ const ClassroomStream = () => {
                     <Tooltip title={!copiedText ? 'Copy invitation link' : 'Copied'}>
                       <IconButton
                         onClick={() => {
-                          copy(
-                            `${window.location.origin}/#/classes/join?classId=${classData._id}&role=STUDENT&code=${classData.code}`,
-                          );
+                          copy(Utils.getInvitationLinkFormat(classData._id as string, classData.code));
                         }}
                       >
                         <ContentCopyIcon sx={{ fontSize: 14 }} />

@@ -161,6 +161,10 @@ class Utils {
     let d = new Date(timestamp);
     return [d.getDate(), d.getMonth() + 1, d.getFullYear()].join('/') + ' ' + [d.getHours(), d.getMinutes()].join(':');
   }
+
+  static getInvitationLinkFormat(id: string, code: string): string {
+    return `${window.location.origin}/#/classes/join?classId=${id}&role=STUDENT&code=${code}`;
+  }
 }
 
 export default Utils;

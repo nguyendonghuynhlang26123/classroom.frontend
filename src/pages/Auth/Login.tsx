@@ -57,6 +57,7 @@ const LoginPage = () => {
       setLoading(true);
       signIn(values).catch((e) => {
         toast.warning('Invalid credentials');
+        setLoading(false);
       });
     },
   });

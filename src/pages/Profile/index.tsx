@@ -50,10 +50,13 @@ const UserProfile = () => {
 
   const handleUpdateData = async (id: string, values: IUserBody, file: any) => {
     let form_data = new FormData();
-    if (file) form_data.append('image', file);
-    const uploaded = await uploadAvatar(form_data).unwrap();
-    const updated = await updateProfile({ id: id, body: { ...values, avatar: uploaded.file_name } });
-    return updated;
+
+    if (file) {
+      form_data.append('image', file);
+      const uploaded = await uploadAvatar(form_data).unwrap();
+      return await updateProfile({ id: id, body: { ...values, avatar: uploaded.file_name } });
+    }
+    return await updateProfile({ id: id, body: { ...values, avatar: undefined } });
   };
 
   const handleSelectFile = (ev: any) => {
