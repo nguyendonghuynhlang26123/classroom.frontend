@@ -20,7 +20,20 @@ export const classStudentApi = createApi({
       query: ({ class_id, body }) => _request.put(`classes/${class_id}/students/account-sync`, body),
       invalidatesTags: [{ type: CLASS_STUDENT_TAG, id: 'DATA' }],
     }),
+    uploadStudentList: builder.mutation<any, { class_id: string; body: any }>({
+      query: ({ class_id, body }) => _request.post(`classes/${class_id}/students`, body),
+      invalidatesTags: [{ type: CLASS_STUDENT_TAG, id: 'DATA' }],
+    }),
+    uploadAndUpdateStudentList: builder.mutation<any, { class_id: string; body: any }>({
+      query: ({ class_id, body }) => _request.put(`classes/${class_id}/students`, body),
+      invalidatesTags: [{ type: CLASS_STUDENT_TAG, id: 'DATA' }],
+    }),
   }),
 });
 
-export const { useGetAllStudentsQuery, useUpdateAccountSyncMutation } = classStudentApi;
+export const {
+  useGetAllStudentsQuery,
+  useUpdateAccountSyncMutation,
+  useUploadAndUpdateStudentListMutation,
+  useUploadStudentListMutation,
+} = classStudentApi;

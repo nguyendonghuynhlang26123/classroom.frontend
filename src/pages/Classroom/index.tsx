@@ -1,17 +1,23 @@
-import { Box, Container, LinearProgress, Link, Tab, Tabs, Typography } from '@mui/material';
+import { Box, IconButton, LinearProgress, Link, Tab, Tabs, Typography } from '@mui/material';
 import { ClassroomContextProvider, Navbar, ProfileBtn, useAuth, useLoading } from 'components';
 import { drawerItemConfigs } from 'configs';
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
-import { useGetClassDetailsQuery, useGetMyRoleQuery } from 'services/api';
+import {
+  useGetClassDetailsQuery,
+  useGetMyRoleQuery,
+  useGetAllStudentsQuery,
+  useUpdateClassMutation,
+  useUploadStudentListMutation,
+} from 'services/api';
 import { mainSx, navSx } from './style';
 import { ClassroomSetting } from './subcomponents';
 import { Outlet, useLocation } from 'react-router';
 import { matchPath } from 'react-router-dom';
-
 import Utils from 'common/utils';
 import { toast } from 'react-toastify';
+import { IClassroomBody, IImportedStudents, UserRole } from 'common/interfaces';
 
 const getTabState = (pathName: string) => {
   if (matchPath('/classroom/:id/people', pathName)) return 2;
@@ -46,6 +52,7 @@ const ClassroomBoard = () => {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
+
   return (
     <React.Fragment>
       <Navbar
@@ -71,7 +78,7 @@ const ClassroomBoard = () => {
         </Typography>
 
         <Box>
-          <ClassroomSetting />
+          {role !== UserRole.STUDENT && <ClassroomSetting classData={data as IClassroomBody} />}
           {userData && <ProfileBtn fname={userData.first_name} imageUrl={userData.avatar} />}
         </Box>
       </Navbar>

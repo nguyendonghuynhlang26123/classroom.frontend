@@ -5,6 +5,11 @@ export const settingModalSx: MultipleSxTypes = {
     width: '100vw',
     height: '100vh',
     bgcolor: 'background.paper',
+
+    '& .MuiButton-root': {
+      cursor: 'pointer',
+      py: 0.5,
+    },
   },
 
   toolbar: {
@@ -37,4 +42,6 @@ export const settingModalSx: MultipleSxTypes = {
       my: 1,
     },
   },
+
+  alertContainer: { display: 'flex', justifyContent: 'flex-end', ml: 'auto', alignItems: 'center' },
 };

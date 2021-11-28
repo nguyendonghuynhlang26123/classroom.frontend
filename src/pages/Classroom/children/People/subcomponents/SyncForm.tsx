@@ -32,7 +32,6 @@ export const SyncForm = ({ open, selectedId, students, handleClose, onSubmit }: 
   React.useEffect(() => {
     if (selectedId) setSelected(selectedId);
   }, [selectedId]);
-  console.log('log ~ file: SyncForm.tsx ~ line 34 ~ React.useEffect ~ selectedId', selected);
 
   const handleChange = (event: SelectChangeEvent) => {
     setSelected(event.target.value as string);

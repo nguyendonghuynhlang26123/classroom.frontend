@@ -7,7 +7,14 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { ConfirmDialogProps } from './type';
 
-export const ConfirmDialog = ({ open, handleClose, title, description, onConfirm }: ConfirmDialogProps) => {
+export const ConfirmDialog = ({
+  open,
+  handleClose,
+  title,
+  description,
+  onConfirm,
+  alwayShow = false,
+}: ConfirmDialogProps) => {
   return (
     <Dialog
       open={open}
@@ -20,7 +27,7 @@ export const ConfirmDialog = ({ open, handleClose, title, description, onConfirm
         <DialogContentText id="alert-dialog-description">{description}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Disagree</Button>
+        {!alwayShow && <Button onClick={handleClose}>Disagree</Button>}
         <Button onClick={onConfirm} autoFocus>
           Agree
         </Button>
