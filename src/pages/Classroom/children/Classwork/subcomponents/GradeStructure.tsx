@@ -1,4 +1,5 @@
 import { Button, Collapse, Container, Divider, Stack, Typography } from '@mui/material';
+import { Box } from '@mui/system';
 import { IAssignment } from 'common/interfaces';
 import { AssignmentItem, useClassroomCtx } from 'components';
 import React from 'react';
@@ -27,18 +28,19 @@ export const GradeStructure = () => {
       {data &&
         data.map((a: IAssignment, idx: number) => (
           <React.Fragment key={a._id}>
-            <AssignmentItem
-              data={a}
-              expanded={expandItemKey === a._id}
-              onClick={() => toggleExpand(expandItemKey, a._id || '')}
-              colorMode="primary"
-              actionBtns={[
-                <Button color="primary" onClick={() => navigate(`/classroom/${id}/work/details/${a._id}`)}>
-                  View assignment
-                </Button>,
-              ]}
-            />
-            {data.length > idx + 1 && <Divider />}
+            <Box sx={{ border: 1, borderRadius: 2, borderColor: 'divider', overflow: 'hidden', my: 1 }}>
+              <AssignmentItem
+                data={a}
+                expanded={expandItemKey === a._id}
+                onClick={() => toggleExpand(expandItemKey, a._id || '')}
+                colorMode="primary"
+                actionBtns={[
+                  <Button color="primary" onClick={() => navigate(`/classroom/${id}/work/details/${a._id}`)}>
+                    View assignment
+                  </Button>,
+                ]}
+              />
+            </Box>
           </React.Fragment>
         ))}
     </Container>

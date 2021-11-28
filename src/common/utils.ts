@@ -153,8 +153,8 @@ class Utils {
 
   // Check if list of arguments are all true
   static isLoading(...args: boolean[]): boolean {
-    for (var i = 0; i < args.length; ++i) if (!args[i]) return false;
-    return true;
+    for (var i = 0; i < args.length; ++i) if (args[i]) return true;
+    return false;
   }
 
   static displayDate(timestamp: number): string {

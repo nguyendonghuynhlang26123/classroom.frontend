@@ -18,10 +18,10 @@ import {
 import { Box } from '@mui/system';
 import { IAssignment, IAssignmentBody, UserRole } from 'common/interfaces';
 import Utils from 'common/utils';
-import { AssignmentItem, ConfirmDialog, useClassroomCtx } from 'components';
+import { AssignmentItem, ConfirmDialog, useClassroomCtx, useLoading } from 'components';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import React from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import { useGetAssignmentsQuery, useRemoveAssignmentMutation, useUpdateAssignmentMutation } from 'services';
 import { gradeStructureSx } from './style';
 import { toast } from 'react-toastify';
@@ -52,9 +52,22 @@ export const EditableGradeStructure = () => {
   const [deletedIds, updateDeletedIds] = React.useState<string[]>([]);
   const [confirmation, showConfirmation] = React.useState<boolean>();
 
+  const [loading, setLoading] = useLoading();
+
   React.useEffect(() => {
     if (assignments) setFormData(assignments);
   }, [assignments]);
+
+  React.useEffect(() => {
+    setLoading(Utils.isLoading(isLoading, isRemoving, isUpdating));
+    console.log(
+      'log ~ file: EditableGradeStructure.tsx ~ line 63 ~ React.useEffect ~ isLoading, isRemoving, isUpdating',
+      isLoading,
+      isRemoving,
+      isUpdating,
+      Utils.isLoading(isLoading, isRemoving, isUpdating),
+    );
+  }, [isLoading, isRemoving, isUpdating]);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, index: number) => {
     setAnchorMenu(event.currentTarget);
@@ -179,7 +192,13 @@ export const EditableGradeStructure = () => {
                     <RestartAlt />
                   </IconButton>
                 </Tooltip>
-                <Button endIcon={<Save />} variant="contained" color="secondary" onClick={() => showConfirmation(true)}>
+                <Button
+                  endIcon={<Save />}
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => showConfirmation(true)}
+                  disabled={loading}
+                >
                   Save
                 </Button>
               </Stack>
@@ -247,9 +266,7 @@ export const EditableGradeStructure = () => {
                 ) : (
                   <Typography sx={{ fontSize: 14, color: 'grey.400', fontStyle: 'italic' }}>
                     Not found assignment!
-                    <ALink color={sortMode ? 'secondary' : 'primary'}>
-                      <Link to={`/classroom/${id}/work/create`}>Click here to create assignment</Link>
-                    </ALink>
+                    <Link to={`/classroom/${id}/work/create`}>Click here to create assignment</Link>
                   </Typography>
                 )}
                 {provided.placeholder}

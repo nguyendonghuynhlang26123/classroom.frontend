@@ -1,10 +1,22 @@
 import React from 'react';
 import { settingModalSx } from './style';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Box, Grow, IconButton, Modal, Toolbar, Typography, Container, TextField, Button } from '@mui/material';
+import {
+  Box,
+  Grow,
+  IconButton,
+  Modal,
+  Toolbar,
+  Typography,
+  Container,
+  TextField,
+  Button,
+  LinearProgress,
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { useLoading } from 'components';
 
 const validationSchema = yup.object({
   title: yup
@@ -27,6 +39,7 @@ const validationSchema = yup.object({
 });
 export const ClassroomSetting = ({}) => {
   const [modal, showModal] = React.useState<boolean>(false);
+  const [loading, setLoading] = useLoading();
   const formik = useFormik({
     initialValues: {
       title: '',
@@ -36,7 +49,10 @@ export const ClassroomSetting = ({}) => {
     },
     validateOnBlur: true,
     validationSchema: validationSchema,
-    onSubmit: (values) => {},
+    onSubmit: (values) => {
+      console.log('log ~ file: index.tsx ~ line 53 ~ ClassroomSetting ~ values', values);
+      setLoading(true);
+    },
   });
 
   return (
@@ -72,8 +88,11 @@ export const ClassroomSetting = ({}) => {
               </IconButton>
               <Typography variant="body1">Classroom setting</Typography>
 
-              <Button variant="contained">Save</Button>
+              <Button variant="contained" onClick={() => formik.submitForm()}>
+                Save
+              </Button>
             </Toolbar>
+            {loading && <LinearProgress sx={{ width: '100%' }} />}
 
             <Container maxWidth={false} sx={settingModalSx.container}>
               <Box

@@ -2,7 +2,7 @@ import { Box, LinearProgress, Typography } from '@mui/material';
 import type { IClassroomBody } from 'common/interfaces';
 import { IClassroom, UserRole } from 'common/interfaces';
 import Utils from 'common/utils';
-import { Navbar, ProfileBtn, useAuth } from 'components';
+import { Navbar, ProfileBtn, useAuth, useLoading } from 'components';
 import { drawerItemConfigs } from 'configs';
 import React from 'react';
 import { useNavigate } from 'react-router';
@@ -14,13 +14,14 @@ import { toast } from 'react-toastify';
 const Dashboard = () => {
   const navigate = useNavigate();
   const { userData } = useAuth();
-  const { data, refetch, isLoading } = useGetAllClassesQuery();
+  const { data, isLoading } = useGetAllClassesQuery();
   const [createClass, { isLoading: isUpdating }] = useCreateClassMutation();
   const [joinClass, { isLoading: isJoining }] = useJoinClassMutation();
+  const [loading, setLoading] = useLoading();
 
   React.useEffect(() => {
-    // refetch(); //Reset cache
-  }, []);
+    setLoading(Utils.isLoading(isLoading, isUpdating, isJoining));
+  }, [isLoading, isUpdating, isJoining]);
 
   const handleCreateClass = (form: IClassroomBody) => {
     createClass(form)
@@ -39,10 +40,7 @@ const Dashboard = () => {
 
   return (
     <React.Fragment>
-      <Navbar
-        items={drawerItemConfigs}
-        toolbarComponents={<>{Utils.isLoading(isLoading, isUpdating, isJoining) && <LinearProgress />}</>}
-      >
+      <Navbar items={drawerItemConfigs} toolbarComponents={<>{loading && <LinearProgress />}</>}>
         <>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             🎓 Moorssalc
@@ -54,7 +52,7 @@ const Dashboard = () => {
           </div>
         </>
       </Navbar>
-      {!isLoading && data && (
+      {!loading && data && (
         <Box sx={bodyContainer}>
           <Box sx={cardContainer}>
             {data.map((c: IClassroom, index: number) => (

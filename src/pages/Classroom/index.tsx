@@ -1,5 +1,5 @@
 import { Box, Container, LinearProgress, Link, Tab, Tabs, Typography } from '@mui/material';
-import { ClassroomContextProvider, Navbar, ProfileBtn, useAuth } from 'components';
+import { ClassroomContextProvider, Navbar, ProfileBtn, useAuth, useLoading } from 'components';
 import { drawerItemConfigs } from 'configs';
 import React from 'react';
 import { useNavigate } from 'react-router';
@@ -26,12 +26,10 @@ const ClassroomBoard = () => {
   const navigate = useNavigate();
   const [tabValue, setTabValue] = React.useState<number>(getTabState(pathname));
 
-  const { data, error, isLoading } = useGetClassDetailsQuery(id as string);
-  const { data: role, isLoading: roleIsLoading } = useGetMyRoleQuery(id as string);
+  const { data, error, isLoading: fetchingClassData } = useGetClassDetailsQuery(id as string);
+  const { data: role, isLoading: fetchingRole } = useGetMyRoleQuery(id as string);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
-  };
+  const [loading, setLoading] = useLoading();
 
   //Error
   React.useEffect(() => {
@@ -41,6 +39,13 @@ const ClassroomBoard = () => {
     }
   }, [error]);
 
+  React.useEffect(() => {
+    setLoading(Utils.isLoading(fetchingRole, fetchingClassData));
+  }, [fetchingClassData, fetchingRole]);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
   return (
     <React.Fragment>
       <Navbar
@@ -54,7 +59,7 @@ const ClassroomBoard = () => {
                 <Tab label="People" id="three" onClick={() => navigate('./people')} />
               </Tabs>
             </Box>
-            {Utils.isLoading(isLoading, roleIsLoading) && <LinearProgress sx={navSx.progressBar} />}
+            {loading && <LinearProgress sx={navSx.progressBar} />}
           </>
         }
       >
@@ -69,7 +74,7 @@ const ClassroomBoard = () => {
           {userData && <ProfileBtn fname={userData.first_name} imageUrl={userData.avatar} />}
         </Box>
       </Navbar>
-      {!isLoading && data && role && (
+      {data && role && (
         <Container maxWidth={false} sx={mainSx.container}>
           <ClassroomContextProvider role={role} classData={data}>
             <Outlet />
