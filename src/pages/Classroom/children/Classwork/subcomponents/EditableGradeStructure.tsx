@@ -60,13 +60,6 @@ export const EditableGradeStructure = () => {
 
   React.useEffect(() => {
     setLoading(Utils.isLoading(isLoading, isRemoving, isUpdating));
-    console.log(
-      'log ~ file: EditableGradeStructure.tsx ~ line 63 ~ React.useEffect ~ isLoading, isRemoving, isUpdating',
-      isLoading,
-      isRemoving,
-      isUpdating,
-      Utils.isLoading(isLoading, isRemoving, isUpdating),
-    );
   }, [isLoading, isRemoving, isUpdating]);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, index: number) => {

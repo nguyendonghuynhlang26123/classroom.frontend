@@ -1,4 +1,4 @@
-import { Upload } from '@mui/icons-material';
+import { Download, Upload } from '@mui/icons-material';
 import {
   Table,
   TableContainer,
@@ -14,7 +14,7 @@ import {
   ListItemText,
   Typography,
   Stack,
-  IconButton,
+  Button,
 } from '@mui/material';
 import { IAssignment, IStudentInfo } from 'common/interfaces';
 import Utils from 'common/utils';
@@ -68,16 +68,14 @@ const Grading = () => {
             <TableHead>
               <TableRow>
                 <TableCell className="fixed-collumn fixed-header" sx={gradeSx.controller}>
-                  <ListItem>
-                    <Stack direction="row">
-                      <IconButton>
-                        <Upload />
-                      </IconButton>
-                      <IconButton>
-                        <Upload />
-                      </IconButton>
-                    </Stack>
-                  </ListItem>
+                  <Stack direction="row" spacing={2} justifyContent="center">
+                    <Button color="primary" size="small" variant="outlined" startIcon={<Upload />}>
+                      Import
+                    </Button>
+                    <Button color="primary" size="small" variant="outlined" startIcon={<Download />}>
+                      Export
+                    </Button>
+                  </Stack>
                 </TableCell>
 
                 {assignments?.map((a: IAssignment, indx: number) => (
