@@ -14,19 +14,13 @@ export const classStudentApi = createApi({
   endpoints: (builder) => ({
     getAllStudents: builder.query<IImportedStudents, string>({
       query: (id: string) => _request.get(`classes/${id}/students`),
-      providesTags: (result: IImportedStudents | undefined) =>
-        result
-          ? // successful query
-            [
-              { type: CLASS_STUDENT_TAG, id: result._id },
-              { type: CLASS_STUDENT_TAG, id: 'LIST' },
-            ]
-          : // an error occurred, but we still want to refetch this query when `{ type: 'Posts', id: 'LIST' }` is invalidated
-            [{ type: CLASS_STUDENT_TAG, id: 'LIST' }],
+      providesTags: [{ type: CLASS_STUDENT_TAG, id: 'DATA' }],
+    }),
+    updateAccountSync: builder.mutation<any, { class_id: string; body: { student_id: string; user_id: string } }>({
+      query: ({ class_id, body }) => _request.put(`classes/${class_id}/students/account-sync`, body),
+      invalidatesTags: [{ type: CLASS_STUDENT_TAG, id: 'DATA' }],
     }),
   }),
 });
 
-// Export hooks for usage in function components, which are
-// auto-generated based on the defined endpoints
-export const { useGetAllStudentsQuery } = classStudentApi;
+export const { useGetAllStudentsQuery, useUpdateAccountSyncMutation } = classStudentApi;

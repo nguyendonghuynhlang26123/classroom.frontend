@@ -19,10 +19,13 @@ type StudentsProps = {
   role: UserRole;
   data: IStudentInfo[] | undefined;
   onInvite: () => void;
+  onBtnSyncClick: (student: IStudentInfo) => void;
 };
 
-export const Students = ({ role, data, onInvite }: StudentsProps) => {
-  const syncBtnHandle = (student: IStudentInfo) => {};
+export const Students = ({ role, data, onInvite, onBtnSyncClick }: StudentsProps) => {
+  const syncBtnHandle = (student: IStudentInfo) => {
+    onBtnSyncClick(student);
+  };
 
   return data ? (
     <React.Fragment>
@@ -60,20 +63,20 @@ export const Students = ({ role, data, onInvite }: StudentsProps) => {
                       </>
                     }
                   />
-                  {u.status === 'NOT_SYNCED' && role === UserRole.STUDENT && (
+                  {role === UserRole.STUDENT && u.status === 'NOT_SYNCED' && (
                     <Tooltip title={'Synced your account with this account'}>
-                      <IconButton>
+                      <IconButton onClick={() => syncBtnHandle(u)}>
                         <Sync />
                       </IconButton>
                     </Tooltip>
                   )}
-                  {u.status === 'NOT_SYNCED' && role !== UserRole.STUDENT && (
+                  {/* {role !== UserRole.STUDENT && (
                     <Tooltip title={'Mannually set account for this student account'}>
-                      <IconButton>
+                      <IconButton onClick={() => syncBtnHandle(u)}>
                         <ManageAccounts />
                       </IconButton>
                     </Tooltip>
-                  )}
+                  )} */}
                 </ListItem>
                 <Divider />
               </React.Fragment>
