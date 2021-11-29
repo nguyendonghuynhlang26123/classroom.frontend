@@ -62,10 +62,17 @@ export const gradeSx: MultipleSxTypes = {
     },
     '& .header_point': {
       fontSize: 14,
+      py: 0.5,
       color: 'grey.600',
       borderTop: 1,
       borderColor: 'divider',
       mt: 2,
+      '& .icon': {
+        cursor: 'pointer',
+        ':hover': {
+          color: 'primary.main',
+        },
+      },
     },
   },
 };

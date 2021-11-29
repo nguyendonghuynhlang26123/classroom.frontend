@@ -1,5 +1,5 @@
 import { loadingSlice, cleanUpSlice } from './slices';
-import { classroomApi, classroomDetailsApi, usersApi, assignmentsApi, uploadApi, classStudentApi } from 'services/api';
+import { classroomApi, classroomDetailsApi, usersApi, assignmentsApi, uploadApi, classStudentApi, gradeApi } from 'services/api';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/dist/query';
 
@@ -12,6 +12,7 @@ const combinedReducer = combineReducers({
   [uploadApi.reducerPath]: uploadApi.reducer,
   [assignmentsApi.reducerPath]: assignmentsApi.reducer,
   [classStudentApi.reducerPath]: classStudentApi.reducer,
+  [gradeApi.reducerPath]: gradeApi.reducer,
 });
 
 const rootReducer = (state: any, action: any): any => {
@@ -31,6 +32,7 @@ export const store = configureStore({
       uploadApi.middleware,
       assignmentsApi.middleware,
       classStudentApi.middleware,
+      gradeApi.middleware,
     ),
 });
 

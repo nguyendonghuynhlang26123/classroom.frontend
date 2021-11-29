@@ -109,10 +109,9 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
 
   const handleUploadBtn = (ev: any) => {
     const file = ev?.target?.files[0];
-    console.log('log ~ file: index.tsx ~ line 74 ~ handleUploadBtn ~ file', file);
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) {
-      toast.warning('Image size is too large! Please try another one');
+      toast.warning('File size is too large! Please try another one');
       return;
     }
     setCSVFile(file);
