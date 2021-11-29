@@ -25,11 +25,16 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useLoading, ConfirmDialog } from 'components';
 import { useParams } from 'react-router-dom';
-import { ClassroomSettingProps } from './type';
+import { ClassroomSettingProps, UploadConfirmProps } from './type';
 import { IClassroomBody } from 'common/interfaces';
 import { toast } from 'react-toastify';
 import { Close, Download, Settings, Upload } from '@mui/icons-material';
-import { useGetAllStudentsQuery, useUpdateClassMutation, useUploadStudentListMutation } from 'services';
+import {
+  useGetAllStudentsQuery,
+  useUpdateClassMutation,
+  useUploadAndUpdateStudentListMutation,
+  useUploadStudentListMutation,
+} from 'services';
 import Utils from 'common/utils';
 
 const validationSchema = yup.object({
@@ -49,14 +54,31 @@ const defaultProps: IClassroomBody = {
   subject: '',
 };
 
+const UploadConfirm = ({ csvFile, loading, onClick, onClose }: UploadConfirmProps) => (
+  <Stack direction="row" sx={settingModalSx.alertContainer} spacing={1}>
+    <p>
+      📁 <em> {csvFile.name} </em>
+    </p>
+    <IconButton size="small" color="warning" onClick={onClose}>
+      <Close />
+    </IconButton>
+    <Button variant="contained" color="warning" component="span" size="small" disabled={loading} onClick={onClick}>
+      Upload
+    </Button>
+  </Stack>
+);
+
 export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
   const { id } = useParams();
+  const uploadRef = React.createRef<HTMLInputElement>();
   const { data: studentData, error: studentsErr, isLoading: isFetchingStudents } = useGetAllStudentsQuery(id as string);
   const [updateClassData, { isLoading: isUpdatingData }] = useUpdateClassMutation();
   const [uploadList, { isLoading: isUploading }] = useUploadStudentListMutation();
+  const [updateStuList, { isLoading: isUpdateStudents }] = useUploadAndUpdateStudentListMutation();
 
   const [modal, showModal] = React.useState<boolean>(false);
   const [alert, showAlert] = React.useState<boolean>(false);
+  const [alertReUpload, showAlertReUpload] = React.useState<boolean>(false);
   const [csvFile, setCSVFile] = React.useState<any>(null);
 
   const [loading, setLoading] = useLoading();
@@ -75,8 +97,8 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
   }, [classData]);
 
   React.useEffect(() => {
-    setLoading(Utils.isLoading(isFetchingStudents, isUpdatingData, isUploading));
-  }, [isFetchingStudents, isUpdatingData, isUploading]);
+    setLoading(Utils.isLoading(isFetchingStudents, isUpdatingData, isUploading, isUpdateStudents));
+  }, [isFetchingStudents, isUpdatingData, isUploading, isUpdateStudents]);
 
   React.useEffect(() => {
     const err = studentsErr as any;
@@ -108,7 +130,21 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
         .catch((err) => {
           toast.error('Upload student list failed! ' + err.data);
         });
+    } else {
+      updateStuList({ class_id: id as string, body: form })
+        .unwrap()
+        .then(() => {
+          toast.success('Upload student list completed! New students are registered');
+        })
+        .catch((err) => {
+          toast.error('Upload student list failed! ' + err.data);
+        });
     }
+    setCSVFile(null);
+  };
+
+  const showUploadPicker = () => {
+    if (uploadRef?.current) uploadRef.current.click();
   };
 
   return (
@@ -123,6 +159,8 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
       >
         <Settings sx={{ fontSize: 24 }} />
       </IconButton>
+
+      <input type="file" accept=".csv" style={{ display: 'none' }} id="button-file" onChange={handleUploadBtn} ref={uploadRef} />
 
       <Modal open={modal} onClose={() => showModal(false)} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <Grow in={modal} timeout={300}>
@@ -198,35 +236,23 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
                   <Alert severity="warning">
                     Warning! You need to import a list of students to the system to keep track of your classworks
                     {csvFile ? (
-                      <Stack direction="row" sx={settingModalSx.alertContainer} spacing={1}>
-                        <p>
-                          📁 <em> {csvFile.name} </em>
-                        </p>
-                        <IconButton size="small" color="warning" onClick={() => setCSVFile(null)}>
-                          <Close />
-                        </IconButton>
-                        <Button
-                          variant="contained"
-                          color="warning"
-                          component="span"
-                          size="small"
-                          disabled={loading}
-                          onClick={() => {
-                            handleUpdateClassStudent('CREATE', csvFile);
-                          }}
-                        >
-                          Upload
-                        </Button>
-                      </Stack>
+                      <UploadConfirm
+                        csvFile={csvFile}
+                        loading={loading}
+                        onClose={() => setCSVFile(null)}
+                        onClick={() => handleUpdateClassStudent('CREATE', csvFile)}
+                      />
                     ) : (
-                      <Box sx={settingModalSx.alertContainer}>
-                        <input type="file" accept=".csv" style={{ display: 'none' }} id="button-file" onChange={handleUploadBtn} />
-                        <label htmlFor="button-file">
-                          <Button variant="outlined" color="warning" component="span" size="small" disabled={loading}>
-                            Import student list
-                          </Button>
-                        </label>
-                      </Box>
+                      <Button
+                        variant="outlined"
+                        color="warning"
+                        component="span"
+                        size="small"
+                        disabled={loading}
+                        onClick={showUploadPicker}
+                      >
+                        Import student list
+                      </Button>
                     )}
                   </Alert>
                 ) : (
@@ -251,9 +277,18 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
                             <TableCell>Update this list by importing new one</TableCell>
                             <TableCell align="center">
                               <Tooltip title="Import student list from csv">
-                                <IconButton color="primary" size="small">
-                                  <Upload />
-                                </IconButton>
+                                {csvFile ? (
+                                  <UploadConfirm
+                                    csvFile={csvFile}
+                                    loading={loading}
+                                    onClose={() => setCSVFile(null)}
+                                    onClick={() => showAlertReUpload(true)}
+                                  />
+                                ) : (
+                                  <IconButton color="primary" size="small" onClick={showUploadPicker}>
+                                    <Upload />
+                                  </IconButton>
+                                )}
                               </Tooltip>
                             </TableCell>
                           </TableRow>
@@ -287,6 +322,18 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
         onConfirm={() => {
           showModal(true);
           showAlert(false);
+        }}
+      />
+      <ConfirmDialog
+        open={alertReUpload}
+        handleClose={() => {
+          showAlertReUpload(false);
+        }}
+        title="⚠Alert"
+        description="Do you want to re-upload the student list? All synchronizing account may be reseted"
+        onConfirm={() => {
+          showAlertReUpload(false);
+          if (csvFile) handleUpdateClassStudent('UPDATE', csvFile);
         }}
       />
     </>

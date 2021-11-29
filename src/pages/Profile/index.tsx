@@ -138,8 +138,8 @@ const UserProfile = () => {
               </Stack>
               {userData?.google_id != null && (
                 <Typography sx={profileSx.form_note} variant="body2">
-                  *You are linking your account with google, so please update your google account if you want to update
-                  your classroom account
+                  *You are linking your account with google, so please update your google account if you want to update your classroom
+                  account
                 </Typography>
               )}
             </Grid>
