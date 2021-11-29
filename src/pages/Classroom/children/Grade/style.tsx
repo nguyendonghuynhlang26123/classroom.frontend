@@ -8,10 +8,6 @@ export const gradeSx: MultipleSxTypes = {
     minHeight: 'calc(100vh - 100px)',
   },
 
-  userInfo: {
-    p: 0,
-  },
-
   table: {
     minWidth: '100vw',
     tableLayout: 'fixed',

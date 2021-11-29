@@ -34,7 +34,8 @@ export const settingModalSx: MultipleSxTypes = {
     border: 1,
     borderColor: 'divider',
     borderRadius: 2,
-    '& .MuiTypography-root': {
+
+    '& .header': {
       fontSize: '24px',
       mb: 1,
     },

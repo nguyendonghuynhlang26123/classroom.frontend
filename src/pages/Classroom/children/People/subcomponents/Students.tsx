@@ -1,28 +1,18 @@
 import { ManageAccounts, Sync, PersonAddOutlined } from '@mui/icons-material';
-import {
-  Avatar,
-  Divider,
-  IconButton,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Stack,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Avatar, Divider, IconButton, List, ListItem, ListItemAvatar, ListItemText, Stack, Tooltip, Typography } from '@mui/material';
 import { IImportedStudents, UserRole, IStudentInfo } from 'common/interfaces';
 import React from 'react';
 import { styleSx } from './style';
 
 type StudentsProps = {
   role: UserRole;
+  studentId: string | null | undefined;
   data: IStudentInfo[] | undefined;
   onInvite: () => void;
   onBtnSyncClick: (student: IStudentInfo) => void;
 };
 
-export const Students = ({ role, data, onInvite, onBtnSyncClick }: StudentsProps) => {
+export const Students = ({ role, studentId, data, onInvite, onBtnSyncClick }: StudentsProps) => {
   const syncBtnHandle = (student: IStudentInfo) => {
     onBtnSyncClick(student);
   };
@@ -44,11 +34,7 @@ export const Students = ({ role, data, onInvite, onBtnSyncClick }: StudentsProps
               <React.Fragment key={idx}>
                 <ListItem alignItems="center" sx={styleSx.listItem}>
                   <ListItemAvatar>
-                    {u.user_id ? (
-                      <Avatar alt={u.user_id.first_name} src={u.user_id.avatar} sx={{ bgcolor: 'primary.main' }} />
-                    ) : (
-                      <Avatar />
-                    )}
+                    {u.user_id ? <Avatar alt={u.user_id.first_name} src={u.user_id.avatar} sx={{ bgcolor: 'primary.main' }} /> : <Avatar />}
                   </ListItemAvatar>
                   <ListItemText
                     primary={u.student_name}
@@ -63,20 +49,20 @@ export const Students = ({ role, data, onInvite, onBtnSyncClick }: StudentsProps
                       </>
                     }
                   />
-                  {role === UserRole.STUDENT && u.status === 'NOT_SYNCED' && (
+                  {role === UserRole.STUDENT && u.status === 'NOT_SYNCED' && !studentId && (
                     <Tooltip title={'Synced your account with this account'}>
                       <IconButton onClick={() => syncBtnHandle(u)}>
                         <Sync />
                       </IconButton>
                     </Tooltip>
                   )}
-                  {/* {role !== UserRole.STUDENT && (
+                  {role !== UserRole.STUDENT && (
                     <Tooltip title={'Mannually set account for this student account'}>
                       <IconButton onClick={() => syncBtnHandle(u)}>
                         <ManageAccounts />
                       </IconButton>
                     </Tooltip>
-                  )} */}
+                  )}
                 </ListItem>
                 <Divider />
               </React.Fragment>

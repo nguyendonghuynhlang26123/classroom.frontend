@@ -1,21 +1,5 @@
 import { Download, Upload } from '@mui/icons-material';
-import {
-  Table,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Collapse,
-  Box,
-  ListItem,
-  ListItemAvatar,
-  Avatar,
-  ListItemText,
-  Typography,
-  Stack,
-  Button,
-} from '@mui/material';
+import { Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Collapse, Box, Stack, Button } from '@mui/material';
 import { IAssignment, IStudentInfo } from 'common/interfaces';
 import Utils from 'common/utils';
 import { useLoading } from 'components';
@@ -23,31 +7,7 @@ import React from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useGetAssignmentsQuery, useGetAllStudentsQuery } from 'services';
 import { gradeSx } from './style';
-
-const UserInfo = ({ student }: { student: IStudentInfo }) => (
-  <ListItem alignItems="center" sx={gradeSx.userInfo}>
-    <ListItemAvatar>
-      {student.user_id ? (
-        <Avatar alt={student.user_id.first_name} src={student.user_id.avatar} sx={{ bgcolor: 'primary.main' }} />
-      ) : (
-        <Avatar />
-      )}
-    </ListItemAvatar>
-    <ListItemText
-      primary={student.student_name}
-      secondary={
-        <>
-          <Typography sx={{ display: 'inline' }} component="span" variant="body2" color="text.primary">
-            {student.student_id}
-          </Typography>
-          {student.status === 'SYNCED' &&
-            student.user_id &&
-            ` - ${student.user_id.first_name + ' ' + student.user_id.last_name} (${student.user_id.email})`}
-        </>
-      }
-    />
-  </ListItem>
-);
+import { StudentInfoCell } from './subcomponents';
 
 const Grading = () => {
   const navigate = useNavigate();
@@ -81,10 +41,7 @@ const Grading = () => {
                 {assignments?.map((a: IAssignment, indx: number) => (
                   <TableCell key={indx}>
                     <Box className="time">{a.due_date ? `Due at ${Utils.displayDate(a.due_date)}` : 'No due date'}</Box>
-                    <Box
-                      onClick={() => navigate(`/classroom/${id}/work/details/${a._id}`)}
-                      className="assignment_title"
-                    >
+                    <Box onClick={() => navigate(`/classroom/${id}/work/details/${a._id}`)} className="assignment_title">
                       {a.title}
                     </Box>
                     <Box className="header_point">out of {a.total_points}</Box>
@@ -99,7 +56,7 @@ const Grading = () => {
                 students.map((s: IStudentInfo, index: number) => (
                   <TableRow key={index}>
                     <TableCell className="fixed-collumn">
-                      <UserInfo student={s} />
+                      <StudentInfoCell student={s} />
                     </TableCell>
                     {assignments?.map((a: IAssignment, indx: number) => (
                       <TableCell key={indx}></TableCell>

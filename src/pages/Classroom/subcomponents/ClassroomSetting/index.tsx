@@ -13,6 +13,13 @@ import {
   LinearProgress,
   Alert,
   Stack,
+  Table,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Tooltip,
 } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -21,7 +28,7 @@ import { useParams } from 'react-router-dom';
 import { ClassroomSettingProps } from './type';
 import { IClassroomBody } from 'common/interfaces';
 import { toast } from 'react-toastify';
-import { Close, Settings } from '@mui/icons-material';
+import { Close, Download, Settings, Upload } from '@mui/icons-material';
 import { useGetAllStudentsQuery, useUpdateClassMutation, useUploadStudentListMutation } from 'services';
 import Utils from 'common/utils';
 
@@ -31,18 +38,9 @@ const validationSchema = yup.object({
     .min(1, 'Classroom Title should be of 1-100 characters length')
     .max(100, 'Classroom Title should be of 1-100 characters length')
     .required('Classroom Title is required'),
-  section: yup
-    .string()
-    .min(1, 'Section should be of 1-50 characters length')
-    .max(50, 'Section should be of 1-50 characters length'),
-  subject: yup
-    .string()
-    .min(1, 'Subject should be of 1-50 characters length')
-    .max(50, 'Subject should be of 1-50 characters length'),
-  room: yup
-    .string()
-    .min(1, 'Room should be of 1-50 characters length')
-    .max(50, 'Room should be of 1-50 characters length'),
+  section: yup.string().min(1, 'Section should be of 1-50 characters length').max(50, 'Section should be of 1-50 characters length'),
+  subject: yup.string().min(1, 'Subject should be of 1-50 characters length').max(50, 'Subject should be of 1-50 characters length'),
+  room: yup.string().min(1, 'Room should be of 1-50 characters length').max(50, 'Room should be of 1-50 characters length'),
 });
 const defaultProps: IClassroomBody = {
   title: '',
@@ -126,22 +124,11 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
         <Settings sx={{ fontSize: 24 }} />
       </IconButton>
 
-      <Modal
-        open={modal}
-        onClose={() => showModal(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+      <Modal open={modal} onClose={() => showModal(false)} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <Grow in={modal} timeout={300}>
           <Box sx={settingModalSx.root}>
             <Toolbar sx={settingModalSx.toolbar}>
-              <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="close modal"
-                onClick={() => showModal(false)}
-              >
+              <IconButton size="large" edge="start" color="inherit" aria-label="close modal" onClick={() => showModal(false)}>
                 <Close sx={{ fontSize: 20 }} />
               </IconButton>
               <Typography variant="body1">Classroom setting</Typography>
@@ -153,14 +140,10 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
             {loading && <LinearProgress sx={{ width: '100%' }} />}
 
             <Container maxWidth={false} sx={settingModalSx.container}>
-              <Box
-                sx={settingModalSx.form}
-                component="form"
-                noValidate
-                autoComplete="off"
-                onSubmit={formik.handleSubmit}
-              >
-                <Typography color="primary">Class Details</Typography>
+              <Box sx={settingModalSx.form} component="form" noValidate autoComplete="off" onSubmit={formik.handleSubmit}>
+                <Typography color="primary" className="header">
+                  Class Details
+                </Typography>
                 <TextField
                   id="title"
                   name="title"
@@ -208,8 +191,10 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
               </Box>
 
               <Box sx={settingModalSx.form}>
-                <Typography color="primary">Students Details</Typography>
-                {!studentData && (
+                <Typography className="header" color="primary">
+                  Students Details
+                </Typography>
+                {!studentData ? (
                   <Alert severity="warning">
                     Warning! You need to import a list of students to the system to keep track of your classworks
                     {csvFile ? (
@@ -235,13 +220,7 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
                       </Stack>
                     ) : (
                       <Box sx={settingModalSx.alertContainer}>
-                        <input
-                          type="file"
-                          accept=".csv"
-                          style={{ display: 'none' }}
-                          id="button-file"
-                          onChange={handleUploadBtn}
-                        />
+                        <input type="file" accept=".csv" style={{ display: 'none' }} id="button-file" onChange={handleUploadBtn} />
                         <label htmlFor="button-file">
                           <Button variant="outlined" color="warning" component="span" size="small" disabled={loading}>
                             Import student list
@@ -250,6 +229,48 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
                       </Box>
                     )}
                   </Alert>
+                ) : (
+                  <Box>
+                    <TableContainer>
+                      <Table aria-label="simple table">
+                        <TableBody>
+                          <TableRow>
+                            <TableCell>Latest update</TableCell>
+                            <TableCell align="center">{Utils.displayDate(studentData.updated_at as number)}</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell>Number of students</TableCell>
+                            <TableCell align="center">{studentData.students.length}</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell>Number of account synced</TableCell>
+                            <TableCell align="center">{studentData.students.filter((s) => s.status === 'SYNCED').length}</TableCell>
+                          </TableRow>
+
+                          <TableRow>
+                            <TableCell>Update this list by importing new one</TableCell>
+                            <TableCell align="center">
+                              <Tooltip title="Import student list from csv">
+                                <IconButton color="primary" size="small">
+                                  <Upload />
+                                </IconButton>
+                              </Tooltip>
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell>Export the current list</TableCell>
+                            <TableCell align="center">
+                              <Tooltip title="Export as csv">
+                                <IconButton color="primary" size="small">
+                                  <Download />
+                                </IconButton>
+                              </Tooltip>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Box>
                 )}
               </Box>
             </Container>

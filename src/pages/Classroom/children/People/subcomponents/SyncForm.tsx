@@ -27,7 +27,7 @@ type SyncFormProps = {
 };
 
 export const SyncForm = ({ open, selectedId, students, handleClose, onSubmit }: SyncFormProps) => {
-  const [selected, setSelected] = React.useState<string>('');
+  const [selected, setSelected] = React.useState<string>('0');
 
   React.useEffect(() => {
     if (selectedId) setSelected(selectedId);
@@ -38,7 +38,7 @@ export const SyncForm = ({ open, selectedId, students, handleClose, onSubmit }: 
   };
 
   const handleSubmit = () => {
-    onSubmit(selected);
+    if (selected !== '0') onSubmit(selected);
   };
 
   return (
@@ -51,12 +51,14 @@ export const SyncForm = ({ open, selectedId, students, handleClose, onSubmit }: 
             id="account-label"
             value={selected}
             label="Account"
+            defaultValue={'0'}
             onChange={handleChange}
             placeholder="Choose account"
           >
+            <MenuItem value={'0'}>No user</MenuItem>
             {students.map((u: IClassroomUser, index) => (
               <MenuItem value={u.user_id._id} key={index}>
-                <ListItem alignItems="center">
+                <Stack direction="row" alignItems="center">
                   <ListItemAvatar>
                     {u.user_id.avatar ? (
                       <Avatar alt={u.user_id.first_name} src={u.user_id.avatar} sx={{ bgcolor: 'primary.main' }} />
@@ -72,14 +74,14 @@ export const SyncForm = ({ open, selectedId, students, handleClose, onSubmit }: 
                       </Typography>
                     }
                   />
-                </ListItem>
+                </Stack>
               </MenuItem>
             ))}
           </Select>
         </FormControl>
         <Stack direction="row" spacing={2} justifyContent="flex-end">
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={() => handleSubmit()} disabled={selectedId === selected}>
+          <Button onClick={() => handleSubmit()} disabled={selectedId === selected || selected === '0'}>
             Set
           </Button>
         </Stack>

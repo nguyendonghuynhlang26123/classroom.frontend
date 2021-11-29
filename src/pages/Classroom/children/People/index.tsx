@@ -6,18 +6,13 @@ import { useAuth, useClassroomCtx, useCopyToClipboard, useLoading } from 'compon
 import React from 'react';
 import { useParams } from 'react-router';
 import { toast } from 'react-toastify';
-import {
-  useGetAllStudentsQuery,
-  useGetClassUsersQuery,
-  useInviteUserMutation,
-  useUpdateAccountSyncMutation,
-} from 'services/api';
+import { useGetAllStudentsQuery, useGetClassUsersQuery, useInviteUserMutation, useUpdateAccountSyncMutation } from 'services/api';
 import { peopleTabSx } from './style';
 import { InviteForm, PendingInvitation, Students, SyncForm, Teachers } from './subcomponents';
 
 const ClassroomPeople = () => {
   const { id } = useParams<'id'>();
-  const { role, classData } = useClassroomCtx();
+  const { role, classData, studentId } = useClassroomCtx();
   const { userData } = useAuth();
   const [copiedText, copy] = useCopyToClipboard();
   const { data: classUsers, isLoading: isFetchingUsers } = useGetClassUsersQuery(id as string);
@@ -36,17 +31,19 @@ const ClassroomPeople = () => {
   }, [isFetchingUsers, isFetchingStudents, isSubmitingInvitation, isSubmitingAccountSync]);
 
   const getTeachers = (data: IClassroomUser[] | undefined) =>
-    data && data.length > 0
-      ? data.filter((u: IClassroomUser) => u.role !== UserRole.STUDENT && u.status !== 'INACTIVATED')
-      : [];
-
-  const getStudents = (data: IClassroomUser[] | undefined) =>
-    data && data.length > 0
-      ? data.filter((u: IClassroomUser) => u.role === UserRole.STUDENT && u.status !== 'INACTIVATED')
-      : [];
+    data && data.length > 0 ? data.filter((u: IClassroomUser) => u.role !== UserRole.STUDENT && u.status !== 'INACTIVATED') : [];
 
   const getPendingInvititaion = (data: IClassroomUser[] | undefined) =>
     data && data.length > 0 ? data.filter((u: IClassroomUser) => u.status !== 'ACTIVATED') : [];
+
+  const getNotSyncedStudents = (data: IClassroomUser[] | undefined) => {
+    if (!data || data.length === 0) return [];
+    if (!classStudents) return [];
+    const syncedStudents = classStudents.students.filter((s) => s.status === 'SYNCED').map((s) => s.user_id?._id);
+    return data.filter(
+      (u: IClassroomUser) => u.role === UserRole.STUDENT && u.status !== 'INACTIVATED' && !syncedStudents.find((s) => s === u.user_id._id),
+    );
+  };
 
   const syncBtnCallback = (s: IStudentInfo) => {
     if (!s || !userData) return;
@@ -79,12 +76,14 @@ const ClassroomPeople = () => {
         student_id: studentId,
       },
     })
+      .unwrap()
       .then(() => {
         toast.success('Operation succeeded');
       })
       .catch((err) => {
         toast.error('Operation failed! ' + err.data);
       });
+    setSyncTarget(null);
   };
 
   return (
@@ -93,6 +92,7 @@ const ClassroomPeople = () => {
         <Teachers role={role} onInvite={() => showTeacherInviteForm(true)} data={getTeachers(classUsers)} />
 
         <Students
+          studentId={studentId}
           role={role}
           data={classStudents?.students}
           onInvite={() => showStudentInviteForm(true)}
@@ -147,16 +147,18 @@ const ClassroomPeople = () => {
           }}
         />
 
-        <SyncForm
-          open={syncTarget !== null}
-          selectedId={syncTarget?.user_id?._id}
-          students={getStudents(classUsers)}
-          handleClose={() => setSyncTarget(null)}
-          onSubmit={(id: string) => {
-            console.log(`Map student id = ${syncTarget?.student_id} -> user #${id} `);
-            // if (syncTarget) submitUpdateSync(syncTarget?.student_id, id);
-          }}
-        />
+        {syncTarget !== null && (
+          <SyncForm
+            open={syncTarget !== null}
+            selectedId={syncTarget?.user_id?._id}
+            students={getNotSyncedStudents(classUsers)}
+            handleClose={() => setSyncTarget(null)}
+            onSubmit={(id: string) => {
+              // console.log(`Map student id = ${syncTarget?.student_id} -> user #${id} `);
+              if (syncTarget) submitUpdateSync(syncTarget?.student_id, id);
+            }}
+          />
+        )}
       </Container>
     </Collapse>
   );

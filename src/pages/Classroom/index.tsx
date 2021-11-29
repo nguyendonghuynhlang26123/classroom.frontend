@@ -1,16 +1,10 @@
 import { Box, IconButton, LinearProgress, Link, Tab, Tabs, Typography } from '@mui/material';
-import { ClassroomContextProvider, Navbar, ProfileBtn, useAuth, useLoading } from 'components';
+import { ClassroomContextProvider, ConfirmDialog, Navbar, ProfileBtn, useAuth, useLoading } from 'components';
 import { drawerItemConfigs } from 'configs';
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
-import {
-  useGetClassDetailsQuery,
-  useGetMyRoleQuery,
-  useGetAllStudentsQuery,
-  useUpdateClassMutation,
-  useUploadStudentListMutation,
-} from 'services/api';
+import { useGetClassDetailsQuery, useGetMyRoleQuery, useGetMyStudentIdQuery } from 'services/api';
 import { mainSx, navSx } from './style';
 import { ClassroomSetting } from './subcomponents';
 import { Outlet, useLocation } from 'react-router';
@@ -20,8 +14,9 @@ import { toast } from 'react-toastify';
 import { IClassroomBody, IImportedStudents, UserRole } from 'common/interfaces';
 
 const getTabState = (pathName: string) => {
-  if (matchPath('/classroom/:id/people', pathName)) return 2;
   if (matchPath('/classroom/:id/work', pathName)) return 1;
+  if (matchPath('/classroom/:id/people', pathName)) return 2;
+  if (matchPath('/classroom/:id/grade', pathName)) return 3;
   return 0;
 };
 
@@ -31,9 +26,21 @@ const ClassroomBoard = () => {
   const { userData } = useAuth();
   const navigate = useNavigate();
   const [tabValue, setTabValue] = React.useState<number>(getTabState(pathname));
+  const [notifyMappingStudentId, showNotification] = React.useState<boolean>(false);
 
   const { data, error, isLoading: fetchingClassData } = useGetClassDetailsQuery(id as string);
   const { data: role, isLoading: fetchingRole } = useGetMyRoleQuery(id as string);
+  const {
+    data: studentData,
+    error: stuErr,
+    isLoading: fetchingStuId,
+  } = useGetMyStudentIdQuery(
+    {
+      classId: id as string,
+      userId: userData?._id as string,
+    },
+    { skip: !Boolean(role) || role !== UserRole.STUDENT },
+  );
 
   const [loading, setLoading] = useLoading();
 
@@ -46,8 +53,15 @@ const ClassroomBoard = () => {
   }, [error]);
 
   React.useEffect(() => {
-    setLoading(Utils.isLoading(fetchingRole, fetchingClassData));
-  }, [fetchingClassData, fetchingRole]);
+    setLoading(Utils.isLoading(fetchingRole, fetchingClassData, fetchingStuId));
+  }, [fetchingClassData, fetchingRole, fetchingStuId]);
+
+  React.useEffect(() => {
+    const err = stuErr as any;
+    if (err && err?.status === 404) {
+      showNotification(true);
+    }
+  }, [stuErr]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -64,7 +78,7 @@ const ClassroomBoard = () => {
                 <Tab label="Stream" id="stream" onClick={() => navigate('.')} />
                 <Tab label="Classwork" id="work" onClick={() => navigate('./work')} />
                 <Tab label="People" id="people" onClick={() => navigate('./people')} />
-                <Tab label="Grading" id="people" onClick={() => navigate('./grade')} />
+                {role !== UserRole.STUDENT && <Tab label="Grading" id="people" onClick={() => navigate('./grade')} />}
               </Tabs>
             </Box>
             {loading && <LinearProgress sx={navSx.progressBar} />}
@@ -84,10 +98,24 @@ const ClassroomBoard = () => {
       </Navbar>
       {data && role && (
         <Box sx={mainSx.container}>
-          <ClassroomContextProvider role={role} classData={data}>
+          <ClassroomContextProvider role={role} classData={data} studentId={studentData ? studentData.student_id : null}>
             <Outlet />
           </ClassroomContextProvider>
         </Box>
+      )}
+      {role === UserRole.STUDENT && (
+        <ConfirmDialog
+          open={notifyMappingStudentId}
+          handleClose={() => {
+            showNotification(false);
+          }}
+          title="Reminder"
+          description="You need link your current account with your student account in this class"
+          onConfirm={() => {
+            navigate(`/classroom/${id}/people`);
+            showNotification(false);
+          }}
+        />
       )}
     </React.Fragment>
   );
