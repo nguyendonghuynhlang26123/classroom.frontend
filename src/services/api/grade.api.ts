@@ -13,7 +13,7 @@ export const gradeApi = createApi({
   tagTypes: [GRADE_TAG],
   endpoints: (builder) => ({
     getAllGrading: builder.query<IGradingAssignment[], string>({
-      query: (classId: string) => _request.get(`classes/${classId}/grading`),
+      query: (classId: string) => _request.get(`classes/${classId}/grading?sort_by=student_id,assignment_id&sort_type=asc&per_page=1000`),
       transformResponse: (response: IGenericGetAllResponse<IGradingAssignment>) => response.data,
       providesTags: (result: IGradingAssignment[] | undefined) =>
         result
@@ -22,9 +22,18 @@ export const gradeApi = createApi({
           : // an error occurred, but we still want to refetch this query when `{ type: 'Posts', id: 'LIST' }` is invalidated
             [{ type: GRADE_TAG, id: 'LIST' }],
     }),
+
+    createGrading: builder.mutation<any, { classId: string; body: IGradingBody[] }>({
+      query: ({ classId, body }) => _request.post(`classes/${classId}/grading`, { data: body }),
+      invalidatesTags: [{ type: GRADE_TAG, id: 'LIST' }],
+    }),
+    updateGrading: builder.mutation<any, { classId: string; body: IGradingBody[] }>({
+      query: ({ classId, body }) => _request.put(`classes/${classId}/grading`, { data: body }),
+      invalidatesTags: [{ type: GRADE_TAG, id: 'LIST' }],
+    }),
   }),
 });
 
 // Export hooks for usage in function components, which are
 // auto-generated based on the defined endpoints
-export const { useGetAllGradingQuery } = gradeApi;
+export const { useGetAllGradingQuery, useCreateGradingMutation, useUpdateGradingMutation } = gradeApi;

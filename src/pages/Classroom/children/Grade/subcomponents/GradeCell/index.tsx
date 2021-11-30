@@ -2,28 +2,40 @@ import { InputAdornment, TableCell, TextField, Box, IconButton, Typography } fro
 import React from 'react';
 import { GradeCellPropsType } from './type';
 import { gradeCellSx } from './style';
-import { useOnClickOutside } from 'components';
+import { useDebounce, useOnClickOutside } from 'components';
 import { Close } from '@mui/icons-material';
 
 const isValid = (value: undefined | number, total: number): boolean => {
-  if (value) return value <= total;
+  if (value) return value <= total && value >= 0;
   else return false;
 };
 
-export const GradeCell = ({ mark, total, onMarkChange, onCancel }: GradeCellPropsType) => {
+export const GradeCell = ({ mark, total, onMarkChange, onCancel, enableEdit = true }: GradeCellPropsType) => {
   const cellRef = React.createRef();
   const [editingMode, setEditingMode] = React.useState<boolean>(false);
-  const [value, setValue] = React.useState<number | undefined>();
+  const [value, setValue] = React.useState<number>();
   const [inputErr, setInputErr] = React.useState<boolean>(false);
+  const debounceInputValue = useDebounce<number | undefined>(value, 500);
 
   useOnClickOutside(cellRef, () => {
-    if (!value) setEditingMode(false);
+    if (!value || mark === value) setEditingMode(false);
   });
 
   React.useEffect(() => {
-    if (value && value > total) setInputErr(true);
-    else setInputErr(false);
-  }, [value]);
+    if (!debounceInputValue) return;
+    if (isValid(debounceInputValue, total)) setInputErr(false);
+    else setInputErr(true);
+
+    onMarkChange(Number(debounceInputValue));
+  }, [debounceInputValue]);
+
+  React.useEffect(() => {
+    setValue(mark);
+  }, [mark]);
+
+  React.useEffect(() => {
+    if (!enableEdit) setEditingMode(false);
+  }, [enableEdit]);
 
   const handleCancel = (ev: React.MouseEvent) => {
     ev.stopPropagation();
@@ -33,9 +45,11 @@ export const GradeCell = ({ mark, total, onMarkChange, onCancel }: GradeCellProp
   };
 
   const handleEditInput = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(Number(ev.target.value));
-    onMarkChange(Number(ev.target.value));
+    const value = ev.target.value;
+    if (value === '') return;
+    setValue(Number(value));
   };
+
   return (
     <TableCell sx={gradeCellSx} onClick={() => setEditingMode(true)} ref={cellRef}>
       <Box>
@@ -47,7 +61,7 @@ export const GradeCell = ({ mark, total, onMarkChange, onCancel }: GradeCellProp
             <TextField
               variant="standard"
               type="number"
-              value={value}
+              value={value || ''}
               error={inputErr}
               helperText={inputErr && 'Invalid point'}
               autoFocus

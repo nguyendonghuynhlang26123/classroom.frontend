@@ -1,3 +1,4 @@
+import { colors } from '@mui/material';
 import { MultipleSxTypes } from 'common/type';
 
 export const gradeSx: MultipleSxTypes = {
@@ -25,21 +26,31 @@ export const gradeSx: MultipleSxTypes = {
     },
     '& .MuiTableCell-root': {
       p: 1,
-      width: 200,
+      width: 150,
       minHeight: 100,
       borderRight: 1,
       borderColor: 'divider',
       overflow: 'hidden',
-      '&.fixed-collumn': {
+      '&.student-collumn': {
         zIndex: 3,
         position: 'sticky',
-        width: 300,
-        minHeight: 200,
+        width: 200,
         left: 0,
         bgcolor: 'inherit',
       },
-      '&.fixed-header': {
-        zIndex: 4,
+      '&.header': {
+        zIndex: '6 !important',
+        borderLeft: 0,
+      },
+      '&.total-collumn': {
+        zIndex: 5,
+        right: 0,
+        bgcolor: colors.blue[50],
+        position: 'sticky',
+        borderLeft: 1,
+        borderColor: colors.blue[100],
+        textAlign: 'center',
+        width: 100,
       },
     },
     '& .placeholder': {
@@ -57,7 +68,7 @@ export const gradeSx: MultipleSxTypes = {
       },
     },
     '& .time': {
-      fontSize: 12,
+      fontSize: 10,
       color: 'grey.500',
     },
     '& .header_point': {

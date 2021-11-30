@@ -3,4 +3,5 @@ export type GradeCellPropsType = {
   total: number;
   onMarkChange: (value: number) => void;
   onCancel: () => void;
+  enableEdit?: boolean;
 };
