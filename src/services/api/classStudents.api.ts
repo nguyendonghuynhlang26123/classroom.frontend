@@ -35,6 +35,9 @@ export const classStudentApi = createApi({
       query: ({ class_id, body }) => _request.put(`classes/${class_id}/students`, body),
       invalidatesTags: [{ type: CLASS_STUDENT_TAG, id: 'DATA' }],
     }),
+    downloadStudentList: builder.mutation<any, string>({
+      query: (id: string) => _request.get(`classes/${id}/students/file/download`),
+    }),
   }),
 });
 
@@ -44,4 +47,5 @@ export const {
   useUploadAndUpdateStudentListMutation,
   useUploadStudentListMutation,
   useGetMyStudentIdQuery,
+  useDownloadStudentListMutation,
 } = classStudentApi;

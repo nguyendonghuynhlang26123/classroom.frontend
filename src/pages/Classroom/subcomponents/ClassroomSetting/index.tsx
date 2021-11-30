@@ -30,6 +30,7 @@ import { IClassroomBody } from 'common/interfaces';
 import { toast } from 'react-toastify';
 import { Close, Download, Settings, Upload } from '@mui/icons-material';
 import {
+  useDownloadStudentListMutation,
   useGetAllStudentsQuery,
   useUpdateClassMutation,
   useUploadAndUpdateStudentListMutation,
@@ -75,6 +76,7 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
   const [updateClassData, { isLoading: isUpdatingData }] = useUpdateClassMutation();
   const [uploadList, { isLoading: isUploading }] = useUploadStudentListMutation();
   const [updateStuList, { isLoading: isUpdateStudents }] = useUploadAndUpdateStudentListMutation();
+  const [downloadCsvFile, { isLoading: isDownloadComplete }] = useDownloadStudentListMutation();
 
   const [modal, showModal] = React.useState<boolean>(false);
   const [alert, showAlert] = React.useState<boolean>(false);
@@ -97,8 +99,8 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
   }, [classData]);
 
   React.useEffect(() => {
-    setLoading(Utils.isLoading(isFetchingStudents, isUpdatingData, isUploading, isUpdateStudents));
-  }, [isFetchingStudents, isUpdatingData, isUploading, isUpdateStudents]);
+    setLoading(Utils.isLoading(isFetchingStudents, isUpdatingData, isUploading, isUpdateStudents, isDownloadComplete));
+  }, [isFetchingStudents, isUpdatingData, isUploading, isUpdateStudents, isDownloadComplete]);
 
   React.useEffect(() => {
     const err = studentsErr as any;
@@ -117,7 +119,7 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
     setCSVFile(file);
   };
 
-  const handleUpdateClassStudent = (mode: 'UPDATE' | 'CREATE', file: any) => {
+  const handleUploadClassStudent = (mode: 'UPDATE' | 'CREATE', file: any) => {
     const form = new FormData();
     if (file) form.append('csv', file);
     if (mode === 'CREATE') {
@@ -127,7 +129,7 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
           toast.success('Upload student list completed! New students are registered');
         })
         .catch((err) => {
-          toast.error('Upload student list failed! ' + err.data);
+          toast.error('Upload new student list failed! ' + err.data);
         });
     } else {
       updateStuList({ class_id: id as string, body: form })
@@ -136,7 +138,7 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
           toast.success('Upload student list completed! New students are registered');
         })
         .catch((err) => {
-          toast.error('Upload student list failed! ' + err.data);
+          toast.error('Update existing student list failed! ' + err.data);
         });
     }
     setCSVFile(null);
@@ -144,6 +146,22 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
 
   const showUploadPicker = () => {
     if (uploadRef?.current) uploadRef.current.click();
+  };
+
+  const downloadStudentList = () => {
+    downloadCsvFile(id as string)
+      .unwrap()
+      .then((res) => {
+        const url = window.URL.createObjectURL(new Blob([res]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'student_list.csv'); //or any other extension
+        document.body.appendChild(link);
+        link.click();
+      })
+      .catch((err) => {
+        toast.error('Cannot download the file! ' + err.data);
+      });
   };
 
   return (
@@ -239,19 +257,21 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
                         csvFile={csvFile}
                         loading={loading}
                         onClose={() => setCSVFile(null)}
-                        onClick={() => handleUpdateClassStudent('CREATE', csvFile)}
+                        onClick={() => handleUploadClassStudent('CREATE', csvFile)}
                       />
                     ) : (
-                      <Button
-                        variant="outlined"
-                        color="warning"
-                        component="span"
-                        size="small"
-                        disabled={loading}
-                        onClick={showUploadPicker}
-                      >
-                        Import student list
-                      </Button>
+                      <Box sx={settingModalSx.alertContainer}>
+                        <Button
+                          variant="outlined"
+                          color="warning"
+                          component="span"
+                          size="small"
+                          disabled={loading}
+                          onClick={showUploadPicker}
+                        >
+                          Import student list
+                        </Button>
+                      </Box>
                     )}
                   </Alert>
                 ) : (
@@ -295,7 +315,7 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
                             <TableCell>Export the current list</TableCell>
                             <TableCell align="center">
                               <Tooltip title="Export as csv">
-                                <IconButton color="primary" size="small">
+                                <IconButton color="primary" size="small" onClick={downloadStudentList}>
                                   <Download />
                                 </IconButton>
                               </Tooltip>
@@ -332,7 +352,7 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
         description="Do you want to re-upload the student list? All synchronizing account may be reseted"
         onConfirm={() => {
           showAlertReUpload(false);
-          if (csvFile) handleUpdateClassStudent('UPDATE', csvFile);
+          if (csvFile) handleUploadClassStudent('UPDATE', csvFile);
         }}
       />
     </>
