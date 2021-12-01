@@ -1,16 +1,4 @@
-import {
-  Container,
-  Grow,
-  Paper,
-  Typography,
-  Box,
-  Button,
-  Divider,
-  Link,
-  Stack,
-  TextField,
-  CircularProgress,
-} from '@mui/material';
+import { Container, Grow, Paper, Typography, Box, Button, Divider, Link, Stack, TextField, CircularProgress } from '@mui/material';
 import React from 'react';
 import { useGoogleLogin } from 'react-google-login';
 import { sharedStyleSx } from './style';
@@ -29,6 +17,7 @@ const validationSchema = yup.object({
 });
 
 const LoginPage = () => {
+  console.log('log ~ file: Login.tsx ~ line 25 ~ GG_API_KEY', GG_API_KEY);
   const { search } = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState<boolean>(false);
