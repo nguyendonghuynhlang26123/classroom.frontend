@@ -4,8 +4,9 @@ export const gradeCellSx: SxProps = {
   '& .MuiTextField-root': { width: '15ch', mx: 'auto', '& input, .MuiFormHelperText-root': { textAlign: 'right' } },
 
   '& .result': {
-    fontSize: 24,
-    color: 'primary.main',
+    fontSize: 16,
+    textAlign: 'right',
+    // color: 'primary.main',
     '& b': {
       fontSize: 14,
       fontWeight: 600,

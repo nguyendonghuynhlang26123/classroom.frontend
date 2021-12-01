@@ -4,18 +4,29 @@ import { GradeCellPropsType } from './type';
 import { gradeCellSx } from './style';
 import { useDebounce, useOnClickOutside } from 'components';
 import { Close } from '@mui/icons-material';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 
 const isValid = (value: undefined | number, total: number): boolean => {
   if (value) return value <= total && value >= 0;
   else return false;
 };
 
-export const GradeCell = ({ mark, total, onMarkChange, onCancel, enableEdit = true }: GradeCellPropsType) => {
+const validationSchema = yup.object({
+  code: yup
+    .string()
+    .min(6, 'Classroom Title should be of 6 characters length')
+    .max(6, 'Classroom Title should be of 6 characters length')
+    .matches(/^[ A-Za-z0-9]*$/, 'Alphabetical or numeral characters only!')
+    .required('Classroom code is required'),
+});
+
+const GradeCellComponent = ({ mark, total, onMarkChange, onCancel, enableEdit = true }: GradeCellPropsType) => {
   const cellRef = React.createRef();
   const [editingMode, setEditingMode] = React.useState<boolean>(false);
   const [value, setValue] = React.useState<number>();
   const [inputErr, setInputErr] = React.useState<boolean>(false);
-  const debounceInputValue = useDebounce<number | undefined>(value, 500);
+  const debounceInputValue = useDebounce<number | undefined>(value, 1000);
 
   useOnClickOutside(cellRef, () => {
     if (!value || mark === value) setEditingMode(false);
@@ -76,7 +87,7 @@ export const GradeCell = ({ mark, total, onMarkChange, onCancel, enableEdit = tr
             {mark && (
               <Typography className="result">
                 {mark}
-                <b>/{total}</b>{' '}
+                {/* <b>/{total}</b>{' '} */}
               </Typography>
             )}
           </>
@@ -85,3 +96,5 @@ export const GradeCell = ({ mark, total, onMarkChange, onCancel, enableEdit = tr
     </TableCell>
   );
 };
+
+export const GradeCell = React.memo(GradeCellComponent);

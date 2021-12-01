@@ -11,6 +11,7 @@ export const gradeSx: MultipleSxTypes = {
 
   table: {
     minWidth: '100vw',
+    width: '100%',
     tableLayout: 'fixed',
     position: 'relative',
 
@@ -50,7 +51,8 @@ export const gradeSx: MultipleSxTypes = {
         borderLeft: 1,
         borderColor: colors.blue[100],
         textAlign: 'center',
-        width: 100,
+        width: 80,
+        '& .MuiTypography-root': { fontWeight: 600 },
       },
     },
     '& .placeholder': {

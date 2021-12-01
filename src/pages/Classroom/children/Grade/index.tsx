@@ -24,6 +24,8 @@ import {
   useCreateGradingMutation,
   useUpdateGradingMutation,
   useGetAllGradingQuery,
+  useImportGradingMutation,
+  useDownloadGradingMutation,
 } from 'services';
 import { gradeSx } from './style';
 import { StudentInfoCell, GradeCell } from './subcomponents';
@@ -73,6 +75,8 @@ const Grading = () => {
   const { data: classGrading, isLoading: isFetchingGradings } = useGetAllGradingQuery(id as string);
   const [createGradingRequest, { isLoading: isCreating }] = useCreateGradingMutation();
   const [updateGradingRequest, { isLoading: isUpdating }] = useUpdateGradingMutation();
+  const [importStudentRequest, { isLoading: isImporting }] = useImportGradingMutation();
+  const [downloadStudentRequest, { isLoading: isDownloading }] = useDownloadGradingMutation();
   const students = classStudents?.students;
   const gradings = prepareGradesArray(assignments, students, classGrading);
 
@@ -84,15 +88,17 @@ const Grading = () => {
   const [loading, setLoading] = useLoading();
 
   React.useEffect(() => {
-    setLoading(Utils.isLoading(isFetchingAssignments, isFetchingStudents, isCreating, isUpdating, isFetchingGradings));
-  }, [isFetchingAssignments, isFetchingStudents, isCreating, isUpdating, isFetchingGradings]);
+    setLoading(
+      Utils.isLoading(isFetchingAssignments, isFetchingStudents, isCreating, isUpdating, isFetchingGradings, isImporting, isDownloading),
+    );
+  }, [isFetchingAssignments, isFetchingStudents, isCreating, isUpdating, isFetchingGradings, isImporting, isDownloading]);
 
   const gradeCellChangeHandle = (mode: Mode, row: number, col: number, value: number) => {
     const key: string = getKey(row, col);
     if (!assignments || !students) return;
 
     setBoardState((prvState: BoardState) => {
-      const isValid = undefined === Object.values(prvState).find((s) => s.mark > assignments[row].total_points);
+      const isValid = undefined === Object.values(prvState).find((s) => s.mark > assignments[col].total_points);
       setAllowSave(isValid);
 
       return {
@@ -169,11 +175,36 @@ const Grading = () => {
       });
   };
 
-  const triggerUpload = () => {
-    console.log(csvFile);
+  const triggerUpload = (assignmentId: string) => {
+    const form = new FormData();
+    if (csvFile) form.append('csv', csvFile);
+    importStudentRequest({ classId: id as string, assignmentId: assignmentId, body: form })
+      .unwrap()
+      .then(() => {
+        toast.success('Import completed! Grading results are now updated');
+      })
+      .catch((err) => {
+        toast.error('Import grading data failed! ' + err.data);
+      });
 
     setTargetAssignmentIndex(-1);
     setCsvFile(null);
+  };
+
+  const triggerDownload = (assignmentName: string, assignmentId: string) => {
+    downloadStudentRequest({ classId: id as string, assignmentId: assignmentId })
+      .unwrap()
+      .then((res) => {
+        const url = window.URL.createObjectURL(new Blob([res]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `grading_${Utils.sanitizeString(assignmentName)}.csv`); //or any other extension
+        document.body.appendChild(link);
+        link.click();
+      })
+      .catch((err) => {
+        toast.error('Download grading data failed! ' + err.data);
+      });
   };
 
   return (
@@ -213,7 +244,7 @@ const Grading = () => {
                         <Tooltip title="Upload grade sheet">
                           <Upload className="icon" onClick={() => handleUploadBtn(indx)} />
                         </Tooltip>
-                        <Tooltip title="Dowload grade sheet">
+                        <Tooltip title="Dowload grade sheet" onClick={() => triggerDownload(a.title, a._id as string)}>
                           <Download className="icon" />
                         </Tooltip>
                       </Stack>
@@ -275,7 +306,7 @@ const Grading = () => {
           title="⚠Alert⚠"
           description="Do you want to upload the grading sheet? Please note that any duplicated records will be overwritten in this process!"
           onConfirm={() => {
-            triggerUpload();
+            if (assignments && targetAssignmentIndex !== -1) triggerUpload(assignments[targetAssignmentIndex]._id as string);
           }}
         />
       </Box>

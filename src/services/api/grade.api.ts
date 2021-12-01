@@ -31,9 +31,22 @@ export const gradeApi = createApi({
       query: ({ classId, body }) => _request.put(`classes/${classId}/grading`, { data: body }),
       invalidatesTags: [{ type: GRADE_TAG, id: 'LIST' }],
     }),
+    importGrading: builder.mutation<any, { classId: string; assignmentId: string; body: any }>({
+      query: ({ classId, assignmentId, body }) => _request.post(`classes/${classId}/grading/assignment/${assignmentId}/import`, body),
+      invalidatesTags: [{ type: GRADE_TAG, id: 'LIST' }],
+    }),
+    downloadGrading: builder.mutation<any, { classId: string; assignmentId: string }>({
+      query: ({ classId, assignmentId }) => _request.get(`classes/${classId}/grading/assignment/${assignmentId}/export`),
+    }),
   }),
 });
 
 // Export hooks for usage in function components, which are
 // auto-generated based on the defined endpoints
-export const { useGetAllGradingQuery, useCreateGradingMutation, useUpdateGradingMutation } = gradeApi;
+export const {
+  useGetAllGradingQuery,
+  useCreateGradingMutation,
+  useUpdateGradingMutation,
+  useImportGradingMutation,
+  useDownloadGradingMutation,
+} = gradeApi;
