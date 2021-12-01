@@ -3,7 +3,7 @@ import { MultipleSxTypes } from 'common/type';
 export const settingModalSx: MultipleSxTypes = {
   root: {
     width: '100vw',
-    height: '100vh',
+    minHeight: '100vh',
     bgcolor: 'background.paper',
 
     '& .MuiButton-root': {
@@ -15,6 +15,10 @@ export const settingModalSx: MultipleSxTypes = {
   toolbar: {
     borderBottom: 1,
     borderColor: 'divider',
+    position: 'sticky',
+    bgcolor: 'background.paper',
+    zIndex: 4,
+    top: 0,
     '& .MuiTypography-root': {
       fontWeight: 500,
     },

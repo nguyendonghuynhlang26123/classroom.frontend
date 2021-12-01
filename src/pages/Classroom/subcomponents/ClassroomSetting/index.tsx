@@ -90,12 +90,25 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
     validateOnBlur: true,
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      setLoading(true);
+      updateClassData({ id: id as string, body: values })
+        .unwrap()
+        .then(() => {
+          toast.success('Update class data completed');
+        })
+        .catch((err) => {
+          toast.error('Update class data failed! ' + err.data);
+        });
     },
   });
 
   React.useEffect(() => {
-    if (classData) formik.setValues(classData);
+    if (classData)
+      formik.setValues({
+        title: classData.title,
+        section: classData.section,
+        room: classData.room || '',
+        subject: classData.subject || '',
+      });
   }, [classData]);
 
   React.useEffect(() => {
@@ -179,7 +192,13 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
 
       <input type="file" accept=".csv" style={{ display: 'none' }} id="button-file" onChange={handleUploadBtn} ref={uploadRef} />
 
-      <Modal open={modal} onClose={() => showModal(false)} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+      <Modal
+        sx={{ overflow: 'auto' }}
+        open={modal}
+        onClose={() => showModal(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
         <Grow in={modal} timeout={300}>
           <Box sx={settingModalSx.root}>
             <Toolbar sx={settingModalSx.toolbar}>
