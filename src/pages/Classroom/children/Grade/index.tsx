@@ -12,12 +12,13 @@ import {
   Button,
   Tooltip,
   Typography,
+  Link,
 } from '@mui/material';
 import { IAssignment, IStudentInfo, IGradingBody, IGradingAssignment } from 'common/interfaces';
 import Utils from 'common/utils';
 import { ConfirmDialog, useLoading } from 'components';
 import React from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   useGetAssignmentsQuery,
   useGetAllStudentsQuery,
@@ -61,6 +62,7 @@ const prepareGradesArray = (
   grading.forEach((g) => {
     const row = students.findIndex((s) => s.student_id === g.student_id);
     const col = assignments.findIndex((a) => a._id === g.assignment_id);
+    if (marks[row] === undefined || marks[row][col] === undefined) return;
     marks[row][col] = g.mark === undefined ? -1 : g.mark;
   });
   return marks;
@@ -79,6 +81,7 @@ const Grading = () => {
   const [downloadStudentRequest, { isLoading: isDownloading }] = useDownloadGradingMutation();
   const students = classStudents?.students;
   const gradings = prepareGradesArray(assignments, students, classGrading);
+  const assignmetTotalPoint = assignments ? assignments.map((a) => a.total_points).reduce((prev, cur) => cur + prev) : 0;
 
   const [boardState, setBoardState] = React.useState<BoardState>({});
   const [allowSave, setAllowSave] = React.useState<boolean>(false);
@@ -125,12 +128,12 @@ const Grading = () => {
   };
 
   const getMark = (row: number, col: number) => {
-    return gradings[row] && gradings[row][col] && gradings[row][col] !== -1 ? gradings[row][col] : undefined;
+    return gradings[row] !== undefined && gradings[row][col] !== undefined && gradings[row][col] !== -1 ? gradings[row][col] : undefined;
   };
 
   const getStudentTotalPoint = (row: number) => {
     const totalPoint = gradings[row] && gradings[row].length > 0 ? gradings[row].reduce((prv, cur) => (cur !== -1 ? prv + cur : prv)) : -1;
-    return totalPoint === -1 ? undefined : totalPoint;
+    return totalPoint === -1 ? 0 : totalPoint;
   };
 
   const handleUploadBtn = (index: number) => {
@@ -207,6 +210,15 @@ const Grading = () => {
       });
   };
 
+  const triggerDownloadTemplate = () => {
+    const url = window.URL.createObjectURL(new Blob(['student_id,mark']));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `grading_template.csv`); //or any other extension
+    document.body.appendChild(link);
+    link.click();
+  };
+
   return (
     <Collapse timeout={500} appear={true} in={true}>
       <Box sx={{ position: 'relative' }}>
@@ -241,7 +253,17 @@ const Grading = () => {
                     <Stack direction="row" className="header_point" justifyContent="space-between">
                       <Box>out of {a.total_points}</Box>
                       <Stack direction="row" spacing={1}>
-                        <Tooltip title="Upload grade sheet">
+                        <Tooltip
+                          arrow
+                          title={
+                            <Typography id="tooltip-text" sx={{ fontSize: 12 }}>
+                              Upload grade sheet{' '}
+                              <Link href="#" sx={{ fontSize: 12, color: 'yellow' }} onClick={triggerDownloadTemplate}>
+                                Download template here
+                              </Link>
+                            </Typography>
+                          }
+                        >
                           <Upload className="icon" onClick={() => handleUploadBtn(indx)} />
                         </Tooltip>
                         <Tooltip title="Dowload grade sheet" onClick={() => triggerDownload(a.title, a._id as string)}>
@@ -286,6 +308,7 @@ const Grading = () => {
                     {gradings[row] && gradings[row].length > 0 && (
                       <TableCell className="total-collumn">
                         <Typography variant="body1">{getStudentTotalPoint(row)}</Typography>
+                        <Typography variant="body2">/{assignmetTotalPoint}</Typography>
                       </TableCell>
                     )}
                     <TableCell className=""></TableCell>

@@ -7,6 +7,7 @@ export const gradeSx: MultipleSxTypes = {
     // mt: -4,
     maxHeight: 'calc(100vh - 100px)',
     minHeight: 'calc(100vh - 100px)',
+ 
   },
 
   table: {
@@ -52,7 +53,8 @@ export const gradeSx: MultipleSxTypes = {
         borderColor: colors.blue[100],
         textAlign: 'center',
         width: 80,
-        '& .MuiTypography-root': { fontWeight: 600 },
+        '& .MuiTypography-body1': { fontWeight: 600, fontSize: 18 },
+        '& .MuiTypography-body2': { fontSize: 12 },
       },
     },
     '& .placeholder': {

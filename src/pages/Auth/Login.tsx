@@ -17,7 +17,6 @@ const validationSchema = yup.object({
 });
 
 const LoginPage = () => {
-  console.log('log ~ file: Login.tsx ~ line 25 ~ GG_API_KEY', GG_API_KEY);
   const { search } = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState<boolean>(false);

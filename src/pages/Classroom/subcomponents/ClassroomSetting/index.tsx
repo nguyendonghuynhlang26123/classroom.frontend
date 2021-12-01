@@ -15,7 +15,7 @@ import {
   Stack,
   Table,
   TableContainer,
-  TableHead,
+  Link,
   TableRow,
   TableCell,
   TableBody,
@@ -177,6 +177,16 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
       });
   };
 
+  const triggerDownloadTemplate = (ev: any) => {
+    ev.preventDefault();
+    const url = window.URL.createObjectURL(new Blob(['student_id,name']));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'template.csv'); //or any other extension
+    document.body.appendChild(link);
+    link.click();
+  };
+
   return (
     <>
       <IconButton
@@ -270,7 +280,10 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
                 </Typography>
                 {!studentData ? (
                   <Alert severity="warning">
-                    Warning! You need to import a list of students to the system to keep track of your classworks
+                    Warning! You need to import a list of students to the system to keep track of your classworks{' '}
+                    <Link href="#" sx={{ color: 'warning.main' }} underline="none" onClick={triggerDownloadTemplate}>
+                      Here is the upload template.
+                    </Link>
                     {csvFile ? (
                       <UploadConfirm
                         csvFile={csvFile}
@@ -323,9 +336,21 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
                                     onClick={() => showAlertReUpload(true)}
                                   />
                                 ) : (
-                                  <IconButton color="primary" size="small" onClick={showUploadPicker}>
-                                    <Upload />
-                                  </IconButton>
+                                  <Tooltip
+                                    arrow
+                                    title={
+                                      <Typography id="tooltip-text" sx={{ fontSize: 12 }}>
+                                        Upload student list sheet{' '}
+                                        <Link href="#" sx={{ fontSize: 12, color: 'yellow' }} onClick={triggerDownloadTemplate}>
+                                          Download template here
+                                        </Link>
+                                      </Typography>
+                                    }
+                                  >
+                                    <IconButton color="primary" size="small" onClick={showUploadPicker}>
+                                      <Upload className="icon" />
+                                    </IconButton>
+                                  </Tooltip>
                                 )}
                               </Tooltip>
                             </TableCell>
