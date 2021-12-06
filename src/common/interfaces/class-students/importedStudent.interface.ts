@@ -1,5 +1,5 @@
-import { IUser } from './../users/users.interface';
-import { IBase } from './../base';
+import { IUser } from '../users/users.interface';
+import { IBase } from '../base';
 
 export interface IStudentInfo {
   student_id: string;
@@ -7,7 +7,7 @@ export interface IStudentInfo {
   status: 'SYNCED' | 'NOT_SYNCED';
   user_id: IUser | undefined | null;
 }
-export interface IImportedStudents extends IBase {
+export interface ClassStudents extends IBase {
   class_id: string;
   file_location: string;
   students: IStudentInfo[];

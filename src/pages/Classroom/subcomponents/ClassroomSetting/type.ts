@@ -1,4 +1,4 @@
-import { IClassroomBody, IImportedStudents } from 'common/interfaces';
+import { IClassroomBody, ClassStudents } from 'common/interfaces';
 export type ClassroomSettingProps = {
   classData: IClassroomBody;
 };

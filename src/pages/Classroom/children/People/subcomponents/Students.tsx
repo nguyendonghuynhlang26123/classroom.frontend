@@ -1,6 +1,6 @@
 import { ManageAccounts, Sync, PersonAddOutlined } from '@mui/icons-material';
 import { Avatar, Divider, IconButton, List, ListItem, ListItemAvatar, ListItemText, Stack, Tooltip, Typography } from '@mui/material';
-import { IImportedStudents, UserRole, IStudentInfo } from 'common/interfaces';
+import { ClassStudents, UserRole, IStudentInfo } from 'common/interfaces';
 import React from 'react';
 import { styleSx } from './style';
 

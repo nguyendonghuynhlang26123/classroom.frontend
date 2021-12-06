@@ -1,9 +1,7 @@
-import { DrawerItemConfigType } from 'common/type';
-
-export type DrawerItemType = DrawerItemConfigType;
+import { IClassroom } from 'common/interfaces';
 
 export type NavbarProps = {
   children: React.ReactElement | React.ReactElement[];
-  items: DrawerItemType[];
+  classrooms: IClassroom[];
   toolbarComponents?: React.ReactElement | React.ReactElement[];
 };

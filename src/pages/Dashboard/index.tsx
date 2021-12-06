@@ -3,7 +3,6 @@ import type { IClassroomBody } from 'common/interfaces';
 import { IClassroom, UserRole } from 'common/interfaces';
 import Utils from 'common/utils';
 import { Navbar, ProfileBtn, useAuth, useLoading } from 'components';
-import { drawerItemConfigs } from 'configs';
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useCreateClassMutation, useGetAllClassesQuery, useJoinClassMutation } from 'services/api';
@@ -14,14 +13,14 @@ import { toast } from 'react-toastify';
 const Dashboard = () => {
   const navigate = useNavigate();
   const { userData } = useAuth();
-  const { data, isLoading } = useGetAllClassesQuery();
+  const { data: classrooms, isLoading: isFetchingClassrooms } = useGetAllClassesQuery();
   const [createClass, { isLoading: isUpdating }] = useCreateClassMutation();
   const [joinClass, { isLoading: isJoining }] = useJoinClassMutation();
   const [loading, setLoading] = useLoading();
 
   React.useEffect(() => {
-    setLoading(Utils.isLoading(isLoading, isUpdating, isJoining));
-  }, [isLoading, isUpdating, isJoining]);
+    setLoading(Utils.isLoading(isFetchingClassrooms, isUpdating, isJoining));
+  }, [isFetchingClassrooms, isUpdating, isJoining]);
 
   const handleCreateClass = (form: IClassroomBody) => {
     createClass(form)
@@ -40,7 +39,7 @@ const Dashboard = () => {
 
   return (
     <React.Fragment>
-      <Navbar items={drawerItemConfigs} toolbarComponents={<>{loading && <LinearProgress />}</>}>
+      <Navbar classrooms={classrooms || []} toolbarComponents={<>{loading && <LinearProgress />}</>}>
         <>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             🎓 Moorssalc
@@ -52,10 +51,10 @@ const Dashboard = () => {
           </div>
         </>
       </Navbar>
-      {!loading && data && (
+      {!loading && classrooms && (
         <Box sx={bodyContainer}>
           <Box sx={cardContainer}>
-            {data.map((c: IClassroom, index: number) => (
+            {classrooms.map((c: IClassroom, index: number) => (
               <ClassCard
                 key={index}
                 title={c.title}

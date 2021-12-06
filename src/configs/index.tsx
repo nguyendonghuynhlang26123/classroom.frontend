@@ -1,1 +1,1 @@
-export * from './drawer.config';
+export * from './theme.config';

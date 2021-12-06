@@ -15,13 +15,17 @@ export const drawerSx: MultipleSxTypes = {
     fontWeight: 500,
     fontSize: 16,
     height: 56,
+
+    '& .MuiAvatar-root': {
+      bgcolor: 'primary.main',
+    },
   },
   textItem: {
-    height: 40,
     '& .MuiTypography-root': {
       fontWeight: 500,
-      fontSize: 14,
-      letterSpacing: '.5px',
+      fontSize: 12,
+      color: 'grey.800',
+      letterSpacing: '.2px',
     },
   },
 };

@@ -1,17 +1,16 @@
 import { Box, IconButton, LinearProgress, Link, Tab, Tabs, Typography } from '@mui/material';
 import { ClassroomContextProvider, ConfirmDialog, Navbar, ProfileBtn, useAuth, useLoading } from 'components';
-import { drawerItemConfigs } from 'configs';
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
-import { useGetClassDetailsQuery, useGetMyRoleQuery, useGetMyStudentIdQuery } from 'services/api';
+import { useGetClassDetailsQuery, useGetMyRoleQuery, useGetMyStudentIdQuery, useGetAllClassesQuery } from 'services/api';
 import { mainSx, navSx } from './style';
 import { ClassroomSetting } from './subcomponents';
 import { Outlet, useLocation } from 'react-router';
 import { matchPath } from 'react-router-dom';
 import Utils from 'common/utils';
 import { toast } from 'react-toastify';
-import { IClassroomBody, IImportedStudents, UserRole } from 'common/interfaces';
+import { IClassroomBody, UserRole } from 'common/interfaces';
 
 const getTabState = (pathName: string) => {
   if (matchPath('/classroom/:id/work', pathName)) return 1;
@@ -29,6 +28,7 @@ const ClassroomBoard = () => {
   const [notifyMappingStudentId, showNotification] = React.useState<boolean>(false);
 
   const { data, error, isLoading: fetchingClassData } = useGetClassDetailsQuery(id as string);
+  const { data: classrooms, isLoading: isFetchingClassrooms } = useGetAllClassesQuery();
   const { data: role, isLoading: fetchingRole } = useGetMyRoleQuery(id as string);
   const {
     data: studentData,
@@ -53,8 +53,8 @@ const ClassroomBoard = () => {
   }, [error]);
 
   React.useEffect(() => {
-    setLoading(Utils.isLoading(fetchingRole, fetchingClassData, fetchingStuId));
-  }, [fetchingClassData, fetchingRole, fetchingStuId]);
+    setLoading(Utils.isLoading(fetchingRole, fetchingClassData, fetchingStuId, isFetchingClassrooms));
+  }, [fetchingClassData, fetchingRole, fetchingStuId, isFetchingClassrooms]);
 
   React.useEffect(() => {
     const err = stuErr as any;
@@ -70,7 +70,7 @@ const ClassroomBoard = () => {
   return (
     <React.Fragment>
       <Navbar
-        items={drawerItemConfigs}
+        classrooms={classrooms || []}
         toolbarComponents={
           <>
             <Box sx={navSx.tabsContainer}>

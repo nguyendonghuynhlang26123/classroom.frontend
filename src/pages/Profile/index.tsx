@@ -4,11 +4,10 @@ import { Avatar, Box, Button, Container, Grid, LinearProgress, Stack, TextField,
 import { NAME_REGEX } from 'common/constants/regex';
 import { IUserBody } from 'common/interfaces';
 import { Navbar, useAuth } from 'components';
-import { drawerItemConfigs } from 'configs';
 import { useFormik } from 'formik';
 import React from 'react';
 import { toast } from 'react-toastify';
-import { useUpdateProfileMutation, useUploadImageMutation } from 'services/api';
+import { useUpdateProfileMutation, useUploadImageMutation, useGetAllClassesQuery } from 'services/api';
 import * as yup from 'yup';
 import { profileSx } from './style';
 
@@ -21,6 +20,7 @@ const UserProfile = () => {
   const { userData } = useAuth();
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
   const [uploadAvatar, { isLoading: isUploading }] = useUploadImageMutation();
+  const { data: classrooms, isLoading: isFetchingClassrooms } = useGetAllClassesQuery();
   const [avatar, setAvatar] = React.useState<string | undefined>(userData?.avatar);
   const [uploadFile, setUploadFile] = React.useState<any>(null);
 
@@ -76,7 +76,7 @@ const UserProfile = () => {
 
   return (
     <Box sx={profileSx.root}>
-      <Navbar items={drawerItemConfigs} toolbarComponents={<>{isLoading && <LinearProgress />}</>}>
+      <Navbar classrooms={classrooms || []} toolbarComponents={<>{isLoading && <LinearProgress />}</>}>
         <>
           <Typography variant="body1">Classroom setting</Typography>
           <Button
