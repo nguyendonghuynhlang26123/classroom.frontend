@@ -10,18 +10,18 @@ class JwtAuthService {
 
     repository.interceptors.response.use(
       (response) => response,
-      (err) => {
-        console.log('log ~ file: jwt.service.ts ~ line 14 ~ JwtAuthService ~ init ~ err', err);
-        if (err?.response?.status === 401 && err.config && !err.config.__isRetryRequest) {
-          // if (this.isAuthTokenValid(refresh_token))
-          //   return this.refresh(refresh_token as string)
-          //     .then(() => repository(err.config))
-          //     .catch(() => {
-          //       this._setSession(null, null); //Reset session
-          //       logoutCallback(); // Callback
-          //     });
-          this._setSession(null, null); //Reset session
-          logoutCallback(); // Callback
+      async (err) => {
+        const originalRequest = err.config;
+        if (err?.response?.status === 401 && originalRequest && !originalRequest._retry) {
+          originalRequest._retry = true;
+          if (this.isAuthTokenValid(refresh_token))
+            this.refresh(refresh_token as string)
+              .then(() => repository(err.config))
+              .catch(() => {
+                this._setSession(null, null); //Reset session
+                logoutCallback(); // Callback
+              });
+          return repository(originalRequest);
         }
         return Promise.reject(err);
       },
