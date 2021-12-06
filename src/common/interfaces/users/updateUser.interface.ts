@@ -1,6 +1,5 @@
 export interface IUserBody {
-  student_id: string;
-  avatar: string;
+  avatar?: string;
   last_name: string;
   first_name: string;
 }

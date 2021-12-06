@@ -2,13 +2,16 @@ import { MultipleSxTypes } from 'common/type';
 
 export const accordionSx: MultipleSxTypes = {
   root: {
-    borderRadius: 2,
     my: 0,
     overflow: 'hidden',
 
     '& .MuiAccordionSummary-root': {
       alignItems: 'center',
       cursor: 'pointer',
+
+      ':hover': {
+        bgcolor: 'grey.100',
+      },
 
       '&.Mui-expanded': {
         borderBottom: 0.5,
@@ -27,13 +30,9 @@ export const accordionSx: MultipleSxTypes = {
     },
 
     ':hover': {
-      boxShadow: 3,
       '& .MuiIconButton-root': {
         opacity: 1,
       },
-    },
-    '&.Mui-expanded': {
-      boxShadow: 3,
     },
   },
 

@@ -3,13 +3,20 @@ import { Typography, Box, Stack, Button, TextField } from '@mui/material';
 import { SimpleModal } from 'components';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { InviteFormProps } from './type';
 
 const validationSchema = yup.object({
   email: yup.string().email().required('Email is required'),
 });
 
-export const InviteForm = ({ open, title, handleClose, onSubmit }: InviteFormProps) => {
+type InviteFormProps = {
+  open: boolean;
+  title: string;
+  description: any;
+  handleClose: () => void;
+  onSubmit: (email: string) => void;
+};
+
+export const InviteForm = ({ open, description, title, handleClose, onSubmit }: InviteFormProps) => {
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -22,11 +29,9 @@ export const InviteForm = ({ open, title, handleClose, onSubmit }: InviteFormPro
   });
 
   return (
-    <SimpleModal open={open} handleClose={handleClose} title={title} width={300}>
+    <SimpleModal open={open} handleClose={handleClose} title={title} width={350}>
       <Box component="form" noValidate autoComplete="off" onSubmit={formik.handleSubmit}>
-        <Typography variant="body2" gutterBottom component="p">
-          Send an invitation link to this email
-        </Typography>
+        {description}
         <TextField
           id="email"
           name="email"

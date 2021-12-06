@@ -1,21 +1,38 @@
-import { classroomApi, classroomDetailsApi, usersApi, assignmentsApi, topicsApi } from 'services/api';
-import { configureStore } from '@reduxjs/toolkit';
+import { loadingSlice, cleanUpSlice } from './slices';
+import { classroomApi, classroomDetailsApi, usersApi, assignmentsApi, uploadApi, classStudentApi, gradeApi } from 'services/api';
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/dist/query';
+
+const combinedReducer = combineReducers({
+  [loadingSlice.name]: loadingSlice.reducer,
+  [cleanUpSlice.name]: cleanUpSlice.reducer,
+  [classroomApi.reducerPath]: classroomApi.reducer,
+  [classroomDetailsApi.reducerPath]: classroomDetailsApi.reducer,
+  [usersApi.reducerPath]: usersApi.reducer,
+  [uploadApi.reducerPath]: uploadApi.reducer,
+  [assignmentsApi.reducerPath]: assignmentsApi.reducer,
+  [classStudentApi.reducerPath]: classStudentApi.reducer,
+  [gradeApi.reducerPath]: gradeApi.reducer,
+});
+
+const rootReducer = (state: any, action: any): any => {
+  if (action.type === 'cleanup/cleanUp') {
+    state = undefined;
+  }
+  return combinedReducer(state, action);
+};
+
 export const store = configureStore({
-  reducer: {
-    [classroomApi.reducerPath]: classroomApi.reducer,
-    [classroomDetailsApi.reducerPath]: classroomDetailsApi.reducer,
-    [usersApi.reducerPath]: usersApi.reducer,
-    [topicsApi.reducerPath]: topicsApi.reducer,
-    [assignmentsApi.reducerPath]: assignmentsApi.reducer,
-  },
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       classroomApi.middleware,
       classroomDetailsApi.middleware,
       usersApi.middleware,
-      topicsApi.middleware,
+      uploadApi.middleware,
       assignmentsApi.middleware,
+      classStudentApi.middleware,
+      gradeApi.middleware,
     ),
 });
 

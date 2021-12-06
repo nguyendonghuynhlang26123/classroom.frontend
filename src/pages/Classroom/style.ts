@@ -40,6 +40,5 @@ export const mainSx: MultipleSxTypes = {
   container: {
     mt: 4,
     p: '0 !important',
-    maxWidth: '1000px',
   },
 };

@@ -1,3 +1,5 @@
+import { timeStamp } from 'console';
+
 class Utils {
   static filterArrayByString(mainArr: any[], searchText: string): any[] {
     if (searchText === '') {
@@ -151,8 +153,17 @@ class Utils {
 
   // Check if list of arguments are all true
   static isLoading(...args: boolean[]): boolean {
-    for (var i = 0; i < args.length; ++i) if (!args[i]) return false;
-    return true;
+    for (var i = 0; i < args.length; ++i) if (args[i]) return true;
+    return false;
+  }
+
+  static displayDate(timestamp: number): string {
+    let d = new Date(timestamp);
+    return [d.getDate(), d.getMonth() + 1, d.getFullYear()].join('/') + ' ' + [d.getHours(), d.getMinutes()].join(':');
+  }
+
+  static getInvitationLinkFormat(id: string, code: string): string {
+    return `${window.location.origin}/#/classes/join?classId=${id}&role=STUDENT&code=${code}`;
   }
 }
 

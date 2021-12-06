@@ -13,7 +13,7 @@ export const assignmentsApi = createApi({
   tagTypes: [TAG],
   endpoints: (builder) => ({
     getAssignments: builder.query<IAssignment[], string>({
-      query: (classId: string) => _request.get(`classes/${classId}/assignments`),
+      query: (classId: string) => _request.get(`classes/${classId}/assignments?sort_by=ui_index&sort_type=asc&per_page=100`),
       transformResponse: (response: IGenericGetAllResponse<IAssignment>) => response.data,
 
       providesTags: (result: IAssignment[] | undefined) =>
@@ -34,7 +34,7 @@ export const assignmentsApi = createApi({
       invalidatesTags: [{ type: TAG, id: 'LIST' }],
     }),
 
-    updateAssignment: builder.mutation<IAssignment, { id: string; assignmentId: string; body: IAssignmentBody }>({
+    updateAssignment: builder.mutation<IAssignment, { id: string; assignmentId: string; body: Partial<IAssignmentBody> }>({
       query: ({ id, assignmentId, body }) => _request.put(`classes/${id}/assignments/${assignmentId}`, body),
       invalidatesTags: [
         { type: TAG, id: 'LIST' },

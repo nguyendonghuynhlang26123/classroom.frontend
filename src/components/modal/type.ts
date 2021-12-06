@@ -14,4 +14,5 @@ export type ConfirmDialogProps = {
   title: string;
   description: string;
   onConfirm: () => void;
+  alwayShow?: boolean;
 };

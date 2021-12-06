@@ -1,43 +1,56 @@
-import { Mail, PersonAddOutlined } from '@mui/icons-material';
-import {
-  Avatar,
-  Collapse,
-  Container,
-  Divider,
-  IconButton,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Stack,
-  Tooltip,
-  Typography,
-} from '@mui/material';
-import { IClassroomUser, UserRole } from 'common/interfaces';
-import { useClassroomCtx } from 'components';
+import { ContentCopy } from '@mui/icons-material';
+import { Collapse, Container, Stack, Typography, Box, IconButton, Tooltip } from '@mui/material';
+import { IClassroomUser, IStudentInfo, UserRole } from 'common/interfaces';
+import Utils from 'common/utils';
+import { useAuth, useClassroomCtx, useCopyToClipboard, useLoading } from 'components';
 import React from 'react';
 import { useParams } from 'react-router';
 import { toast } from 'react-toastify';
-import { useGetClassUsersQuery, useInviteUserMutation } from 'services/api';
-import { InviteForm } from './InviteForm';
+import { useGetAllStudentsQuery, useGetClassUsersQuery, useInviteUserMutation, useUpdateAccountSyncMutation } from 'services/api';
 import { peopleTabSx } from './style';
+import { InviteForm, PendingInvitation, Students, SyncForm, Teachers } from './subcomponents';
 
 const ClassroomPeople = () => {
   const { id } = useParams<'id'>();
-  const { role } = useClassroomCtx();
+  const { role, classData, studentId } = useClassroomCtx();
+  const { userData } = useAuth();
+  const [copiedText, copy] = useCopyToClipboard();
+  const { data: classUsers, isLoading: isFetchingUsers } = useGetClassUsersQuery(id as string);
+  const { data: classStudents, isLoading: isFetchingStudents } = useGetAllStudentsQuery(id as string);
+  const [submitInvitation, { isLoading: isSubmitingInvitation }] = useInviteUserMutation();
+  const [submitAccountSync, { isLoading: isSubmitingAccountSync }] = useUpdateAccountSyncMutation();
+
   const [inviteTeacher, showTeacherInviteForm] = React.useState<boolean>(false);
   const [inviteStudent, showStudentInviteForm] = React.useState<boolean>(false);
-  const { data, isLoading } = useGetClassUsersQuery(id as string);
-  const [submitInvitation] = useInviteUserMutation();
+  const [syncTarget, setSyncTarget] = React.useState<IStudentInfo | null>(null);
 
-  const checkRole = (role: UserRole, type: 'Teachers' | 'Students') => {
-    if (type === 'Teachers') return role !== UserRole.STUDENT;
-    else return role === UserRole.STUDENT;
+  const [, setLoading] = useLoading();
+
+  React.useEffect(() => {
+    setLoading(Utils.isLoading(isFetchingStudents, isFetchingUsers, isSubmitingInvitation, isSubmitingAccountSync));
+  }, [isFetchingUsers, isFetchingStudents, isSubmitingInvitation, isSubmitingAccountSync]);
+
+  const getTeachers = (data: IClassroomUser[] | undefined) =>
+    data && data.length > 0 ? data.filter((u: IClassroomUser) => u.role !== UserRole.STUDENT && u.status !== 'INACTIVATED') : [];
+
+  const getPendingInvititaion = (data: IClassroomUser[] | undefined) =>
+    data && data.length > 0 ? data.filter((u: IClassroomUser) => u.status !== 'ACTIVATED') : [];
+
+  const getNotSyncedStudents = (data: IClassroomUser[] | undefined) => {
+    if (!data || data.length === 0) return [];
+    if (!classStudents) return [];
+    const syncedStudents = classStudents.students.filter((s) => s.status === 'SYNCED').map((s) => s.user_id?._id);
+    return data.filter(
+      (u: IClassroomUser) => u.role === UserRole.STUDENT && u.status !== 'INACTIVATED' && !syncedStudents.find((s) => s === u.user_id._id),
+    );
   };
 
-  const inviteBtnHandler = (type: 'Teachers' | 'Students') => {
-    if (type === 'Teachers') showTeacherInviteForm(true);
-    else showStudentInviteForm(true);
+  const syncBtnCallback = (s: IStudentInfo) => {
+    if (!s || !userData) return;
+    if (role === UserRole.STUDENT) submitUpdateSync(s.student_id, userData._id as string);
+    else {
+      setSyncTarget(s);
+    }
   };
 
   const submitInvite = (invitedRole: UserRole, email: string) => {
@@ -55,77 +68,46 @@ const ClassroomPeople = () => {
       });
   };
 
+  const submitUpdateSync = (studentId: string, userId: string) => {
+    submitAccountSync({
+      class_id: id as string,
+      body: {
+        user_id: userId,
+        student_id: studentId,
+      },
+    })
+      .unwrap()
+      .then(() => {
+        toast.success('Operation succeeded');
+      })
+      .catch((err) => {
+        toast.error('Operation failed! ' + err.data);
+      });
+    setSyncTarget(null);
+  };
+
   return (
     <Collapse timeout={500} appear={true} in={true}>
-      <Container maxWidth={false} sx={peopleTabSx.root}>
-        {['Teachers', 'Students'].map((t: any) => (
-          <React.Fragment key={t}>
-            <Stack direction="row" justifyContent="space-between" sx={peopleTabSx.header}>
-              <Typography>{t}</Typography>
-              {role !== UserRole.STUDENT && (
-                <IconButton
-                  onClick={() => {
-                    inviteBtnHandler(t);
-                  }}
-                >
-                  <PersonAddOutlined />
-                </IconButton>
-              )}
-            </Stack>
-            <List>
-              {isLoading || !data
-                ? 'Loading for results...'
-                : data
-                    .filter(
-                      (u: IClassroomUser) =>
-                        checkRole(u.role, t) && (role !== UserRole.STUDENT || u.status !== 'INACTIVATED'),
-                    )
-                    .map((u: IClassroomUser, idx: number) => (
-                      <React.Fragment key={idx}>
-                        <ListItem alignItems="flex-start" sx={peopleTabSx.listItem}>
-                          <ListItemAvatar>
-                            {u.user_id.avatar ? (
-                              <Avatar
-                                alt={u.user_id.first_name}
-                                src={u.user_id.avatar}
-                                sx={{ bgcolor: 'primary.main' }}
-                              />
-                            ) : (
-                              <Avatar sx={{ bgcolor: 'primary.main' }}>{u.user_id.first_name.charAt(0)}</Avatar>
-                            )}
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={u.user_id.first_name + ' ' + u.user_id.last_name}
-                            secondary={
-                              <>
-                                <Typography
-                                  sx={{ display: 'inline' }}
-                                  component="span"
-                                  variant="body2"
-                                  color="text.primary"
-                                >
-                                  {u.user_id.email}
-                                </Typography>
-                                {u.status === 'INACTIVATED' && ' - (Inviting)'}
-                              </>
-                            }
-                          />
-                          <Tooltip title={`Send Mail to ${u.user_id.email}`}>
-                            <IconButton href={`mailto:${u.user_id.email}`}>
-                              <Mail />
-                            </IconButton>
-                          </Tooltip>
-                        </ListItem>
-                        <Divider />
-                      </React.Fragment>
-                    ))}
-            </List>
-          </React.Fragment>
-        ))}
+      <Container maxWidth="md" sx={peopleTabSx.root}>
+        <Teachers role={role} onInvite={() => showTeacherInviteForm(true)} data={getTeachers(classUsers)} />
+
+        <Students
+          studentId={studentId}
+          role={role}
+          data={classStudents?.students}
+          onInvite={() => showStudentInviteForm(true)}
+          onBtnSyncClick={syncBtnCallback}
+        />
+        <PendingInvitation role={role} data={getPendingInvititaion(classUsers)} />
 
         <InviteForm
           title="Invite Teachers"
           open={inviteTeacher}
+          description={
+            <Typography variant="body2" gutterBottom component="p">
+              Send an invitation link to your colleagues via email and invite them as a collaborative teacher.
+            </Typography>
+          }
           handleClose={() => showTeacherInviteForm(false)}
           onSubmit={(email: string) => {
             submitInvite(UserRole.TEACHER, email);
@@ -136,12 +118,47 @@ const ClassroomPeople = () => {
         <InviteForm
           title="Invite students"
           open={inviteStudent}
+          description={
+            <React.Fragment>
+              <Typography variant="body2" gutterBottom component="p">
+                Send an invitation link to your students via email.
+              </Typography>
+              <Stack direction="row" sx={peopleTabSx.invite}>
+                <Box>
+                  <Typography variant="body2" component="p">
+                    Or use this <b>Invitation link</b>
+                  </Typography>
+                  <Box component="div" className="link">
+                    {Utils.getInvitationLinkFormat(id as string, classData?.code || '')}
+                  </Box>
+                </Box>
+                <Tooltip title={copiedText ? 'Copied' : 'Copy invitation link'}>
+                  <IconButton onClick={() => copy(Utils.getInvitationLinkFormat(id as string, classData?.code || ''))}>
+                    <ContentCopy />
+                  </IconButton>
+                </Tooltip>
+              </Stack>
+            </React.Fragment>
+          }
           handleClose={() => showStudentInviteForm(false)}
           onSubmit={(email: string) => {
             submitInvite(UserRole.STUDENT, email);
             showStudentInviteForm(false);
           }}
         />
+
+        {syncTarget !== null && (
+          <SyncForm
+            open={syncTarget !== null}
+            selectedId={syncTarget?.user_id?._id}
+            students={getNotSyncedStudents(classUsers)}
+            handleClose={() => setSyncTarget(null)}
+            onSubmit={(id: string) => {
+              // console.log(`Map student id = ${syncTarget?.student_id} -> user #${id} `);
+              if (syncTarget) submitUpdateSync(syncTarget?.student_id, id);
+            }}
+          />
+        )}
       </Container>
     </Collapse>
   );

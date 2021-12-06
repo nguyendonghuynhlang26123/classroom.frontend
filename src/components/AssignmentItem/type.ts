@@ -2,9 +2,7 @@ import { IAssignment } from './../../common/interfaces/assignments/assignments.i
 export type AccordionItemProps = {
   data: IAssignment;
   expanded: boolean;
-  isStudent: boolean;
   onClick: () => void;
-  onEdit: () => void;
-  onView: () => void;
-  onRemove: () => void;
+  actionBtns: JSX.Element[];
+  colorMode: string;
 };

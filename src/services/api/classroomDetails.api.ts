@@ -30,8 +30,8 @@ export const classroomDetailsApi = createApi({
       transformResponse: (response: { users: IClassroomUser[] }) => response.users,
     }),
 
-    updateClass: builder.mutation<IClassroom, IClassroomBody>({
-      query: (body) => _request.put('classes', body),
+    updateClass: builder.mutation<IClassroom, { id: string; body: IClassroomBody }>({
+      query: ({ id, body }) => _request.put('classes/' + id, body),
       invalidatesTags: [{ type: CLASSROOM_DETAILS_TAG, id: 'DETAILS' }],
     }),
 
