@@ -81,7 +81,8 @@ const Grading = () => {
   const [downloadStudentRequest, { isLoading: isDownloading }] = useDownloadGradingMutation();
   const students = classStudents?.students;
   const gradings = prepareGradesArray(assignments, students, classGrading);
-  const assignmetTotalPoint = assignments ? assignments.map((a) => a.total_points).reduce((prev, cur) => cur + prev) : 0;
+  const assignmetTotalPoint =
+    assignments && assignments.length > 0 ? assignments.map((a) => a.total_points).reduce((prev, cur) => cur + prev) : 0;
 
   const [boardState, setBoardState] = React.useState<BoardState>({});
   const [allowSave, setAllowSave] = React.useState<boolean>(false);
