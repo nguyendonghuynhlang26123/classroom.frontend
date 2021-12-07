@@ -24,6 +24,7 @@ export const JoinForm = ({ open, handleClose, onSubmit }: JoinFormProps) => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       onSubmit(values);
+      handleClose();
     },
   });
   return (

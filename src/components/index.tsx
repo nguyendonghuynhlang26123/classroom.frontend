@@ -8,3 +8,4 @@ export * from './hooks';
 export * from './AssignmentItem';
 export * from './RichEditor';
 export * from './DateTimePicker';
+export * from './NoResourceDisplay';

@@ -17,14 +17,8 @@ const validationSchema = yup.object({
     .min(1, 'Section should be of 1-50 characters length')
     .max(50, 'Section should be of 1-50 characters length')
     .required('Section is required'),
-  subject: yup
-    .string()
-    .min(1, 'Subject should be of 1-50 characters length')
-    .max(50, 'Subject should be of 1-50 characters length'),
-  room: yup
-    .string()
-    .min(1, 'Room should be of 1-50 characters length')
-    .max(50, 'Room should be of 1-50 characters length'),
+  subject: yup.string().min(1, 'Subject should be of 1-50 characters length').max(50, 'Subject should be of 1-50 characters length'),
+  room: yup.string().min(1, 'Room should be of 1-50 characters length').max(50, 'Room should be of 1-50 characters length'),
 });
 
 export const CreateForm = ({ open, handleClose, onSubmit }: FormModalProps) => {
@@ -38,6 +32,7 @@ export const CreateForm = ({ open, handleClose, onSubmit }: FormModalProps) => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       onSubmit(values);
+      handleClose();
     },
   });
 

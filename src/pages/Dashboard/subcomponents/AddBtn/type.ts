@@ -18,6 +18,6 @@ export type JoinFormProps = {
 };
 
 export type AddBtnProps = {
-  handleCreateClass: (form: IClassroomBody) => void;
-  handleJoinClass: (form: { code: string }) => void;
+  createOptionChosen: () => void;
+  joinOptionChosen: () => void;
 };
