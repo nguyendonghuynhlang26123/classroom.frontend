@@ -1,21 +1,31 @@
-import { Stack, Typography, Button } from '@mui/material';
+import { Stack, Typography, Button, Box } from '@mui/material';
 import React from 'react';
 import { NoResourceDisplayProps } from './type';
 import Kite from 'assets/images/kite.svg';
 import { styleSx } from './style';
 
-export const NoResourceDisplay = ({ title, img = Kite, onClick }: NoResourceDisplayProps) => {
+export const NoResourceDisplay = ({ title, description, img = Kite, direction = 'column', onClick }: NoResourceDisplayProps) => {
   return (
-    <Stack direction="column" sx={styleSx.root} spacing={1}>
-      <img src={img} width="20%" />
-      <Stack direction="column" sx={styleSx.textContainer}>
-        <Typography sx={styleSx.textTitle}>Create {title}</Typography>
-        <Typography sx={styleSx.textDescription}>
-          Click on the below buttons to <br /> navigate to the {title} creation screen
-        </Typography>
-        <Button sx={styleSx.btn} variant="contained" onClick={onClick}>
-          Create
-        </Button>
+    <Stack direction={direction === 'column' ? 'column' : 'row-reverse'} sx={styleSx.root} spacing={1}>
+      <Box sx={styleSx.imgContainer}>
+        <img src={img} />
+      </Box>
+      <Stack
+        direction="column"
+        sx={{
+          ...styleSx.textContainer,
+          alignItems: direction.includes('row') ? 'start' : 'center',
+          textAlign: direction.includes('row') ? 'left' : 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Typography sx={styleSx.textTitle}>{title}</Typography>
+        <Typography sx={styleSx.textDescription}>{description}</Typography>
+        {onClick && (
+          <Button sx={styleSx.btn} variant="contained" onClick={onClick}>
+            Continue
+          </Button>
+        )}
       </Stack>
     </Stack>
   );

@@ -3,22 +3,20 @@ import { MultipleSxTypes } from 'common/type';
 export const styleSx: MultipleSxTypes = {
   root: {
     width: '100%',
-    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    py: 3,
     px: 2,
-    py: 4,
+  },
 
+  imgContainer: {
     '& img': {
-      width: '20%',
+      height: 200,
     },
   },
 
   textContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    my: 4,
-    textAlign: 'center',
+    flex: 1,
   },
 
   textTitle: {

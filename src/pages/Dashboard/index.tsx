@@ -87,7 +87,16 @@ const Dashboard = () => {
                 />
               ))
             ) : (
-              <NoResourceDisplay title="Classroom" img={Kite} onClick={() => showCreateForm(true)} />
+              <NoResourceDisplay
+                title="No classroom created yet!"
+                img={Kite}
+                onClick={() => showCreateForm(true)}
+                description={
+                  <>
+                    Click on the below buttons to <br /> create a class and start teaching!
+                  </>
+                }
+              />
             )}
           </Box>
         </Box>

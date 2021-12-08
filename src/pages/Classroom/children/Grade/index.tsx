@@ -133,8 +133,12 @@ const Grading = () => {
   };
 
   const getStudentTotalPoint = (row: number) => {
-    const totalPoint = gradings[row] && gradings[row].length > 0 ? gradings[row].reduce((prv, cur) => (cur !== -1 ? prv + cur : prv)) : -1;
-    return totalPoint === -1 ? 0 : totalPoint;
+    if (gradings[row] && gradings[row].length > 0) {
+      let totalPoint = 0;
+      for (let grade of gradings[row]) totalPoint = grade !== -1 ? totalPoint + grade : totalPoint;
+      return totalPoint;
+    }
+    return 0;
   };
 
   const handleUploadBtn = (index: number) => {

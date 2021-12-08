@@ -18,7 +18,7 @@ import {
 import { Box } from '@mui/system';
 import { IAssignment, IAssignmentBody, UserRole } from 'common/interfaces';
 import Utils from 'common/utils';
-import { AssignmentItem, ConfirmDialog, useClassroomCtx, useLoading } from 'components';
+import { AssignmentItem, ConfirmDialog, useClassroomCtx, useLoading, NoResourceDisplay } from 'components';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import React from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
@@ -26,6 +26,7 @@ import { useGetAssignmentsQuery, useRemoveAssignmentMutation, useUpdateAssignmen
 import { gradeStructureSx } from './style';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
+import NotFoundImg from 'assets/images/reading.svg';
 
 //A list of helper functions
 const reorder = (list: any[], fromIndex: number, toIndex: number): any[] => {
@@ -185,13 +186,7 @@ export const EditableGradeStructure = () => {
                     <RestartAlt />
                   </IconButton>
                 </Tooltip>
-                <Button
-                  endIcon={<Save />}
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => showConfirmation(true)}
-                  disabled={loading}
-                >
+                <Button endIcon={<Save />} variant="contained" color="secondary" onClick={() => showConfirmation(true)} disabled={loading}>
                   Save
                 </Button>
               </Stack>
@@ -212,21 +207,14 @@ export const EditableGradeStructure = () => {
                   formData.map((a: IAssignment, indx: number) => (
                     <Draggable draggableId={'row-' + indx} index={indx} key={indx}>
                       {(dragProvided) => (
-                        <div
-                          {...dragProvided.draggableProps}
-                          {...dragProvided.dragHandleProps}
-                          ref={dragProvided.innerRef}
-                        >
+                        <div {...dragProvided.draggableProps} {...dragProvided.dragHandleProps} ref={dragProvided.innerRef}>
                           <React.Fragment key={a._id}>
                             <Box sx={gradeStructureSx.criteriaCard} width="100%">
                               <Box sx={gradeStructureSx.dragZone}>
                                 <Tooltip title="Drag to reorder">
                                   <DragIndicatorSharp className="dragIcon" />
                                 </Tooltip>
-                                <IconButton
-                                  size="small"
-                                  onClick={(ev: React.MouseEvent<HTMLElement>) => handleMenuOpen(ev, indx)}
-                                >
+                                <IconButton size="small" onClick={(ev: React.MouseEvent<HTMLElement>) => handleMenuOpen(ev, indx)}>
                                   <MoreHorizRounded />
                                 </IconButton>
                               </Box>
@@ -236,16 +224,10 @@ export const EditableGradeStructure = () => {
                                 expanded={expandItemKey === a._id}
                                 onClick={() => toggleExpand(expandItemKey, a._id || '')}
                                 actionBtns={[
-                                  <Button
-                                    color="primary"
-                                    onClick={() => navigate(`/classroom/${id}/work/details/${a._id}`)}
-                                  >
+                                  <Button color="primary" onClick={() => navigate(`/classroom/${id}/work/details/${a._id}`)}>
                                     View assignment
                                   </Button>,
-                                  <Button
-                                    color="secondary"
-                                    onClick={() => navigate(`/classroom/${id}/work/edit/${a._id}`)}
-                                  >
+                                  <Button color="secondary" onClick={() => navigate(`/classroom/${id}/work/edit/${a._id}`)}>
                                     Edit assignment
                                   </Button>,
                                 ]}
@@ -257,10 +239,17 @@ export const EditableGradeStructure = () => {
                     </Draggable>
                   ))
                 ) : (
-                  <Typography sx={{ fontSize: 14, color: 'grey.400', fontStyle: 'italic' }}>
-                    Not found assignment!
-                    <Link to={`/classroom/${id}/work/create`}>Click here to create assignment</Link>
-                  </Typography>
+                  <NoResourceDisplay
+                    title="Add assignments"
+                    direction="row"
+                    img={NotFoundImg}
+                    description={
+                      <>
+                        Click on the below buttons to <br /> add assignments to this class
+                      </>
+                    }
+                    onClick={() => navigate(`/classroom/${id}/work/create`)}
+                  />
                 )}
                 {provided.placeholder}
               </Box>

@@ -16,7 +16,7 @@ const ClassroomPeople = () => {
   const { userData } = useAuth();
   const [copiedText, copy] = useCopyToClipboard();
   const { data: classUsers, isLoading: isFetchingUsers } = useGetClassUsersQuery(id as string);
-  const { data: classStudents, isLoading: isFetchingStudents } = useGetAllStudentsQuery(id as string);
+  const { data: classStudents, error: fetchStuError, isLoading: isFetchingStudents } = useGetAllStudentsQuery(id as string);
   const [submitInvitation, { isLoading: isSubmitingInvitation }] = useInviteUserMutation();
   const [submitAccountSync, { isLoading: isSubmitingAccountSync }] = useUpdateAccountSyncMutation();
 
@@ -94,7 +94,7 @@ const ClassroomPeople = () => {
         <Students
           studentId={studentId}
           role={role}
-          data={classStudents?.students}
+          data={fetchStuError ? [] : classStudents?.students}
           onInvite={() => showStudentInviteForm(true)}
           onBtnSyncClick={syncBtnCallback}
         />
