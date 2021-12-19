@@ -12,13 +12,14 @@ class JwtAuthService {
       (response) => response,
       async (err) => {
         const originalRequest = err.config;
+        console.log('log ~ file: jwt.service.ts ~ line 15 ~ JwtAuthService ~ originalRequest', originalRequest);
         if (err?.response?.status === 401 && originalRequest && !originalRequest._retry) {
           originalRequest._retry = true;
           if (this.isAuthTokenValid(refresh_token))
             this.refresh(refresh_token as string)
               .then(() => repository(err.config))
               .catch(() => {
-                this._setSession(null, null); //Reset session
+                //this._setSession(null, null); //Reset session
                 logoutCallback(); // Callback
               });
           return repository(originalRequest);
@@ -34,7 +35,7 @@ class JwtAuthService {
       this.refresh(refresh_token as string)
         .then(() => loginCallback())
         .catch(() => {
-          this._setSession(null, null); //Reset session
+          //this._setSession(null, null); //Reset session
           logoutCallback();
         });
     } else {

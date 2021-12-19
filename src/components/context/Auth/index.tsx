@@ -30,13 +30,11 @@ export const AuthProvider = ({ children }: { children: any }) => {
   };
 
   React.useEffect(() => {
-    ('Check Auth');
     repository.get('/', { withCredentials: true }); // Send get request to get CSRF token once site is visited.
     checkJWT();
   }, []);
 
   const onAutoLogIn = () => {
-    ('~ onAutoLogIn');
     jwtService
       .getUserData()
       .then((data: any) => {
@@ -50,7 +48,6 @@ export const AuthProvider = ({ children }: { children: any }) => {
   };
 
   const onAutoLogOut = () => {
-    ('~ onAutoLogOut');
     setIsAuthen(false);
     setIsPending(false); //Show that the api has been processed
     setInfor(undefined);

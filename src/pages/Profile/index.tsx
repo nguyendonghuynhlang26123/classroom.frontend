@@ -1,9 +1,10 @@
 //Profile
 import { PhotoCamera } from '@mui/icons-material';
-import { Avatar, Box, Button, Container, Grid, LinearProgress, Stack, TextField, Typography } from '@mui/material';
+import { Avatar, Box, Button, CircularProgress, Container, Grid, LinearProgress, Stack, TextField, Typography } from '@mui/material';
 import { NAME_REGEX } from 'common/constants/regex';
 import { IUserBody } from 'common/interfaces';
-import { Navbar, useAuth } from 'components';
+import Utils from 'common/utils';
+import { Navbar, useAuth, useLoading } from 'components';
 import { useFormik } from 'formik';
 import React from 'react';
 import { toast } from 'react-toastify';
@@ -23,6 +24,7 @@ const UserProfile = () => {
   const { data: classrooms, isLoading: isFetchingClassrooms } = useGetAllClassesQuery();
   const [avatar, setAvatar] = React.useState<string | undefined>(userData?.avatar);
   const [uploadFile, setUploadFile] = React.useState<any>(null);
+  const [loading, setLoading] = useLoading();
 
   const formik = useFormik({
     initialValues: {
@@ -40,13 +42,13 @@ const UserProfile = () => {
           .catch((err) => {
             toast.error('Update failed! ' + err.data);
           });
-        // uploadAvatar(form_data);
-
-        // updateProfile({ id: userData._id as string, body: { ...values } })
-        //   .unwrap()
       }
     },
   });
+
+  React.useEffect(() => {
+    setLoading(Utils.isLoading(isLoading, isUploading, isFetchingClassrooms));
+  }, [isLoading, isUploading, isFetchingClassrooms]);
 
   const handleUpdateData = async (id: string, values: IUserBody, file: any) => {
     let form_data = new FormData();
@@ -54,7 +56,7 @@ const UserProfile = () => {
     if (file) {
       form_data.append('image', file);
       const uploaded = await uploadAvatar(form_data).unwrap();
-      return await updateProfile({ id: id, body: { ...values, avatar: uploaded.file_name } });
+      return await updateProfile({ id: id, body: { ...values, avatar: uploaded.url } });
     }
     return await updateProfile({ id: id, body: { ...values, avatar: undefined } });
   };
@@ -76,7 +78,7 @@ const UserProfile = () => {
 
   return (
     <Box sx={profileSx.root}>
-      <Navbar classrooms={classrooms || []} toolbarComponents={<>{isLoading && <LinearProgress />}</>}>
+      <Navbar classrooms={classrooms || []} toolbarComponents={<>{loading && <LinearProgress />}</>}>
         <>
           <Typography variant="body1">Classroom setting</Typography>
           <Button
@@ -84,6 +86,8 @@ const UserProfile = () => {
             onClick={() => {
               formik.submitForm();
             }}
+            disabled={loading}
+            startIcon={loading && <CircularProgress size={16} />}
           >
             Save
           </Button>
