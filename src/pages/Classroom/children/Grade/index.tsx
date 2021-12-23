@@ -215,7 +215,8 @@ const Grading = () => {
       });
   };
 
-  const triggerDownloadTemplate = () => {
+  const triggerDownloadTemplate = (ev: any) => {
+    ev.preventDefault();
     const url = window.URL.createObjectURL(new Blob(['student_id,mark']));
     const link = document.createElement('a');
     link.href = url;

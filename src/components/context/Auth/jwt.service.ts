@@ -15,13 +15,16 @@ class JwtAuthService {
         console.log('log ~ file: jwt.service.ts ~ line 15 ~ JwtAuthService ~ originalRequest', originalRequest);
         if (err?.response?.status === 401 && originalRequest && !originalRequest._retry) {
           originalRequest._retry = true;
-          if (this.isAuthTokenValid(refresh_token))
-            this.refresh(refresh_token as string)
-              .then(() => repository(err.config))
-              .catch(() => {
-                //this._setSession(null, null); //Reset session
-                logoutCallback(); // Callback
-              });
+
+          if (this.isAuthTokenValid(refresh_token)) {
+            try {
+              await this.refresh(refresh_token as string);
+            } catch (err) {
+              //this._setSession(null, null); //Reset session
+              logoutCallback(); // Callback
+            }
+          }
+
           return repository(originalRequest);
         }
         return Promise.reject(err);

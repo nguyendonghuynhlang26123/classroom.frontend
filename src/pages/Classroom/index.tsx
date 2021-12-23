@@ -13,10 +13,10 @@ import { toast } from 'react-toastify';
 import { IClassroomBody, UserRole } from 'common/interfaces';
 
 const getTabState = (pathName: string) => {
-  if (matchPath('/classroom/:id/work', pathName)) return 1;
-  if (matchPath('/classroom/:id/people', pathName)) return 2;
-  if (matchPath('/classroom/:id/grade', pathName)) return 3;
-  return 0;
+  if (matchPath('/classroom/:id/work', pathName)) return '1';
+  if (matchPath('/classroom/:id/people', pathName)) return '2';
+  if (matchPath('/classroom/:id/grade', pathName)) return '3';
+  return '0';
 };
 
 const ClassroomBoard = () => {
@@ -24,7 +24,7 @@ const ClassroomBoard = () => {
   const { pathname } = useLocation();
   const { userData } = useAuth();
   const navigate = useNavigate();
-  const [tabValue, setTabValue] = React.useState<number>(getTabState(pathname));
+  const [tabValue, setTabValue] = React.useState<string>(getTabState(pathname));
   const [notifyMappingStudentId, showNotification] = React.useState<boolean>(false);
 
   const { data, error, isLoading: fetchingClassData } = useGetClassDetailsQuery(id as string);
@@ -63,7 +63,7 @@ const ClassroomBoard = () => {
     }
   }, [stuErr]);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setTabValue(newValue);
   };
 
@@ -75,10 +75,10 @@ const ClassroomBoard = () => {
           <>
             <Box sx={navSx.tabsContainer}>
               <Tabs value={tabValue} onChange={handleChange} aria-label="basic tabs example">
-                <Tab label="Stream" id="stream" onClick={() => navigate('.')} />
-                <Tab label="Classwork" id="work" onClick={() => navigate('./work')} />
-                <Tab label="People" id="people" onClick={() => navigate('./people')} />
-                {role !== UserRole.STUDENT && <Tab label="Grading" id="people" onClick={() => navigate('./grade')} />}
+                <Tab value="0" label="Stream" id="stream" onClick={() => navigate('.')} />
+                <Tab value="1" label="Classwork" id="work" onClick={() => navigate('./work')} />
+                <Tab value="2" label="People" id="people" onClick={() => navigate('./people')} />
+                {role !== UserRole.STUDENT && <Tab value="3" label="Grading" id="people" onClick={() => navigate('./grade')} />}
               </Tabs>
             </Box>
             {loading && <LinearProgress sx={navSx.progressBar} />}
