@@ -23,14 +23,15 @@ export const gradeApi = createApi({
             [{ type: GRADE_TAG, id: 'LIST' }],
     }),
 
-    createGrading: builder.mutation<any, { classId: string; body: IGradingBody[] }>({
-      query: ({ classId, body }) => _request.post(`classes/${classId}/grading`, { data: body }),
+    createGrading: builder.mutation<any, { classId: string; body: IGradingBody }>({
+      query: ({ classId, body }) => _request.post(`classes/${classId}/grading`, body),
       invalidatesTags: [{ type: GRADE_TAG, id: 'LIST' }],
     }),
-    updateGrading: builder.mutation<any, { classId: string; body: IGradingBody[] }>({
-      query: ({ classId, body }) => _request.put(`classes/${classId}/grading`, { data: body }),
-      invalidatesTags: [{ type: GRADE_TAG, id: 'LIST' }],
+    updateGrading: builder.mutation<any, { classId: string; body: IGradingBody }>({
+      query: ({ classId, body }) => _request.put(`classes/${classId}/grading`, body),
+      invalidatesTags: ({ _id }) => [{ type: GRADE_TAG, id: _id }],
     }),
+
     importGrading: builder.mutation<any, { classId: string; assignmentId: string; body: any }>({
       query: ({ classId, assignmentId, body }) => _request.post(`classes/${classId}/grading/assignment/${assignmentId}/import`, body),
       invalidatesTags: [{ type: GRADE_TAG, id: 'LIST' }],
