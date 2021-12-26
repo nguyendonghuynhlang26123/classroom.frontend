@@ -19,7 +19,7 @@ export const gradeApi = createApi({
         result
           ? // successful query
             [...result.map(({ _id }) => ({ type: GRADE_TAG, id: _id } as const)), { type: GRADE_TAG, id: 'LIST' }]
-          : // an error occurred, but we still want to refetch this query when `{ type: 'Posts', id: 'LIST' }` is invalidated
+          : // an error occurred, but we still want to refetch this query when mutation 
             [{ type: GRADE_TAG, id: 'LIST' }],
     }),
 

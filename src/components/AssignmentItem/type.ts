@@ -5,4 +5,5 @@ export type AccordionItemProps = {
   onClick: () => void;
   actionBtns: JSX.Element[];
   colorMode: string;
+  mark?: number;
 };

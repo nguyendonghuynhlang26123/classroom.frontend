@@ -10,6 +10,7 @@ import NotFoundImg from 'assets/images/party.svg';
 
 export const GradeStructure = () => {
   const { id } = useParams<'id'>();
+  const { role, studentId } = useClassroomCtx();
   const { data, isLoading } = useGetAssignmentsQuery(id as string);
   const navigate = useNavigate();
   const [expandItemKey, setExpandKey] = React.useState<string | null>(null);
@@ -23,8 +24,15 @@ export const GradeStructure = () => {
     <Container maxWidth="md" sx={gradeStructureSx.form}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography sx={gradeStructureSx.formHeader} color="primary">
-          Grading Structure
+          Classwork
         </Typography>
+        {studentId ? (
+          <Typography color="primary">Overall: 20</Typography>
+        ) : (
+          <Typography color="error" fontSize={14}>
+            Your account is not synced to view grading!
+          </Typography>
+        )}
       </Stack>
       {data &&
         (data.length > 0 ? (
@@ -33,6 +41,7 @@ export const GradeStructure = () => {
               <Box sx={{ border: 1, borderRadius: 2, borderColor: 'divider', overflow: 'hidden', my: 1 }}>
                 <AssignmentItem
                   data={a}
+                  mark={10}
                   expanded={expandItemKey === a._id}
                   onClick={() => toggleExpand(expandItemKey, a._id || '')}
                   colorMode="primary"
@@ -52,7 +61,7 @@ export const GradeStructure = () => {
             img={NotFoundImg}
             description={
               <>
-                You have no classwork at the moment, <br /> so enjoy this moment and chill!! 🎉🎉
+                Your class has no classwork, <br /> so enjoy this moment and chill!! 🎊🎮🎵
               </>
             }
           />

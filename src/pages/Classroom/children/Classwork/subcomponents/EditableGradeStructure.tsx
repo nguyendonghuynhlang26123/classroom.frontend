@@ -159,7 +159,7 @@ export const EditableGradeStructure = () => {
           <Slide direction="left" in={!sortMode} container={containerRef.current}>
             <Stack direction="row" alignItems="center" justifyContent="space-between">
               <Typography sx={gradeStructureSx.formHeader} color="primary">
-                Grading Structure{' '}
+                Classwork
               </Typography>
 
               <Button endIcon={<Add />} variant="outlined" color="primary" onClick={handleCreateAssignment}>
