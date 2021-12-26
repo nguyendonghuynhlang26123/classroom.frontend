@@ -1,4 +1,4 @@
-import { InputAdornment, TableCell, TextField, Box, IconButton, Typography, Stack } from '@mui/material';
+import { InputAdornment, TableCell, TextField, Box, IconButton, Typography, Stack, Tooltip } from '@mui/material';
 import React from 'react';
 import { GradeCellPropsType } from './type';
 import { gradeCellSx } from './style';
@@ -10,7 +10,7 @@ const isValid = (value: undefined | number, total: number): boolean => {
   else return false;
 };
 
-const GradeCellComponent = ({ mark, total, onSave }: GradeCellPropsType) => {
+const GradeCellComponent = ({ mark, total, onSave, finalized }: GradeCellPropsType) => {
   const cellRef = React.createRef();
   const [editingMode, setEditingMode] = React.useState<boolean>(false);
   const [value, setValue] = React.useState<number>(mark as number);
@@ -78,7 +78,18 @@ const GradeCellComponent = ({ mark, total, onSave }: GradeCellPropsType) => {
           </div>
         </Box>
       ) : (
-        <>{mark !== undefined && <Typography className="result">{mark}</Typography>}</>
+        <>
+          {mark !== undefined && (
+            <Typography className="result">
+              {mark}
+              {finalized && (
+                <Tooltip title="This grade is returned to students" arrow>
+                  <span> ✔ </span>
+                </Tooltip>
+              )}
+            </Typography>
+          )}
+        </>
       )}
     </TableCell>
   );

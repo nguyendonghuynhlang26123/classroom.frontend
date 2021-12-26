@@ -26,6 +26,7 @@ import {
   useGetAllGradingQuery,
   useImportGradingMutation,
   useDownloadGradingMutation,
+  useFinalizeGradingMutation,
 } from 'services';
 import { gradeSx } from './style';
 import { StudentInfoCell, GradeCell, AssignmentCell, TotalGradeCell } from './subcomponents';
@@ -40,23 +41,26 @@ const prepareGradesArray = (
   assignments: IAssignment[] | undefined,
   students: IStudentInfo[] | undefined,
   grading: IGradingAssignment[] | undefined,
-): number[][] => {
-  if (!students || !assignments || !grading) return [];
+): [number[][], boolean[][]] => {
+  if (!students || !assignments || !grading) return [[], []];
   const marks: number[][] = Array(students.length)
     .fill(-1)
     .map(() => Array(assignments.length).fill(-1));
+  const finalized: boolean[][] = Array(students.length)
+    .fill(-1)
+    .map(() => Array(assignments.length).fill(false));
 
   grading.forEach((g) => {
     const row = students.findIndex((s) => s.student_id === g.student_id);
     const col = assignments.findIndex((a) => a._id === g.assignment_id);
     if (marks[row] === undefined || marks[row][col] === undefined) return;
     marks[row][col] = g.mark === undefined ? -1 : g.mark;
+    finalized[row][col] = g.status === 'FINAL';
   });
-  return marks;
+  return [marks, finalized];
 };
 
 const Grading = () => {
-  const navigate = useNavigate();
   const uploadRef = React.createRef<HTMLInputElement>();
   const { id } = useParams<'id'>();
   const { data: assignments, isLoading: isFetchingAssignments } = useGetAssignmentsQuery(id as string);
@@ -66,9 +70,10 @@ const Grading = () => {
   const [updateGradingRequest, { isLoading: isUpdating }] = useUpdateGradingMutation();
   const [importStudentRequest, { isLoading: isImporting }] = useImportGradingMutation();
   const [downloadStudentRequest, { isLoading: isDownloading }] = useDownloadGradingMutation();
+  const [finalizeGradingRequest, { isLoading: isSubmitFinalize }] = useFinalizeGradingMutation();
 
   const students = classStudents?.students;
-  const gradings = prepareGradesArray(assignments, students, classGrading);
+  const [gradings, finalized] = prepareGradesArray(assignments, students, classGrading);
   const assignmetTotalPoint =
     assignments && assignments.length > 0 ? assignments.map((a) => a.total_points).reduce((prev, cur) => cur + prev) : 0;
 
@@ -78,9 +83,18 @@ const Grading = () => {
 
   React.useEffect(() => {
     setLoading(
-      Utils.isLoading(isFetchingAssignments, isFetchingStudents, isCreating, isUpdating, isFetchingGradings, isImporting, isDownloading),
+      Utils.isLoading(
+        isFetchingAssignments,
+        isFetchingStudents,
+        isCreating,
+        isUpdating,
+        isFetchingGradings,
+        isImporting,
+        isDownloading,
+        isSubmitFinalize,
+      ),
     );
-  }, [isFetchingAssignments, isFetchingStudents, isCreating, isUpdating, isFetchingGradings, isImporting, isDownloading]);
+  }, [isFetchingAssignments, isFetchingStudents, isCreating, isUpdating, isFetchingGradings, isImporting, isDownloading, isSubmitFinalize]);
 
   const gradeCellSaveHandle = (mode: Mode, row: number, col: number, value: number) => {
     if (!assignments || !students || value === undefined) return;
@@ -170,6 +184,26 @@ const Grading = () => {
     link.click();
   };
 
+  const finalizeGrade = (index: number) => {
+    if (assignments && assignments[index]) {
+      const assignmentId = assignments[index]._id as string;
+      const assignmentName = assignments[index].title;
+
+      finalizeGradingRequest({ classId: id as string, assignmentId: assignmentId })
+        .unwrap()
+        .then(() => {
+          toast.success(`All grading for assignment ${assignmentName} has been returned to students`);
+        })
+        .catch((err) => {
+          toast.error('Operation failed! ' + err.data);
+        });
+    }
+  };
+
+  const isFinalized = (row: number, col: number) => {
+    return finalized[row] !== undefined && finalized[row][col];
+  };
+
   return (
     <Collapse timeout={500} appear={true} in={true}>
       <Box sx={{ position: 'relative' }}>
@@ -185,6 +219,7 @@ const Grading = () => {
                     onDownloadTemplate={triggerDownloadTemplate}
                     onDownloadGrade={() => triggerDownload(indx)}
                     onUploadGrade={() => handleUploadBtn(indx)}
+                    onFinalizeGrade={() => finalizeGrade(indx)}
                     key={indx}
                   />
                 ))}
@@ -210,6 +245,7 @@ const Grading = () => {
                         key={col}
                         total={a.total_points}
                         mark={getMark(row, col)}
+                        finalized={isFinalized(row, col)}
                         onSave={(value) => {
                           if (getMark(row, col) === undefined) gradeCellSaveHandle(Mode.CREATE, row, col, value);
                           else gradeCellSaveHandle(Mode.UPDATE, row, col, value);

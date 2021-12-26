@@ -1,19 +1,28 @@
 import React from 'react';
-import { TableCell, Box, Stack, Tooltip, Typography, Link } from '@mui/material';
+import { TableCell, Box, Stack, Tooltip, Typography, Link, Button, IconButton } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AssignmentCellProps } from './type';
-import { Download, Upload } from '@mui/icons-material';
+import { Download, KeyboardReturn, Upload } from '@mui/icons-material';
 import Utils from 'common/utils';
 
-export const AssignmentCell = ({ data, onDownloadGrade, onUploadGrade, onDownloadTemplate }: AssignmentCellProps) => {
+export const AssignmentCell = ({ data, onDownloadGrade, onUploadGrade, onDownloadTemplate, onFinalizeGrade }: AssignmentCellProps) => {
   const { id } = useParams<'id'>();
   const navigate = useNavigate();
   return (
     <TableCell>
-      <Box className="time">{data.due_date ? `Due at ${Utils.displayDate(data.due_date)}` : 'No due date'}</Box>
-      <Box onClick={() => navigate(`/classroom/${id}/work/details/${data._id}`)} className="assignment_title">
-        {data.title}
-      </Box>
+      <Stack direction={'row'} justifyContent={'space-between'} alignItems={'end'}>
+        <Box sx={{ width: '70%' }}>
+          <Box className="time">{data.due_date ? `Due at ${Utils.displayDate(data.due_date)}` : 'No due date'}</Box>
+          <Box onClick={() => navigate(`/classroom/${id}/work/details/${data._id}`)} className="assignment_title">
+            {data.title}
+          </Box>
+        </Box>
+        <IconButton onClick={onFinalizeGrade}>
+          <Tooltip title="Mark grading as final">
+            <KeyboardReturn fontSize="small" />
+          </Tooltip>
+        </IconButton>
+      </Stack>
       <Stack direction="row" className="header_point" justifyContent="space-between">
         <Box>out of {data.total_points}</Box>
         <Stack direction="row" spacing={1}>

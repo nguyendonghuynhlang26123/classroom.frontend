@@ -31,6 +31,10 @@ export const gradeApi = createApi({
       query: ({ classId, body }) => _request.put(`classes/${classId}/grading`, body),
       invalidatesTags: ({ _id }) => [{ type: GRADE_TAG, id: _id }],
     }),
+    finalizeGrading: builder.mutation<any, { classId: string; assignmentId: string }>({
+      query: ({ classId, assignmentId }) => _request.post(`classes/${classId}/grading/finalize`, { assignment_id: assignmentId }),
+      invalidatesTags: [{ type: GRADE_TAG, id: 'LIST' }],
+    }),
 
     importGrading: builder.mutation<any, { classId: string; assignmentId: string; body: any }>({
       query: ({ classId, assignmentId, body }) => _request.post(`classes/${classId}/grading/assignment/${assignmentId}/import`, body),
@@ -50,4 +54,5 @@ export const {
   useUpdateGradingMutation,
   useImportGradingMutation,
   useDownloadGradingMutation,
+  useFinalizeGradingMutation,
 } = gradeApi;

@@ -4,4 +4,5 @@ export type AssignmentCellProps = {
   onDownloadTemplate: () => any;
   onDownloadGrade: () => any;
   onUploadGrade: () => any;
+  onFinalizeGrade: () => any;
 };
