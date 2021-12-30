@@ -1,7 +1,7 @@
 //Profile
 import { PhotoCamera } from '@mui/icons-material';
 import { Avatar, Box, Button, CircularProgress, Container, Grid, LinearProgress, Stack, TextField, Typography } from '@mui/material';
-import { NAME_REGEX } from 'common/constants/regex';
+import { NAME_REGEX, STUDENT_ID_REGEX } from 'common/constants/regex';
 import { IUserBody } from 'common/interfaces';
 import Utils from 'common/utils';
 import { Navbar, useAuth, useLoading } from 'components';
@@ -13,6 +13,7 @@ import * as yup from 'yup';
 import { profileSx } from './style';
 
 const validationSchema = yup.object({
+  student_id: yup.string().matches(STUDENT_ID_REGEX, 'Invalid studentID'),
   first_name: yup.string().matches(NAME_REGEX, 'Invalid name').required('Firstname is required'),
   last_name: yup.string().matches(NAME_REGEX, 'Invalid name').required('Lastname is rquired'),
 });
@@ -30,6 +31,7 @@ const UserProfile = () => {
     initialValues: {
       first_name: userData?.first_name || '',
       last_name: userData?.last_name || '',
+      student_id: userData?.student_id || '',
     },
     validateOnBlur: true,
     validationSchema: validationSchema,
@@ -115,6 +117,16 @@ const UserProfile = () => {
               </Box>
             </Grid>
             <Grid item xs={8}>
+              <TextField
+                id="student_id"
+                name="student_id"
+                label="Student Id"
+                fullWidth
+                value={formik.values.student_id}
+                onChange={formik.handleChange}
+                error={formik.touched.student_id && Boolean(formik.errors.student_id)}
+                helperText={formik.touched.student_id && formik.errors.student_id}
+              />
               <TextField id="email" name="email" label="Email" fullWidth disabled value={userData?.email} />
               <Stack direction="row" sx={profileSx.stack}>
                 <TextField

@@ -52,13 +52,7 @@ export const Students = ({ role, studentId, data, onInvite, onBtnSyncClick }: St
                     </>
                   }
                 />
-                {role === UserRole.STUDENT && u.status === 'NOT_SYNCED' && !studentId && (
-                  <Tooltip title={'Synced your account with this account'}>
-                    <IconButton onClick={() => syncBtnHandle(u)}>
-                      <Sync />
-                    </IconButton>
-                  </Tooltip>
-                )}
+
                 {role !== UserRole.STUDENT && (
                   <Tooltip title={'Mannually set account for this student account'}>
                     <IconButton onClick={() => syncBtnHandle(u)}>

@@ -39,7 +39,7 @@ export const AssignmentItem = ({ data, expanded, onClick, actionBtns, colorMode,
         <Stack direction="row" alignItems="center" gap={1} sx={{ ml: 'auto' }}>
           <Typography sx={accordionSx.time}>
             <b> {mark !== undefined && `Graded: ${mark}/${data.total_points}`} </b>
-            <Divider orientation="vertical" />
+            <br />
             {data.due_date ? 'Due at ' + Utils.displayDate(data.due_date) : 'No due date'}
           </Typography>
         </Stack>

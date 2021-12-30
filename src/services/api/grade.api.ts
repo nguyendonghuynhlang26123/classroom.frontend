@@ -19,7 +19,7 @@ export const gradeApi = createApi({
         result
           ? // successful query
             [...result.map(({ _id }) => ({ type: GRADE_TAG, id: _id } as const)), { type: GRADE_TAG, id: 'LIST' }]
-          : // an error occurred, but we still want to refetch this query when mutation 
+          : // an error occurred, but we still want to refetch this query when mutation
             [{ type: GRADE_TAG, id: 'LIST' }],
     }),
 
@@ -32,10 +32,14 @@ export const gradeApi = createApi({
       invalidatesTags: ({ _id }) => [{ type: GRADE_TAG, id: _id }],
     }),
     finalizeGrading: builder.mutation<any, { classId: string; assignmentId: string }>({
-      query: ({ classId, assignmentId }) => _request.post(`classes/${classId}/grading/finalize`, { assignment_id: assignmentId }),
+      query: ({ classId, assignmentId }) => _request.put(`classes/${classId}/grading/finalize`, { assignment_id: assignmentId }),
       invalidatesTags: [{ type: GRADE_TAG, id: 'LIST' }],
     }),
 
+    fetchFinalGrades: builder.mutation<any, { classId: string; studentId: string }>({
+      query: ({ classId, studentId }) => _request.get(`classes/${classId}/grading/student/${studentId}`),
+      transformResponse: (response: IGenericGetAllResponse<IGradingAssignment>) => response.data,
+    }),
     importGrading: builder.mutation<any, { classId: string; assignmentId: string; body: any }>({
       query: ({ classId, assignmentId, body }) => _request.post(`classes/${classId}/grading/assignment/${assignmentId}/import`, body),
       invalidatesTags: [{ type: GRADE_TAG, id: 'LIST' }],
@@ -55,4 +59,5 @@ export const {
   useImportGradingMutation,
   useDownloadGradingMutation,
   useFinalizeGradingMutation,
+  useFetchFinalGradesMutation,
 } = gradeApi;

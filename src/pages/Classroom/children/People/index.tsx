@@ -47,10 +47,7 @@ const ClassroomPeople = () => {
 
   const syncBtnCallback = (s: IStudentInfo) => {
     if (!s || !userData) return;
-    if (role === UserRole.STUDENT) submitUpdateSync(s.student_id, userData._id as string);
-    else {
-      setSyncTarget(s);
-    }
+    if (role !== UserRole.STUDENT) setSyncTarget(s);
   };
 
   const submitInvite = (invitedRole: UserRole, email: string) => {

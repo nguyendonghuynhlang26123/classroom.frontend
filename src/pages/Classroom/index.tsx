@@ -3,7 +3,13 @@ import { ClassroomContextProvider, ConfirmDialog, Navbar, ProfileBtn, useAuth, u
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
-import { useGetClassDetailsQuery, useGetMyRoleQuery, useGetMyStudentIdQuery, useGetAllClassesQuery } from 'services/api';
+import {
+  useGetClassDetailsQuery,
+  useGetMyRoleQuery,
+  useGetMyStudentIdQuery,
+  useGetAllClassesQuery,
+  useUpdateAccountSyncMutation,
+} from 'services/api';
 import { mainSx, navSx } from './style';
 import { ClassroomSetting } from './subcomponents';
 import { Outlet, useLocation } from 'react-router';
@@ -25,7 +31,9 @@ const ClassroomBoard = () => {
   const { userData } = useAuth();
   const navigate = useNavigate();
   const [tabValue, setTabValue] = React.useState<string>(getTabState(pathname));
-  const [notifyMappingStudentId, showNotification] = React.useState<boolean>(false);
+  const [notifySyncing, showNotifySyncing] = React.useState<boolean>(false);
+  const [notifyAddStudentId, showNotifyAddStudentId] = React.useState<boolean>(false);
+  const [submitAccountSync, { isLoading: isSubmitingAccountSync }] = useUpdateAccountSyncMutation();
 
   const { data, error, isLoading: fetchingClassData } = useGetClassDetailsQuery(id as string);
   const { data: classrooms, isLoading: isFetchingClassrooms } = useGetAllClassesQuery();
@@ -59,12 +67,32 @@ const ClassroomBoard = () => {
   React.useEffect(() => {
     const err = stuErr as any;
     if (err && err?.status === 404) {
-      showNotification(true);
+      showNotifySyncing(true);
     }
   }, [stuErr]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setTabValue(newValue);
+  };
+
+  const handleAutomaticSync = () => {
+    if (userData?.student_id == null) showNotifyAddStudentId(true);
+    else
+      submitAccountSync({
+        class_id: id as string,
+        body: {
+          user_id: userData?._id as string,
+          student_id: userData?.student_id as string,
+        },
+      })
+        .unwrap()
+        .then(() => {
+          toast.success('Sync succeeded');
+        })
+        .catch((err) => {
+          toast.error('Sync failed! Not found your student id in this class list! Please contact your teacher!');
+        });
+    showNotifySyncing(false);
   };
 
   return (
@@ -105,15 +133,26 @@ const ClassroomBoard = () => {
       )}
       {role === UserRole.STUDENT && (
         <ConfirmDialog
-          open={notifyMappingStudentId}
+          open={notifySyncing}
           handleClose={() => {
-            showNotification(false);
+            showNotifySyncing(false);
           }}
-          title="Reminder"
-          description="You need link your current account with your student account in this class"
+          title="Syncin"
+          description="You haven't sync your account with userId! Click 'Agree' to add your account to this classroom student list."
+          onConfirm={handleAutomaticSync}
+        />
+      )}
+      {role === UserRole.STUDENT && (
+        <ConfirmDialog
+          open={notifyAddStudentId}
+          handleClose={() => {
+            showNotifyAddStudentId(false);
+          }}
+          title="No student id found in your account setting!"
+          description="You need to set up your student id in your profile setting first!"
           onConfirm={() => {
-            navigate(`/classroom/${id}/people`);
-            showNotification(false);
+            showNotifyAddStudentId(false);
+            navigate(`/profile`);
           }}
         />
       )}
