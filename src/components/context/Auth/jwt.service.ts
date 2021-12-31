@@ -12,7 +12,6 @@ class JwtAuthService {
       (response) => response,
       async (err) => {
         const originalRequest = err.config;
-        console.log('log ~ file: jwt.service.ts ~ line 15 ~ JwtAuthService ~ originalRequest', originalRequest);
         if (err?.response?.status === 401 && originalRequest && !originalRequest._retry) {
           originalRequest._retry = true;
 
@@ -23,11 +22,24 @@ class JwtAuthService {
               //this._setSession(null, null); //Reset session
               logoutCallback(); // Callback
             }
-          }
+          } else logoutCallback();
 
           return repository(originalRequest);
         }
         return Promise.reject(err);
+      },
+    );
+
+    repository.interceptors.request.use(
+      (config) => {
+        const token = localStorage.getItem(JWT_SESSION_KEY);
+        if (config && config.headers && token) {
+          config.headers['Authorization'] = 'Bearer ' + token;
+        }
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
       },
     );
 

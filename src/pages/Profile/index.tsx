@@ -19,7 +19,7 @@ const validationSchema = yup.object({
 });
 
 const UserProfile = () => {
-  const { userData } = useAuth();
+  const { userData, reload } = useAuth();
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
   const [uploadAvatar, { isLoading: isUploading }] = useUploadImageMutation();
   const { data: classrooms, isLoading: isFetchingClassrooms } = useGetAllClassesQuery();
@@ -39,6 +39,7 @@ const UserProfile = () => {
       if (userData) {
         handleUpdateData(userData._id as string, values, uploadFile)
           .then(() => {
+            reload();
             toast.success('Update succeed');
           })
           .catch((err) => {

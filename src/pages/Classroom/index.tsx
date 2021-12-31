@@ -1,5 +1,5 @@
 import { Box, IconButton, LinearProgress, Link, Tab, Tabs, Typography } from '@mui/material';
-import { ClassroomContextProvider, ConfirmDialog, Navbar, ProfileBtn, useAuth, useLoading } from 'components';
+import { ClassroomContextProvider, ConfirmDialog, Navbar, ProfileBtn, useAuth, useDialog, useLoading } from 'components';
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
@@ -30,10 +30,8 @@ const ClassroomBoard = () => {
   const { pathname } = useLocation();
   const { userData } = useAuth();
   const navigate = useNavigate();
-  const [tabValue, setTabValue] = React.useState<string>(getTabState(pathname));
-  const [notifySyncing, showNotifySyncing] = React.useState<boolean>(false);
-  const [notifyAddStudentId, showNotifyAddStudentId] = React.useState<boolean>(false);
-  const [submitAccountSync, { isLoading: isSubmitingAccountSync }] = useUpdateAccountSyncMutation();
+  const [tabValue, setTabValue] = React.useState<string>('0');
+  const [submitAccountSync, { error: syncError, isLoading: isSubmitingAccountSync }] = useUpdateAccountSyncMutation();
 
   const { data, error, isLoading: fetchingClassData } = useGetClassDetailsQuery(id as string);
   const { data: classrooms, isLoading: isFetchingClassrooms } = useGetAllClassesQuery();
@@ -51,6 +49,7 @@ const ClassroomBoard = () => {
   );
 
   const [loading, setLoading] = useLoading();
+  const [showDialog, Dialog] = useDialog();
 
   //Error
   React.useEffect(() => {
@@ -61,23 +60,35 @@ const ClassroomBoard = () => {
   }, [error]);
 
   React.useEffect(() => {
-    setLoading(Utils.isLoading(fetchingRole, fetchingClassData, fetchingStuId, isFetchingClassrooms));
-  }, [fetchingClassData, fetchingRole, fetchingStuId, isFetchingClassrooms]);
+    setLoading(Utils.isLoading(fetchingRole, fetchingClassData, fetchingStuId, isFetchingClassrooms, isSubmitingAccountSync));
+  }, [fetchingClassData, fetchingRole, fetchingStuId, isFetchingClassrooms, isSubmitingAccountSync]);
 
   React.useEffect(() => {
+    if (syncError) {
+      showDialog('⚠Cannot sync your account! Please contact your classroom teacher', () => {});
+      return;
+    }
+
     const err = stuErr as any;
     if (err && err?.status === 404) {
-      showNotifySyncing(true);
+      handleAutomaticSync();
     }
-  }, [stuErr]);
+  }, [stuErr, syncError]);
+
+  React.useEffect(() => {
+    setTabValue(getTabState(pathname));
+  }, []);
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setTabValue(newValue);
   };
 
   const handleAutomaticSync = () => {
-    if (userData?.student_id == null) showNotifyAddStudentId(true);
-    else
+    if (userData?.student_id == null) {
+      showDialog('No student id found in your account setting! You need to set up your student id in your profile setting first!', () => {
+        console.log('SHOW');
+      });
+    } else
       submitAccountSync({
         class_id: id as string,
         body: {
@@ -87,12 +98,8 @@ const ClassroomBoard = () => {
       })
         .unwrap()
         .then(() => {
-          toast.success('Sync succeeded');
-        })
-        .catch((err) => {
-          toast.error('Sync failed! Not found your student id in this class list! Please contact your teacher!');
+          toast.success('Sync student id succeeded');
         });
-    showNotifySyncing(false);
   };
 
   return (
@@ -131,31 +138,7 @@ const ClassroomBoard = () => {
           </ClassroomContextProvider>
         </Box>
       )}
-      {role === UserRole.STUDENT && (
-        <ConfirmDialog
-          open={notifySyncing}
-          handleClose={() => {
-            showNotifySyncing(false);
-          }}
-          title="Syncin"
-          description="You haven't sync your account with userId! Click 'Agree' to add your account to this classroom student list."
-          onConfirm={handleAutomaticSync}
-        />
-      )}
-      {role === UserRole.STUDENT && (
-        <ConfirmDialog
-          open={notifyAddStudentId}
-          handleClose={() => {
-            showNotifyAddStudentId(false);
-          }}
-          title="No student id found in your account setting!"
-          description="You need to set up your student id in your profile setting first!"
-          onConfirm={() => {
-            showNotifyAddStudentId(false);
-            navigate(`/profile`);
-          }}
-        />
-      )}
+      {role === UserRole.STUDENT && <Dialog />}
     </React.Fragment>
   );
 };

@@ -11,7 +11,7 @@ export type SimpleModalProps = {
 export type ConfirmDialogProps = {
   open: boolean;
   handleClose: () => void;
-  title: string;
+  title?: string;
   description: string;
   onConfirm: () => void;
   alwayShow?: boolean;

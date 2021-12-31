@@ -1,3 +1,4 @@
+import { grey } from '@mui/material/colors';
 import { MultipleSxTypes } from 'common/type';
 
 export const assignmentDetailsSx: MultipleSxTypes = {
@@ -77,13 +78,24 @@ export const assignmentDetailsSx: MultipleSxTypes = {
     border: 1,
     borderColor: 'divider',
     boxShadow: 2,
-    '& .MuiTypography-root': {
+    '& .title': {
       fontSize: 20,
       fontWeight: 600,
     },
-    '& .MuiButton-root:first-of-type': {
-      my: 1,
-      textTransform: 'capitalize',
+
+    '& .no-grade': {
+      pt: 2,
+      fontSize: 14,
+      color: grey[700],
+    },
+    '& .grade': {
+      fontSize: 18,
+      textAlign: 'center',
+      borderBottom: 1,
+      borderColor: 'primary',
+      '& b': {
+        fontSize: 40,
+      },
     },
   },
 };

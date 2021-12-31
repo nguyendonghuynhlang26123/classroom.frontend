@@ -37,7 +37,7 @@ export const gradeApi = createApi({
     }),
 
     fetchFinalGrades: builder.mutation<any, { classId: string; studentId: string }>({
-      query: ({ classId, studentId }) => _request.get(`classes/${classId}/grading/student/${studentId}`),
+      query: ({ classId, studentId }) => _request.get(`classes/${classId}/grading/student/${studentId}?per_page=1000`),
       transformResponse: (response: IGenericGetAllResponse<IGradingAssignment>) => response.data,
     }),
     importGrading: builder.mutation<any, { classId: string; assignmentId: string; body: any }>({
