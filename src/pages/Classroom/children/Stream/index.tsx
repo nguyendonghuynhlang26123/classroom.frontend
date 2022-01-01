@@ -3,7 +3,7 @@ import { Box, Card, CardContent, CardMedia, Collapse, Container, Grid, IconButto
 import { UserRole } from 'common/interfaces';
 import { useClassroomCtx } from 'components';
 import React from 'react';
-import { activitySx, bannerSx } from './style';
+import { bannerSx } from './style';
 import { ClassCodePanel, ClassActivities } from './subcomponents';
 
 const ClassroomStream = () => {
@@ -48,7 +48,7 @@ const ClassroomStream = () => {
             </Collapse>
           </Card>
           {role !== UserRole.STUDENT ? (
-            <Grid container spacing={2} sx={activitySx.root}>
+            <Grid container spacing={2}>
               <Grid item xs={2}>
                 <ClassCodePanel code={classData.code} />
               </Grid>

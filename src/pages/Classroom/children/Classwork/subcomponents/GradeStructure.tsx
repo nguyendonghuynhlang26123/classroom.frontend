@@ -1,13 +1,13 @@
-import { Button, Collapse, Container, Divider, Stack, Typography } from '@mui/material';
+import { Button, Container, Stack, Typography } from '@mui/material';
 import { Box } from '@mui/system';
+import NotFoundImg from 'assets/images/party.svg';
 import { IAssignment, IGradingAssignment } from 'common/interfaces';
+import Utils from 'common/utils';
 import { AssignmentItem, NoResourceDisplay, useClassroomCtx, useLoading } from 'components';
 import React from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useFetchFinalGradesMutation, useGetAssignmentsQuery } from 'services';
 import { gradeStructureSx } from './style';
-import NotFoundImg from 'assets/images/party.svg';
-import Utils from 'common/utils';
 
 export const GradeStructure = () => {
   const { id } = useParams<'id'>();

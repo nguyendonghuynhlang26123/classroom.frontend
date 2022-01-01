@@ -1,7 +1,14 @@
 import { MultipleSxTypes } from 'common/type';
 
 export const activitySx: MultipleSxTypes = {
-  root: {},
+  root: {
+    '& .notfound': {
+      border: 1,
+      borderRadius: 2,
+      borderColor: 'divider',
+      px: 6,
+    },
+  },
 
   activityContainer: {
     my: 0,
