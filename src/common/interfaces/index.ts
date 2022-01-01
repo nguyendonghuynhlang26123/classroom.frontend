@@ -6,3 +6,4 @@ export * from './assignments';
 export * from './upload';
 export * from './class-students';
 export * from './grading';
+export * from './activities';

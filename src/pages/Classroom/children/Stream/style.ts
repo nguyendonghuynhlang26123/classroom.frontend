@@ -14,6 +14,7 @@ export const bannerSx: MultipleSxTypes = {
   },
   card: {
     borderRadius: 2,
+    mb: 2,
   },
   header: {
     color: '#fff',
@@ -42,6 +43,26 @@ export const bannerSx: MultipleSxTypes = {
     gap: 1,
     '& .MuiTypography-root:first-of-type': {
       fontWeight: 500,
+    },
+  },
+};
+
+export const activitySx: MultipleSxTypes = {
+  root: {
+    my: 0.5,
+  },
+
+  classCode: {
+    p: 3,
+    borderRadius: 2,
+
+    '& .title': {
+      fontSize: 20,
+      fontWeight: 500,
+    },
+    '& .code': {
+      fontSize: 20,
+      alignItems: 'center',
     },
   },
 };
