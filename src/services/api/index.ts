@@ -5,3 +5,4 @@ export * from './upload.api';
 export * from './assignment.api';
 export * from './classStudents.api';
 export * from './grade.api';
+export * from './activity.api';

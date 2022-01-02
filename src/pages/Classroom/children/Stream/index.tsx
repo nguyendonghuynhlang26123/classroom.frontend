@@ -1,14 +1,23 @@
 import { Info, InfoOutlined } from '@mui/icons-material';
 import { Box, Card, CardContent, CardMedia, Collapse, Container, Grid, IconButton, Stack, Typography } from '@mui/material';
 import { UserRole } from 'common/interfaces';
-import { useClassroomCtx } from 'components';
+import { useClassroomCtx, useLoading } from 'components';
 import React from 'react';
+import { useParams } from 'react-router-dom';
+import { useGetAllActivitiesQuery } from 'services';
 import { bannerSx } from './style';
 import { ClassCodePanel, ClassActivities } from './subcomponents';
 
 const ClassroomStream = () => {
+  const { id } = useParams<'id'>();
   const { classData, role } = useClassroomCtx();
   const [details, showDetails] = React.useState<boolean>(false);
+  const { data, isLoading } = useGetAllActivitiesQuery(id as string);
+  const [, setLoading] = useLoading();
+
+  React.useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading]);
 
   const toggleShowDetails = () => {
     showDetails((prvState) => !prvState);
@@ -53,11 +62,11 @@ const ClassroomStream = () => {
                 <ClassCodePanel code={classData.code} />
               </Grid>
               <Grid item xs={10}>
-                <ClassActivities />
+                <ClassActivities data={data ?? []} />
               </Grid>
             </Grid>
           ) : (
-            <ClassActivities />
+            <ClassActivities data={data ?? []} />
           )}
         </Container>
       )}

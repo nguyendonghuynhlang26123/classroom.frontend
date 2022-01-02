@@ -82,9 +82,9 @@ const dumb: IActivity[] = [
     created_at: 1641051622252,
   },
 ];
-const data: IActivity[] = dumb;
+// const data: IActivity[] = dumb;
 
-export const ClassActivities = () => {
+export const ClassActivities = ({ data }: { data: IActivity[] }) => {
   const { id } = useParams<'id'>();
   const navigate = useNavigate();
 
@@ -105,7 +105,6 @@ export const ClassActivities = () => {
             {data.map((a: IActivity, i: number) => (
               <TimelineItem key={i} sx={activitySx.activityItem}>
                 <TimelineSeparator>
-                  {i !== 0 && i !== data.length - 1 && <TimelineConnector />}
                   <TimelineDot variant="outlined">
                     <Avatar className="icon" src={a.actor.avatar} />
                   </TimelineDot>
