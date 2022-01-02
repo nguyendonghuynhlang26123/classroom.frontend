@@ -6,3 +6,4 @@ export * from './assignment.api';
 export * from './classStudents.api';
 export * from './grade.api';
 export * from './activity.api';
+export * from './gradeReview.api';

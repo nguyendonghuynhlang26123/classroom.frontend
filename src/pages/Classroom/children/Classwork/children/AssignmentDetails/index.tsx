@@ -1,41 +1,32 @@
-import { Add, AssignmentOutlined, MoreVert } from '@mui/icons-material';
-import {
-  Avatar,
-  Box,
-  Button,
-  Collapse,
-  Container,
-  Divider,
-  Grid,
-  IconButton,
-  Link,
-  Menu,
-  MenuItem,
-  Paper,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { AssignmentOutlined, MoreVert } from '@mui/icons-material';
+import { Avatar, Box, Collapse, Container, Divider, Grid, IconButton, Link, Menu, MenuItem, Paper, Stack, Typography } from '@mui/material';
 import { IGradingAssignment, UserRole } from 'common/interfaces';
 import Utils from 'common/utils';
-import { useClassroomCtx, useCopyToClipboard } from 'components';
+import { useClassroomCtx, useCopyToClipboard, useLoading } from 'components';
 import React from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { useGetAssignmentByIdQuery, useFetchFinalGradesMutation } from 'services';
+import { toast } from 'react-toastify';
+import { useCreateReviewRequestMutation, useFetchFinalGradesMutation, useGetAssignmentByIdQuery } from 'services';
 import { assignmentDetailsSx } from './style';
+import { RequestForm } from './subcomponents';
 
 const AssignmentDetails = () => {
   const { role, studentId } = useClassroomCtx();
   const navigate = useNavigate();
   const { id, assignmentId } = useParams();
   const [, copyFn] = useCopyToClipboard();
-  const { data } = useGetAssignmentByIdQuery({
+  const { data, isLoading: isFetchingAssignment } = useGetAssignmentByIdQuery({
     classId: id as string,
     assignmentId: assignmentId as string,
   });
-  const [fetchMyGrading, { data: gradings }] = useFetchFinalGradesMutation();
+  const [submitReviewRequest, { isLoading: isSubmitingRequest }] = useCreateReviewRequestMutation();
+  const [fetchMyGrading, { data: gradings, isLoading: isFetchingMark }] = useFetchFinalGradesMutation();
+
+  const [loading, setLoading] = useLoading();
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [assignmentGrade, setGrade] = React.useState<IGradingAssignment | undefined>();
-  const open = Boolean(anchorEl);
+  const [reviewRequestForm, showReviewRequestForm] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (studentId)
@@ -51,8 +42,31 @@ const AssignmentDetails = () => {
     }
   }, [gradings, data]);
 
+  React.useEffect(() => {
+    setLoading(Utils.isLoading(isFetchingAssignment, isSubmitingRequest, isFetchingMark));
+  }, [isFetchingAssignment, isSubmitingRequest, isFetchingMark]);
+
   const handleCloseModal = () => {
     setAnchorEl(null);
+  };
+
+  const handleSubmitReviewRequest = (message: string, mark: number) => {
+    submitReviewRequest({
+      id: id as string,
+      body: {
+        message: message,
+        expect_mark: mark,
+        student_id: studentId as string,
+        assignment_id: assignmentId as string,
+      },
+    })
+      .unwrap()
+      .then(() => {
+        toast.success('Submiting request successfully');
+      })
+      .catch(() => {
+        toast.error('Failed to submit this review request! Please try again later');
+      });
   };
 
   const handleCopyLink = () => {
@@ -70,6 +84,7 @@ const AssignmentDetails = () => {
     if (data.due_date === null || Date.now() <= data.due_date) return false;
     return true;
   };
+
   return (
     <Collapse timeout={500} appear={true} in={true}>
       <Container>
@@ -115,7 +130,16 @@ const AssignmentDetails = () => {
                         <b>{assignmentGrade.mark}</b>/{data.total_points}
                       </Typography>
                       <Typography className="no-grade">
-                        Not what your expectation? <Link href="#">Request a grade review</Link>{' '}
+                        Not what you expected?{' '}
+                        <Link
+                          href="#"
+                          onClick={(ev) => {
+                            ev.preventDefault();
+                            showReviewRequestForm(true);
+                          }}
+                        >
+                          Request a grade review
+                        </Link>
                       </Typography>
                     </>
                   ) : (
@@ -126,10 +150,19 @@ const AssignmentDetails = () => {
             )}
           </Grid>
         )}
-        <Menu id="details-menu" anchorEl={anchorEl} open={open} onClose={handleCloseModal}>
+        <Menu id="details-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseModal}>
           {role !== UserRole.STUDENT && <MenuItem onClick={navigateToEditPage}>Go to edit page</MenuItem>}
           <MenuItem onClick={handleCopyLink}>Copy link</MenuItem>
         </Menu>
+
+        {data && (
+          <RequestForm
+            open={reviewRequestForm}
+            handleClose={() => showReviewRequestForm(false)}
+            onSubmit={handleSubmitReviewRequest}
+            assignment={data}
+          />
+        )}
       </Container>
     </Collapse>
   );
