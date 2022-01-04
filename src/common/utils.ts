@@ -165,6 +165,14 @@ class Utils {
   static getInvitationLinkFormat(id: string, code: string): string {
     return `${window.location.origin}/#/classes/join?classId=${id}&role=STUDENT&code=${code}`;
   }
+
+  static toCapitalize(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  static getFullName(firstName: string | undefined, lastName: string | undefined): string {
+    return firstName && lastName ? `${Utils.toCapitalize(firstName)} ${Utils.toCapitalize(lastName)}` : ' ';
+  }
 }
 
 export default Utils;

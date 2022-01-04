@@ -15,7 +15,7 @@ export const streamApi = createApi({
     getAllActivities: builder.query<IActivity[], string>({
       query: (id) => _request.get(`classes/${id}/stream?sort_by=created_at&sort_type=desc&per_page=100`),
       transformResponse: (response: IGenericGetAllResponse<IActivity>) => response.data,
-      providesTags: () => [{ type: STREAM_TAG, id: 'LIST' }],
+      providesTags: () => [{ type: STREAM_TAG }],
     }),
   }),
 });

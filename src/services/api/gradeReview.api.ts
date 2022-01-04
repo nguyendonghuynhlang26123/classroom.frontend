@@ -18,13 +18,22 @@ export const gradeReviewApi = createApi({
       providesTags: () => [{ type: GRADE_REVIEW_TAG, id: 'LIST' }],
     }),
 
+    getOneGradeReview: builder.mutation<IGradeReview, { id: string; gradeReviewId: string }>({
+      query: ({ id, gradeReviewId }) => _request.get(`classes/${id}/grade-review/${gradeReviewId}`),
+    }),
+
     createReviewRequest: builder.mutation<any, { id: string; body: IGradeRequestBody }>({
       query: ({ id, body }) => _request.post(`classes/${id}/grade-review`, body),
       invalidatesTags: [{ type: GRADE_REVIEW_TAG, id: 'LIST' }],
+    }),
+
+    createCommentRequest: builder.mutation<any, { id: string; reviewId: string; message: string }>({
+      query: ({ id, reviewId, message }) => _request.post(`classes/${id}/grade-review/${reviewId}/comment`, { message: message }),
     }),
   }),
 });
 
 // Export hooks for usage in function components, which are
 // auto-generated based on the defined endpoints
-export const { useGetAllGradeReviewsQuery, useCreateReviewRequestMutation } = gradeReviewApi;
+export const { useGetAllGradeReviewsQuery, useCreateReviewRequestMutation, useGetOneGradeReviewMutation, useCreateCommentRequestMutation } =
+  gradeReviewApi;

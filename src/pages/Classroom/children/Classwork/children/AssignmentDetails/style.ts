@@ -5,10 +5,12 @@ export const assignmentDetailsSx: MultipleSxTypes = {
   root: {
     maxWidth: '1200',
     mx: 'auto',
+    width: '100%',
     py: 0,
     '& .MuiGrid-item': {
       pt: 0,
       mt: 4,
+      pl: 0,
     },
 
     '& .MuiStack-root': {

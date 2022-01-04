@@ -12,12 +12,14 @@ const ClassroomStream = () => {
   const { id } = useParams<'id'>();
   const { classData, role } = useClassroomCtx();
   const [details, showDetails] = React.useState<boolean>(false);
-  const { data, isLoading } = useGetAllActivitiesQuery(id as string);
+  const { data, refetch, isLoading } = useGetAllActivitiesQuery(id as string);
   const [, setLoading] = useLoading();
 
   React.useEffect(() => {
     setLoading(isLoading);
   }, [isLoading]);
+
+  React.useEffect(() => refetch(), []);
 
   const toggleShowDetails = () => {
     showDetails((prvState) => !prvState);

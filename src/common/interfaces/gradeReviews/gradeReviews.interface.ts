@@ -7,12 +7,12 @@ export interface IGradeReview extends IBase {
   assignment_id: string | IAssignment;
   grading_id: string | IGradingAssignment;
   expect_mark: number;
-  status: IGradeReviewComment;
+  status: RequestReviewStatus;
   comments: IGradeReviewComment[];
 }
 
 export interface IGradeReviewComment {
-  author: IUser | string;
+  author: null | IUser | string;
   message: string;
   created_at: number;
 }
