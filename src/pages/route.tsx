@@ -25,7 +25,9 @@ const ClassroomPeople = React.lazy(() => import('./Classroom/children/People'));
 const ClassroomStream = React.lazy(() => import('./Classroom/children/Stream'));
 const ClassroomWork = React.lazy(() => import('./Classroom/children/Classwork'));
 const ClassroomGrading = React.lazy(() => import('./Classroom/children/Grade'));
+const GradeReviews = React.lazy(() => import('./Classroom/children/GradeReview'));
 
+const ReviewPanel = React.lazy(() => import('./Classroom/children/GradeReview/children/ReviewPanel'));
 const AssignmentCreate = React.lazy(() => import('./Classroom/children/Classwork/children/AssignmentCreation'));
 const AssignmentEdit = React.lazy(() => import('./Classroom/children/Classwork/children/AssignmentEdit'));
 const AssignmentDetails = React.lazy(() => import('./Classroom/children/Classwork/children/AssignmentDetails'));
@@ -38,20 +40,10 @@ const InvitationPage = React.lazy(() => import('./InvitationPage'));
 const NotFoundPage = React.lazy(() => import('./Errors/NotFound'));
 
 // Public routes
-const Wrapper = ({ children }: { children: any }) => (
-  <React.Suspense fallback={<LinearProgress />}>{children}</React.Suspense>
-);
+const Wrapper = ({ children }: { children: any }) => <React.Suspense fallback={<LinearProgress />}>{children}</React.Suspense>;
 
 // Authed routes
-const AuthWrapped = ({
-  isAuthed,
-  search = '',
-  pathname = '',
-}: {
-  isAuthed: boolean;
-  search: string;
-  pathname: string;
-}) => {
+const AuthWrapped = ({ isAuthed, search = '', pathname = '' }: { isAuthed: boolean; search: string; pathname: string }) => {
   if (pathname === '/') {
     pathname = '';
     search = '';
@@ -122,6 +114,20 @@ const appRoutes = (isAuthed: boolean, search: string, pathname: string): RouteCo
                 {
                   path: 'details/:assignmentId',
                   element: <AssignmentDetails />,
+                },
+              ],
+            },
+            {
+              path: 'grade-reviews',
+              element: <GradeReviews />,
+              children: [
+                {
+                  index: true,
+                  element: <div />,
+                },
+                {
+                  path: ':reviewId',
+                  element: <ReviewPanel />,
                 },
               ],
             },

@@ -9,3 +9,5 @@ export * from './AssignmentItem';
 export * from './RichEditor';
 export * from './DateTimePicker';
 export * from './NoResourceDisplay';
+export * from './StudentCard';
+export * from './GradeReviewComments';

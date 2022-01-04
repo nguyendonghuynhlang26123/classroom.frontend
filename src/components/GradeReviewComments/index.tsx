@@ -6,7 +6,7 @@ import { reviewCommentSx } from './style';
 import { GradeCommentProps } from './type';
 import { Send } from '@mui/icons-material';
 
-export const GradeComments = ({ gr, handleSendBtn, userData }: GradeCommentProps) => {
+export const GradeReviewComments = ({ gr, handleSendBtn, userData }: GradeCommentProps) => {
   const [comment, setComment] = React.useState<string>('');
 
   return (
@@ -43,7 +43,7 @@ export const GradeComments = ({ gr, handleSendBtn, userData }: GradeCommentProps
         <>
           <ListItem alignItems="flex-start">
             <ListItemAvatar>
-              <Avatar alt="Remy Sharp" src={userData?.avatar} />
+              <Avatar src={userData?.avatar} />
             </ListItemAvatar>
             <Box sx={reviewCommentSx}>
               <input value={comment} onChange={(ev) => setComment(ev.target.value)} placeholder="Say something" />

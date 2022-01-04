@@ -1,14 +1,13 @@
-import { Check, DoubleArrow, Send, ThumbDown } from '@mui/icons-material';
+import { Check, DoubleArrow, ThumbDown } from '@mui/icons-material';
 import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineSeparator } from '@mui/lab';
-import { Avatar, Box, Button, Divider, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { IGradeReview, IUser, RequestReviewStatus } from 'common/interfaces';
 import Utils from 'common/utils';
 import { useAuth } from 'components';
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import { gradeReviewSx } from './style';
+import { GradeReviewComments } from 'components';
 import { StudentGradeReviewType } from './type';
-import { GradeComments } from './subcomponents';
 
 const data: IGradeReview[] = [
   {
@@ -114,12 +113,12 @@ export const GradeReviewPanel = ({ data, handleSubmitComment }: StudentGradeRevi
                 </TimelineSeparator>
                 <TimelineContent className="content">
                   <Box>
-                    <Typography className="time">123</Typography>
+                    <Typography className="time">{Utils.displayDate(gr.created_at as number)}</Typography>
                     <Typography className="title" component="span">
                       You request a grade review with a expeted grade of {gr.expect_mark}
                     </Typography>
 
-                    <GradeComments gr={gr} userData={userData as IUser} handleSendBtn={handleSendBtn} />
+                    <GradeReviewComments gr={gr} userData={userData as IUser} handleSendBtn={handleSendBtn} />
                   </Box>
                 </TimelineContent>
               </TimelineItem>

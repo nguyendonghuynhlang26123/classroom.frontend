@@ -22,6 +22,7 @@ const getTabState = (pathName: string) => {
   if (matchPath('/classroom/:id/work', pathName)) return '1';
   if (matchPath('/classroom/:id/people', pathName)) return '2';
   if (matchPath('/classroom/:id/grade', pathName)) return '3';
+  if (matchPath('/classroom/:id/grade-reviews', pathName)) return '4';
   return '0';
 };
 
@@ -114,6 +115,9 @@ const ClassroomBoard = () => {
                 <Tab value="1" label="Classwork" id="work" onClick={() => navigate('./work')} />
                 <Tab value="2" label="People" id="people" onClick={() => navigate('./people')} />
                 {role !== UserRole.STUDENT && <Tab value="3" label="Grading" id="people" onClick={() => navigate('./grade')} />}
+                {role !== UserRole.STUDENT && (
+                  <Tab value="4" label="Grade Reviews" id="people" onClick={() => navigate('./grade-reviews')} />
+                )}
               </Tabs>
             </Box>
             {loading && <LinearProgress sx={navSx.progressBar} />}
