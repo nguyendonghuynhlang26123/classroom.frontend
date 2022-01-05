@@ -15,10 +15,26 @@ export const gradeReviewApi = createApi({
     getAllGradeReviews: builder.query<IGradeReview[], string>({
       query: (id) => _request.get(`classes/${id}/grade-review?sort_by=created_at&sort_type=desc&per_page=100`),
       transformResponse: (response: IGenericGetAllResponse<IGradeReview>) => response.data,
-      providesTags: () => [{ type: GRADE_REVIEW_TAG, id: 'LIST' }],
+      providesTags: (result: IGradeReview[] | undefined) =>
+        result
+          ? // successful query
+            [...result.map(({ _id }) => ({ type: GRADE_REVIEW_TAG, id: _id } as const)), { type: GRADE_REVIEW_TAG, id: 'LIST' }]
+          : [{ type: GRADE_REVIEW_TAG, id: 'LIST' }],
     }),
 
-    getOneGradeReview: builder.mutation<IGradeReview, { id: string; gradeReviewId: string }>({
+    getOneGradeReview: builder.query<IGradeReview, { id: string; gradeReviewId: string }>({
+      query: ({ id, gradeReviewId }) => _request.get(`classes/${id}/grade-review/${gradeReviewId}`),
+      providesTags: (result: IGradeReview | undefined) =>
+        result
+          ? // successful query
+            [
+              { type: GRADE_REVIEW_TAG, id: result._id as string },
+              { type: GRADE_REVIEW_TAG, id: 'DATA' },
+            ]
+          : [{ type: GRADE_REVIEW_TAG, id: 'DATA' }],
+    }),
+
+    fetchOneGradeReview: builder.mutation<IGradeReview, { id: string; gradeReviewId: string }>({
       query: ({ id, gradeReviewId }) => _request.get(`classes/${id}/grade-review/${gradeReviewId}`),
     }),
 
@@ -29,11 +45,17 @@ export const gradeReviewApi = createApi({
 
     createCommentRequest: builder.mutation<any, { id: string; reviewId: string; message: string }>({
       query: ({ id, reviewId, message }) => _request.post(`classes/${id}/grade-review/${reviewId}/comment`, { message: message }),
+      invalidatesTags: [{ type: GRADE_REVIEW_TAG, id: 'DATA' }],
     }),
   }),
 });
 
 // Export hooks for usage in function components, which are
 // auto-generated based on the defined endpoints
-export const { useGetAllGradeReviewsQuery, useCreateReviewRequestMutation, useGetOneGradeReviewMutation, useCreateCommentRequestMutation } =
-  gradeReviewApi;
+export const {
+  useGetAllGradeReviewsQuery,
+  useCreateReviewRequestMutation,
+  useFetchOneGradeReviewMutation,
+  useCreateCommentRequestMutation,
+  useGetOneGradeReviewQuery,
+} = gradeReviewApi;

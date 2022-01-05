@@ -15,7 +15,7 @@ export const GradeReviewComments = ({ gr, handleSendBtn, userData }: GradeCommen
         {gr.comments.map(
           (comment, j) =>
             comment.author && (
-              <>
+              <React.Fragment key={j}>
                 <ListItem alignItems="flex-start">
                   <ListItemAvatar>
                     <Avatar alt="Remy Sharp" src={(comment.author as IUser).avatar} />
@@ -34,7 +34,7 @@ export const GradeReviewComments = ({ gr, handleSendBtn, userData }: GradeCommen
                   />
                 </ListItem>
                 <Divider variant="inset" component="li" />
-              </>
+              </React.Fragment>
             ),
         )}
       </List>
@@ -59,7 +59,6 @@ export const GradeReviewComments = ({ gr, handleSendBtn, userData }: GradeCommen
               </Button>
             </Box>
           </ListItem>
-          <Divider variant="inset" component="li" />
         </>
       ) : (
         <Typography className="info" component="span" color="success.main">

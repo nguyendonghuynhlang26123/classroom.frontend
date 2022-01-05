@@ -86,40 +86,72 @@ const appRoutes = (isAuthed: boolean, search: string, pathname: string): RouteCo
           children: [
             {
               index: true,
-              element: <ClassroomStream />,
+              element: (
+                <Wrapper>
+                  <ClassroomStream />
+                </Wrapper>
+              ),
             },
             {
               path: 'people',
-              element: <ClassroomPeople />,
+              element: (
+                <Wrapper>
+                  <ClassroomPeople />
+                </Wrapper>
+              ),
             },
             {
               path: 'grade',
-              element: <ClassroomGrading />,
+              element: (
+                <Wrapper>
+                  <ClassroomGrading />
+                </Wrapper>
+              ),
             },
             {
               path: 'work',
               children: [
                 {
                   index: true,
-                  element: <ClassroomWork />,
+                  element: (
+                    <Wrapper>
+                      <ClassroomWork />
+                    </Wrapper>
+                  ),
                 },
                 {
                   path: 'create',
-                  element: <AssignmentCreate />,
+                  element: (
+                    <Wrapper>
+                      <AssignmentCreate />
+                    </Wrapper>
+                  ),
                 },
                 {
                   path: 'edit/:assignmentId',
-                  element: <AssignmentEdit />,
+                  element: (
+                    <Wrapper>
+                      <AssignmentEdit />
+                    </Wrapper>
+                  ),
                 },
                 {
                   path: 'details/:assignmentId',
-                  element: <AssignmentDetails />,
+                  element: (
+                    <Wrapper>
+                      <AssignmentDetails />
+                    </Wrapper>
+                  ),
                 },
               ],
             },
             {
               path: 'grade-reviews',
-              element: <GradeReviews />,
+              element: (
+                <Wrapper>
+                  <GradeReviews />
+                </Wrapper>
+              ),
               children: [
                 {
                   index: true,
@@ -127,7 +159,11 @@ const appRoutes = (isAuthed: boolean, search: string, pathname: string): RouteCo
                 },
                 {
                   path: ':reviewId',
-                  element: <ReviewPanel />,
+                  element: (
+                    <Wrapper>
+                      <ReviewPanel />
+                    </Wrapper>
+                  ),
                 },
               ],
             },

@@ -10,8 +10,8 @@ import {
   useCreateReviewRequestMutation,
   useFetchFinalGradesMutation,
   useGetAssignmentByIdQuery,
-  useGetOneGradeReviewMutation,
   useCreateCommentRequestMutation,
+  useFetchOneGradeReviewMutation,
 } from 'services';
 import { assignmentDetailsSx } from './style';
 import { GradeReviewPanel, RequestForm } from './subcomponents';
@@ -27,7 +27,7 @@ const AssignmentDetails = () => {
   });
   const [submitReviewRequest, { isLoading: isSubmitingRequest }] = useCreateReviewRequestMutation();
   const [fetchMyGrading, { data: gradings, isLoading: isFetchingMark }] = useFetchFinalGradesMutation();
-  const [fetchAGradeReview, { isLoading: isFetchingReviews }] = useGetOneGradeReviewMutation();
+  const [fetchAGradeReview, { isLoading: isFetchingReviews }] = useFetchOneGradeReviewMutation();
   const [submitComment, { isLoading: isSubmitComment }] = useCreateCommentRequestMutation();
 
   const [, setLoading] = useLoading();
@@ -113,7 +113,7 @@ const AssignmentDetails = () => {
     })
       .unwrap()
       .then(() => {
-        toast.success('Submiting request successfully');
+        toast.success('Submiting comment successfully');
         refetchGrading();
       })
       .catch(() => {
