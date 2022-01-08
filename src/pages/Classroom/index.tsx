@@ -66,6 +66,7 @@ const ClassroomBoard = () => {
 
   React.useEffect(() => {
     if (syncError) {
+      console.log(syncError);
       showDialog('⚠Cannot sync your account! Please contact your classroom teacher', () => {});
       return;
     }
@@ -85,9 +86,10 @@ const ClassroomBoard = () => {
   };
 
   const handleAutomaticSync = () => {
-    if (userData?.student_id == null) {
+    console.log(userData);
+    if (!userData?.student_id) {
       showDialog('No student id found in your account setting! You need to set up your student id in your profile setting first!', () => {
-        console.log('SHOW');
+        navigate('/profile');
       });
     } else
       submitAccountSync({

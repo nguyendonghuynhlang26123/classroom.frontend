@@ -7,7 +7,11 @@ import React from 'react';
 const ClassroomWork = () => {
   const { role } = useClassroomCtx();
 
-  return role === UserRole.STUDENT ? <GradeStructure /> : <EditableGradeStructure />;
+  return (
+    <Collapse timeout={500} appear={true} in={true}>
+      {role === UserRole.STUDENT ? <GradeStructure /> : <EditableGradeStructure />}
+    </Collapse>
+  );
 };
 
 export default ClassroomWork;

@@ -118,6 +118,28 @@ const UserProfile = () => {
               </Box>
             </Grid>
             <Grid item xs={8}>
+              <Stack direction="row" sx={profileSx.stack}>
+                <TextField
+                  id="first_name"
+                  name="first_name"
+                  label="First name (required)"
+                  fullWidth
+                  value={formik.values.first_name}
+                  onChange={formik.handleChange}
+                  error={formik.touched.first_name && Boolean(formik.errors.first_name)}
+                  helperText={formik.touched.first_name && formik.errors.first_name}
+                />
+                <TextField
+                  id="last_name"
+                  name="last_name"
+                  label="Lastname (required)"
+                  fullWidth
+                  onChange={formik.handleChange}
+                  value={formik.values.last_name}
+                  error={formik.touched.last_name && Boolean(formik.errors.last_name)}
+                  helperText={formik.touched.last_name && formik.errors.last_name}
+                />
+              </Stack>
               <TextField
                 id="student_id"
                 name="student_id"
@@ -129,34 +151,10 @@ const UserProfile = () => {
                 helperText={formik.touched.student_id && formik.errors.student_id}
               />
               <TextField id="email" name="email" label="Email" fullWidth disabled value={userData?.email} />
-              <Stack direction="row" sx={profileSx.stack}>
-                <TextField
-                  id="first_name"
-                  name="first_name"
-                  label="First name (required)"
-                  fullWidth
-                  disabled={userData?.google_id !== null}
-                  value={formik.values.first_name}
-                  onChange={formik.handleChange}
-                  error={formik.touched.first_name && Boolean(formik.errors.first_name)}
-                  helperText={formik.touched.first_name && formik.errors.first_name}
-                />
-                <TextField
-                  id="last_name"
-                  name="last_name"
-                  label="Lastname (required)"
-                  fullWidth
-                  disabled={userData?.google_id !== null}
-                  onChange={formik.handleChange}
-                  value={formik.values.last_name}
-                  error={formik.touched.last_name && Boolean(formik.errors.last_name)}
-                  helperText={formik.touched.last_name && formik.errors.last_name}
-                />
-              </Stack>
+
               {userData?.google_id != null && (
                 <Typography sx={profileSx.form_note} variant="body2">
-                  *You are linking your account with google, so please update your google account if you want to update your classroom
-                  account
+                  *You are linking your account with google
                 </Typography>
               )}
             </Grid>

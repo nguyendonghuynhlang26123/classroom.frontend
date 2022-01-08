@@ -36,7 +36,7 @@ export const bannerSx: MultipleSxTypes = {
     fontSize: 14,
   },
   content: {
-    p: 3,
+    px: 3,
   },
   expand_row: {
     alignItems: 'center',

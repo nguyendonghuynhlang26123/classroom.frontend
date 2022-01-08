@@ -4,8 +4,9 @@ import { gradeReviewSx } from './style';
 import { ReviewCard } from './subcomponents';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import { useGetAllGradeReviewsQuery } from 'services';
-import { useLoading } from 'components';
+import { useLoading, NoResourceDisplay } from 'components';
 import Utils from 'common/utils';
+import Success from 'assets/images/success.svg';
 
 const GradeReviewTab = () => {
   const { id, reviewId } = useParams();
@@ -26,15 +27,24 @@ const GradeReviewTab = () => {
 
   return (
     <Collapse timeout={500} appear={true} in={true} sx={gradeReviewSx.root}>
-      <Grid container spacing={2} wrap="nowrap" sx={gradeReviewSx.gridContainer}>
-        <Grid item xs={3}>
-          {reviews &&
-            reviews.map((gr, i) => <ReviewCard isActive={gr._id === active} data={gr} key={i} handleOnClick={handleSelectCard} />)}
+      {reviews && reviews.length > 0 ? (
+        <Grid container spacing={2} wrap="nowrap" sx={gradeReviewSx.gridContainer}>
+          <Grid item xs={3}>
+            {reviews.map((gr, i) => (
+              <ReviewCard isActive={gr._id === active} data={gr} key={i} handleOnClick={handleSelectCard} />
+            ))}
+          </Grid>
+          <Grid item xs={9}>
+            <Outlet />
+          </Grid>
         </Grid>
-        <Grid item xs={9}>
-          <Outlet />
-        </Grid>
-      </Grid>
+      ) : (
+        <NoResourceDisplay
+          title="No grade review request submited yet!"
+          img={Success}
+          description={<>Students are happy with their grades! Yay!!!</>}
+        />
+      )}
     </Collapse>
   );
 };
