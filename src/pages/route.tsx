@@ -3,7 +3,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import React from 'react';
 // import { LinearProgress } from '@mui/material';
 import Utils from 'common/utils';
-import { LinearProgress } from '@mui/material';
+import { LinearProgress, Skeleton } from '@mui/material';
 // import Dashboard from './Dashboard';
 // import LoginPage from './Auth/Login';
 // import RegisterPage from './Auth/Register';

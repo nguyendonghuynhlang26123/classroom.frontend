@@ -7,6 +7,7 @@ export interface IGradeReview extends IBase {
   assignment_id: string | IAssignment;
   grading_id: string | IGradingAssignment;
   expect_mark: number;
+  current_mark: number;
   status: RequestReviewStatus;
   comments: IGradeReviewComment[];
 }

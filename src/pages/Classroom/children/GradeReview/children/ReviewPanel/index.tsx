@@ -1,21 +1,32 @@
-import { GraphicEq } from '@mui/icons-material';
+import { Check, Close, GraphicEq } from '@mui/icons-material';
 import { Box, Button, Chip, Collapse, Divider, Stack, Typography } from '@mui/material';
 import { IAssignment, IGradingAssignment, IUser, RequestReviewStatus } from 'common/interfaces';
 import Utils from 'common/utils';
-import { GradeReviewComments, StudentCard, useAuth } from 'components';
+import { GradeReviewComments, StudentCard, useAuth, useDialog, useLoading } from 'components';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useCreateCommentRequestMutation, useGetOneGradeReviewQuery } from 'services';
+import {
+  useAcceptReviewRequestMutation,
+  useCreateCommentRequestMutation,
+  useGetOneGradeReviewQuery,
+  useRejectReviewRequestMutation,
+} from 'services';
 import { reviewPanelSx } from './style';
+import { AcceptReviewForm } from './subcomponents';
 
 const ReviewPanel = () => {
   const { id, reviewId } = useParams();
   const { userData } = useAuth();
   const { data: review, isLoading: isFetchingData } = useGetOneGradeReviewQuery({ id: id as string, gradeReviewId: reviewId as string });
   const [submitComment, { isLoading: isSubmitComment }] = useCreateCommentRequestMutation();
+  const [rejectReview, { isLoading: isRejecting }] = useRejectReviewRequestMutation();
+  const [acceptReview, { isLoading: isAccepting }] = useAcceptReviewRequestMutation();
 
-  const [comment, setComment] = React.useState<string>('');
+  const [showDialog, RejectDialog] = useDialog();
+  const [, showLoading] = useLoading();
+
+  const [acceptForm, showAcceptForm] = React.useState<boolean>(false);
   const [requester, setRequester] = React.useState<IUser>();
   const [assignment, setAssignment] = React.useState<IAssignment>();
   const [grading, setGrading] = React.useState<IGradingAssignment>();
@@ -27,6 +38,10 @@ const ReviewPanel = () => {
       setRequester(review.comments[0].author as IUser);
     }
   }, [review]);
+
+  React.useEffect(() => {
+    showLoading(Utils.isLoading(isFetchingData, isSubmitComment, isRejecting, isAccepting));
+  }, [isFetchingData, isSubmitComment, isRejecting, isAccepting]);
 
   const handleSendBtn = (requestId: string, message: string) => {
     submitComment({
@@ -43,17 +58,50 @@ const ReviewPanel = () => {
       });
   };
 
+  const handleRejectGradeReview = () => {
+    console.log('REJECT');
+    rejectReview({ id: id as string, reviewId: reviewId as string })
+      .unwrap()
+      .then(() => {
+        toast.success('Submiting response successfully');
+      })
+      .catch(() => {
+        toast.error('Failed to submit response for this review request! Please try again later');
+      });
+  };
+
+  const handleAcceptGradeReview = (mark: number) => {
+    acceptReview({ id: id as string, reviewId: reviewId as string, mark: mark })
+      .unwrap()
+      .then(() => {
+        toast.success('Submiting response successfully');
+      })
+      .catch(() => {
+        toast.error('Failed to submit response for this review request! Please try again later');
+      });
+  };
+
+  const getIconByStatus = (status: RequestReviewStatus) => {
+    if (status === RequestReviewStatus.APPROVED) return <Chip icon={<Check />} label="Approved" color="success" />;
+    else if (status === RequestReviewStatus.REJECTED) return <Chip icon={<Close />} label="Rejected" color="error" />;
+    else return <Chip icon={<GraphicEq />} label="Open" color="primary" />;
+  };
+
   return (
     <Collapse timeout={500} appear={true} in={true}>
       <Box sx={reviewPanelSx.header}>
         <Stack direction="row" alignItems="center" spacing={2}>
-          <Chip icon={<GraphicEq />} label="Open" color="primary" />
+          {review?.status && getIconByStatus(review.status)}
           <Typography>{assignment?.title}</Typography>
         </Stack>
         {review?.status == RequestReviewStatus.OPEN && (
           <Stack direction="row" spacing={1}>
-            <Button color="error">❌ Reject</Button>
-            <Button color="success">✔ Approve</Button>
+            <Button color="error" onClick={() => showDialog('Do you really want to reject this grade review?', handleRejectGradeReview)}>
+              ❌ Reject
+            </Button>
+            <Button color="success" onClick={() => showAcceptForm(true)}>
+              ✔ Approve
+            </Button>
           </Stack>
         )}
       </Box>
@@ -70,6 +118,10 @@ const ReviewPanel = () => {
               <Stack direction="row" className="assignment-record">
                 <Typography>Assignment name: </Typography>
                 <Typography noWrap>{assignment?.title}</Typography>
+              </Stack>
+              <Stack direction="row" className="assignment-record">
+                <Typography>Request date: </Typography>
+                <Typography noWrap>{Utils.displayDate(review?.created_at as number)}</Typography>
               </Stack>
               <Stack direction="row" className="assignment-record">
                 <Typography>Current grade: </Typography>
@@ -91,6 +143,17 @@ const ReviewPanel = () => {
           {review && <GradeReviewComments gr={review} userData={userData as IUser} handleSendBtn={handleSendBtn} />}
         </Box>
       </Box>
+
+      <RejectDialog />
+      {assignment && review && (
+        <AcceptReviewForm
+          handleClose={() => showAcceptForm(false)}
+          open={acceptForm}
+          totalPoint={assignment?.total_points}
+          expectPoint={review?.expect_mark}
+          handleProceed={handleAcceptGradeReview}
+        />
+      )}
     </Collapse>
   );
 };

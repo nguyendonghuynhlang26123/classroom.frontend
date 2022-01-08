@@ -4,7 +4,7 @@ export const reviewPanelSx: MultipleSxTypes = {
   root: {},
   header: {
     px: 2,
-    py: 3.5,
+    py: 3,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',

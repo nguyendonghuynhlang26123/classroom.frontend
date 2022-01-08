@@ -8,10 +8,12 @@ import { useLoading } from 'components';
 import Utils from 'common/utils';
 
 const GradeReviewTab = () => {
-  const { id } = useParams<'id'>();
+  const { id, reviewId } = useParams();
   const navigate = useNavigate();
   const { data: reviews, isLoading: isFetchingReviews } = useGetAllGradeReviewsQuery(id as string);
   const [loading, setLoading] = useLoading();
+
+  const [active, setActive] = React.useState<string>(reviewId ?? '');
 
   React.useEffect(() => {
     setLoading(isFetchingReviews);
@@ -19,13 +21,15 @@ const GradeReviewTab = () => {
 
   const handleSelectCard = (reviewId: string) => {
     navigate(`/classroom/${id}/grade-reviews/${reviewId}`);
+    setActive(reviewId);
   };
 
   return (
     <Collapse timeout={500} appear={true} in={true} sx={gradeReviewSx.root}>
       <Grid container spacing={2} wrap="nowrap" sx={gradeReviewSx.gridContainer}>
         <Grid item xs={3}>
-          {reviews && reviews.map((gr, i) => <ReviewCard data={gr} key={i} handleOnClick={handleSelectCard} />)}
+          {reviews &&
+            reviews.map((gr, i) => <ReviewCard isActive={gr._id === active} data={gr} key={i} handleOnClick={handleSelectCard} />)}
         </Grid>
         <Grid item xs={9}>
           <Outlet />

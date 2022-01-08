@@ -1,13 +1,21 @@
+import { blue } from '@mui/material/colors';
 import { SxType } from 'common/type';
 
 export const cardSx: SxType = {
   alignItems: 'center',
   cursor: 'pointer',
-  ':hover': {
-    bgcolor: 'grey.100',
+  '&:hover': {
     '& .text': {
       color: 'primary.main',
     },
+  },
+
+  '&.resolved': {
+    bgcolor: 'grey.100',
+  },
+
+  '&.active': {
+    bgcolor: blue[50],
   },
 
   '& .avatar': {},

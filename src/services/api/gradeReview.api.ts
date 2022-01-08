@@ -13,7 +13,7 @@ export const gradeReviewApi = createApi({
   tagTypes: [GRADE_REVIEW_TAG],
   endpoints: (builder) => ({
     getAllGradeReviews: builder.query<IGradeReview[], string>({
-      query: (id) => _request.get(`classes/${id}/grade-review?sort_by=created_at&sort_type=desc&per_page=100`),
+      query: (id) => _request.get(`classes/${id}/grade-review?sort_by=status,created_at&sort_type=asc&per_page=100`),
       transformResponse: (response: IGenericGetAllResponse<IGradeReview>) => response.data,
       providesTags: (result: IGradeReview[] | undefined) =>
         result
@@ -47,6 +47,22 @@ export const gradeReviewApi = createApi({
       query: ({ id, reviewId, message }) => _request.post(`classes/${id}/grade-review/${reviewId}/comment`, { message: message }),
       invalidatesTags: [{ type: GRADE_REVIEW_TAG, id: 'DATA' }],
     }),
+
+    acceptReviewRequest: builder.mutation<any, { id: string; reviewId: string; mark: number }>({
+      query: ({ id, reviewId, mark }) => _request.put(`classes/${id}/grade-review/${reviewId}/accept`, { mark: mark }),
+      invalidatesTags: [
+        { type: GRADE_REVIEW_TAG, id: 'DATA' },
+        { type: GRADE_REVIEW_TAG, id: 'LIST' },
+      ],
+    }),
+
+    rejectReviewRequest: builder.mutation<any, { id: string; reviewId: string }>({
+      query: ({ id, reviewId }) => _request.put(`classes/${id}/grade-review/${reviewId}/reject`, {}),
+      invalidatesTags: [
+        { type: GRADE_REVIEW_TAG, id: 'DATA' },
+        { type: GRADE_REVIEW_TAG, id: 'LIST' },
+      ],
+    }),
   }),
 });
 
@@ -58,4 +74,6 @@ export const {
   useFetchOneGradeReviewMutation,
   useCreateCommentRequestMutation,
   useGetOneGradeReviewQuery,
+  useAcceptReviewRequestMutation,
+  useRejectReviewRequestMutation,
 } = gradeReviewApi;

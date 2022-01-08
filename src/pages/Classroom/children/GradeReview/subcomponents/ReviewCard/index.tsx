@@ -3,9 +3,9 @@ import { ListItemAvatar, Avatar, ListItemText, Typography, Stack, ListItem, Divi
 import Utils from 'common/utils';
 import { cardSx } from './style';
 import { ReviewCardProps } from './type';
-import { IUser } from 'common/interfaces';
+import { IUser, RequestReviewStatus } from 'common/interfaces';
 
-export const ReviewCard = ({ data, handleOnClick }: ReviewCardProps) => {
+export const ReviewCard = ({ data, handleOnClick, isActive }: ReviewCardProps) => {
   const [author, setAuthor] = React.useState<IUser>();
 
   React.useEffect(() => {
@@ -13,13 +13,18 @@ export const ReviewCard = ({ data, handleOnClick }: ReviewCardProps) => {
     console.log('log ~ file: index.tsx ~ line 13 ~ React.useEffect ~ data', data);
   }, [data]);
 
+  const listItemClassName = () => {
+    const className = data.status === RequestReviewStatus.OPEN ? '' : 'resolved';
+    return className + ' ' + (isActive ? 'active' : '');
+  };
+
   return (
     <>
       {data && author && (
         <>
-          <ListItem sx={cardSx} onClick={() => handleOnClick(data._id as string)}>
+          <ListItem sx={cardSx} onClick={() => handleOnClick(data._id as string)} className={listItemClassName()}>
             <ListItemAvatar>
-              <Avatar className="avatar" />
+              <Avatar className="avatar" src={author.avatar} />
             </ListItemAvatar>
             {author && (
               <ListItemText
@@ -32,11 +37,13 @@ export const ReviewCard = ({ data, handleOnClick }: ReviewCardProps) => {
                 }
               />
             )}
-            <Box className="marks">
-              <Typography>10</Typography>
-              <Typography>↓</Typography>
-              <Typography>{data.expect_mark}</Typography>
-            </Box>
+            {data.status === RequestReviewStatus.OPEN && (
+              <Box className="marks">
+                <Typography>{data.current_mark}</Typography>
+                <Typography>↓</Typography>
+                <Typography>{data.expect_mark}</Typography>
+              </Box>
+            )}
           </ListItem>
 
           <Divider />
