@@ -4,9 +4,10 @@ import { gradeReviewSx } from './style';
 import { ReviewCard } from './subcomponents';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import { useGetAllGradeReviewsQuery } from 'services';
-import { useLoading, NoResourceDisplay } from 'components';
+import { useLoading, NoResourceDisplay, ClassroomTab } from 'components';
 import Utils from 'common/utils';
 import Success from 'assets/images/success.svg';
+import { UserRole } from 'common/interfaces';
 
 const GradeReviewTab = () => {
   const { id, reviewId } = useParams();
@@ -25,8 +26,14 @@ const GradeReviewTab = () => {
     setActive(reviewId);
   };
 
+  const handleGuardNavigate = (params: any): string => {
+    const { id } = params;
+    if (id) return `/classroom/${id}/work`;
+    return '/not-found';
+  };
+
   return (
-    <Collapse timeout={500} appear={true} in={true} sx={gradeReviewSx.root}>
+    <ClassroomTab roles={[UserRole.TEACHER, UserRole.OWNER]} navigateTo={handleGuardNavigate}>
       {reviews && reviews.length > 0 ? (
         <Grid container spacing={2} wrap="nowrap" sx={gradeReviewSx.gridContainer}>
           <Grid item xs={3}>
@@ -45,7 +52,7 @@ const GradeReviewTab = () => {
           description={<>Students are happy with their grades! Yay!!!</>}
         />
       )}
-    </Collapse>
+    </ClassroomTab>
   );
 };
 export default GradeReviewTab;

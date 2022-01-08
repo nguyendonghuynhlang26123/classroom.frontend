@@ -1,5 +1,5 @@
 import { Box, IconButton, LinearProgress, Link, Tab, Tabs, Typography } from '@mui/material';
-import { ClassroomContextProvider, ConfirmDialog, Navbar, ProfileBtn, useAuth, useDialog, useLoading } from 'components';
+import { ClassroomContextProvider, ConfirmDialog, Navbar, NotificationBtn, ProfileBtn, useAuth, useDialog, useLoading } from 'components';
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
@@ -19,10 +19,10 @@ import { toast } from 'react-toastify';
 import { IClassroomBody, UserRole } from 'common/interfaces';
 
 const getTabState = (pathName: string) => {
-  if (matchPath('/classroom/:id/work', pathName)) return '1';
-  if (matchPath('/classroom/:id/people', pathName)) return '2';
-  if (matchPath('/classroom/:id/grade', pathName)) return '3';
-  if (matchPath('/classroom/:id/grade-reviews', pathName)) return '4';
+  if (/\/classroom\/\w+\/work.*/.test(pathName)) return '1';
+  if (/\/classroom\/\w+\/people.*/.test(pathName)) return '2';
+  if (/\/classroom\/\w+\/grade-reviews.*/.test(pathName)) return '4';
+  if (/\/classroom\/\w+\/grade.*/.test(pathName)) return '3';
   return '0';
 };
 
@@ -67,7 +67,7 @@ const ClassroomBoard = () => {
   React.useEffect(() => {
     if (syncError) {
       console.log(syncError);
-      showDialog('⚠Cannot sync your account! Please contact your classroom teacher', () => {});
+      showDialog('⚠ Cannot sync your account! Please contact your classroom teacher', () => {});
       return;
     }
 
@@ -78,8 +78,8 @@ const ClassroomBoard = () => {
   }, [stuErr, syncError]);
 
   React.useEffect(() => {
-    setTabValue(getTabState(pathname));
-  }, []);
+    if (pathname) setTabValue(getTabState(pathname));
+  }, [pathname]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setTabValue(newValue);
@@ -134,6 +134,7 @@ const ClassroomBoard = () => {
 
         <Box>
           {role !== UserRole.STUDENT && <ClassroomSetting classData={data as IClassroomBody} />}
+          <NotificationBtn />
           {userData && <ProfileBtn fname={userData.first_name} imageUrl={userData.avatar} />}
         </Box>
       </Navbar>

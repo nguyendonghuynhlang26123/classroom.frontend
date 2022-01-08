@@ -1,16 +1,8 @@
 import { RouteConfigs } from 'common/type';
 import { Navigate, Outlet } from 'react-router-dom';
 import React from 'react';
-// import { LinearProgress } from '@mui/material';
 import Utils from 'common/utils';
 import { LinearProgress, Skeleton } from '@mui/material';
-// import Dashboard from './Dashboard';
-// import LoginPage from './Auth/Login';
-// import RegisterPage from './Auth/Register';
-// import Classroom from './Classroom';
-// import ProfilePage from './Profile';
-// import NotFoundPage from './Errors/NotFound';
-// import InvitationPage from './InvitationPage';
 
 // main screen
 const Dashboard = React.lazy(() => import('./Dashboard'));

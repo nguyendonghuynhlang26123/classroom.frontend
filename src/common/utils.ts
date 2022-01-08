@@ -173,6 +173,10 @@ class Utils {
   static getFullName(firstName: string | undefined, lastName: string | undefined): string {
     return firstName && lastName ? `${Utils.toCapitalize(firstName)} ${Utils.toCapitalize(lastName)}` : ' ';
   }
+
+  static regexCheckPath(regex: string, path: string): boolean {
+    return new RegExp(regex).test(path);
+  }
 }
 
 export default Utils;

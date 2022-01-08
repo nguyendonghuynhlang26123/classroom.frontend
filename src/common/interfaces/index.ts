@@ -8,3 +8,4 @@ export * from './classStudents';
 export * from './grading';
 export * from './activities';
 export * from './gradeReviews';
+export * from './notification';

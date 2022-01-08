@@ -1,7 +1,7 @@
 import { Info, InfoOutlined } from '@mui/icons-material';
 import { Box, Card, CardContent, CardMedia, Collapse, Container, Grid, IconButton, Stack, Typography } from '@mui/material';
 import { UserRole } from 'common/interfaces';
-import { useClassroomCtx, useLoading } from 'components';
+import { useClassroomCtx, useLoading, ClassroomTab } from 'components';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useGetAllActivitiesQuery } from 'services';
@@ -26,7 +26,7 @@ const ClassroomStream = () => {
   };
 
   return (
-    <Collapse timeout={500} appear={true} in={true}>
+    <ClassroomTab roles={[UserRole.TEACHER, UserRole.STUDENT, UserRole.OWNER]}>
       {classData && role && (
         <Container>
           {/* BANNER */}
@@ -72,7 +72,7 @@ const ClassroomStream = () => {
           )}
         </Container>
       )}
-    </Collapse>
+    </ClassroomTab>
   );
 };
 

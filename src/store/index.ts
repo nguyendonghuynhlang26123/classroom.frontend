@@ -9,6 +9,7 @@ import {
   gradeApi,
   streamApi,
   gradeReviewApi,
+  notificationApi,
 } from 'services/api';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/dist/query';
@@ -25,6 +26,7 @@ const combinedReducer = combineReducers({
   [gradeApi.reducerPath]: gradeApi.reducer,
   [streamApi.reducerPath]: streamApi.reducer,
   [gradeReviewApi.reducerPath]: gradeReviewApi.reducer,
+  [notificationApi.reducerPath]: notificationApi.reducer,
 });
 
 const rootReducer = (state: any, action: any): any => {
@@ -47,6 +49,7 @@ export const store = configureStore({
       gradeApi.middleware,
       streamApi.middleware,
       gradeReviewApi.middleware,
+      notificationApi.middleware,
     ),
 });
 

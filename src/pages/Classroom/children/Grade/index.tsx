@@ -13,9 +13,9 @@ import {
   Typography,
   Link,
 } from '@mui/material';
-import { IAssignment, IStudentInfo, IGradingBody, IGradingAssignment } from 'common/interfaces';
+import { IAssignment, IStudentInfo, IGradingBody, IGradingAssignment, UserRole } from 'common/interfaces';
 import Utils from 'common/utils';
-import { ConfirmDialog, useLoading } from 'components';
+import { ConfirmDialog, useLoading, ClassroomTab } from 'components';
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -205,7 +205,7 @@ const Grading = () => {
   };
 
   return (
-    <Collapse timeout={500} appear={true} in={true}>
+    <ClassroomTab roles={[UserRole.TEACHER, UserRole.OWNER]}>
       <Box sx={{ position: 'relative' }}>
         <TableContainer sx={gradeSx.root}>
           <Table aria-label="simple table" sx={gradeSx.table} stickyHeader>
@@ -275,7 +275,7 @@ const Grading = () => {
           }}
         />
       </Box>
-    </Collapse>
+    </ClassroomTab>
   );
 };
 

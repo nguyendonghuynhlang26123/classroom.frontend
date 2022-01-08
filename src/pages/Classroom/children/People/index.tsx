@@ -2,7 +2,7 @@ import { ContentCopy } from '@mui/icons-material';
 import { Collapse, Container, Stack, Typography, Box, IconButton, Tooltip } from '@mui/material';
 import { IClassroomUser, IStudentInfo, UserRole } from 'common/interfaces';
 import Utils from 'common/utils';
-import { useAuth, useClassroomCtx, useCopyToClipboard, useLoading } from 'components';
+import { useAuth, useClassroomCtx, useCopyToClipboard, useLoading, ClassroomTab } from 'components';
 import React from 'react';
 import { useParams } from 'react-router';
 import { toast } from 'react-toastify';
@@ -84,7 +84,7 @@ const ClassroomPeople = () => {
   };
 
   return (
-    <Collapse timeout={500} appear={true} in={true}>
+    <ClassroomTab roles={[UserRole.TEACHER, UserRole.STUDENT, UserRole.OWNER]}>
       <Container maxWidth="md" sx={peopleTabSx.root}>
         <Teachers role={role} onInvite={() => showTeacherInviteForm(true)} data={getTeachers(classUsers)} />
 
@@ -157,7 +157,7 @@ const ClassroomPeople = () => {
           />
         )}
       </Container>
-    </Collapse>
+    </ClassroomTab>
   );
 };
 

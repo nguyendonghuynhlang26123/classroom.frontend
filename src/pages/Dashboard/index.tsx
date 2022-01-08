@@ -3,7 +3,7 @@ import Kite from 'assets/images/kite.svg';
 import type { IClassroomBody } from 'common/interfaces';
 import { IClassroom, UserRole } from 'common/interfaces';
 import Utils from 'common/utils';
-import { Navbar, NoResourceDisplay, ProfileBtn, useAuth, useLoading } from 'components';
+import { Navbar, NoResourceDisplay, NotificationBtn, ProfileBtn, useAuth, useLoading } from 'components';
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
@@ -51,6 +51,7 @@ const Dashboard = () => {
 
           <div>
             <AddBtn joinOptionChosen={() => showJoinForm(true)} createOptionChosen={() => showCreateForm(true)} />
+            <NotificationBtn />
             {userData && <ProfileBtn fname={userData.first_name} imageUrl={userData.avatar} />}
           </div>
         </>
