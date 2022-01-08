@@ -24,9 +24,10 @@ const AssignmentCreate = React.lazy(() => import('./Classroom/children/Classwork
 const AssignmentEdit = React.lazy(() => import('./Classroom/children/Classwork/children/AssignmentEdit'));
 const AssignmentDetails = React.lazy(() => import('./Classroom/children/Classwork/children/AssignmentDetails'));
 
+//Other
 const ProfilePage = React.lazy(() => import('./Profile'));
-
 const InvitationPage = React.lazy(() => import('./InvitationPage'));
+const MailActivation = React.lazy(() => import('./EmailActivate'));
 
 //Error pages
 const NotFoundPage = React.lazy(() => import('./Errors/NotFound'));
@@ -184,6 +185,10 @@ const appRoutes = (isAuthed: boolean, search: string, pathname: string): RouteCo
         {
           path: '/auth/register',
           element: <RegisterPage />,
+        },
+        {
+          path: '/mail-activate',
+          element: <MailActivation />,
         },
       ],
     },

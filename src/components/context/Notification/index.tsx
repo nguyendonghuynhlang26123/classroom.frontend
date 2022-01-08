@@ -34,7 +34,6 @@ export const NotificationContextProvider = ({ children }: { children: any }) => 
   }, [isLoading]);
 
   React.useEffect(() => {
-    console.log('Context: ', notifications, localNoti);
     if (notifications && localNoti) {
       const notSeens = notifications.filter((n) => !checkSeen(n._id as string));
       setNewCount(notSeens.length);

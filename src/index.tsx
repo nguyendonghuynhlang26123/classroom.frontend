@@ -12,12 +12,12 @@ import { AuthProvider } from 'components';
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <AuthProvider>
-        <CssBaseline />
-        <HashRouter>
+      <HashRouter>
+        <AuthProvider>
+          <CssBaseline />
           <App />
-        </HashRouter>
-      </AuthProvider>
+        </AuthProvider>
+      </HashRouter>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root'),
