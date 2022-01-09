@@ -1,6 +1,6 @@
 import { AuthData, AuthResponse, IUser } from 'common/interfaces';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { repository } from 'services/repository';
 import GoogleValidateService from './google.service';
 import JwtAuthService from './jwt.service';
@@ -21,6 +21,7 @@ const AuthContext = React.createContext<AuthProps>(defaultValue);
 
 export const AuthProvider = ({ children }: { children: any }) => {
   const navigate = useNavigate();
+  const { search } = useLocation();
   const [infor, setInfor] = React.useState<IUser | undefined>(undefined);
   const [isAuthen, setIsAuthen] = React.useState<boolean>(false);
   const [pending, setIsPending] = React.useState<boolean>(true);
@@ -45,7 +46,9 @@ export const AuthProvider = ({ children }: { children: any }) => {
         setInfor(data);
       })
       .catch((err: any) => {
-        if (err.response.status === 403) navigate('/mail-activate');
+        if (err.response.status === 403 && jwtService.isBanned()) navigate('/account-banned' + (search ?? ''));
+        else if (err.response.status === 403 && !jwtService.isActivated()) navigate('/mail-activate' + (search ?? ''));
+
         setIsPending(false);
         console.error(err);
       });

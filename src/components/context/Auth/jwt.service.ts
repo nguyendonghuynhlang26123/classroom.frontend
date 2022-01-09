@@ -156,6 +156,24 @@ class JwtAuthService {
     }
   };
 
+  isBanned = (): boolean => {
+    const access_token = localStorage.getItem(JWT_SESSION_KEY);
+    if (!access_token) {
+      return false;
+    }
+    const decoded: any = jwtDecode(access_token);
+    return Boolean(decoded.is_banned);
+  };
+
+  isActivated = (): boolean => {
+    const access_token = localStorage.getItem(JWT_SESSION_KEY);
+    if (!access_token) {
+      return false;
+    }
+    const decoded: any = jwtDecode(access_token);
+    return Boolean(decoded.is_activated);
+  };
+
   //HELPER FUNCTIONS
   _setSession = (access_token: string | null, refresh_token: string | null): void => {
     if (access_token) {

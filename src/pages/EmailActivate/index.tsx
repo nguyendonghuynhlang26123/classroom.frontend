@@ -3,17 +3,34 @@ import { activatePageSx } from './style';
 import { Container, Grow, Paper, Typography, Box, Button, Divider, Link } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router';
 import Email from 'assets/images/sending-mail.svg';
+import { useActivateAccountMutation } from 'services';
+import { toast } from 'react-toastify';
+import { useAuth } from 'components';
 
 const EmailActivate = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
-  const [processing, setProcessing] = React.useState(true);
+  const { logOut } = useAuth();
+  const [activateAccount, { isLoading }] = useActivateAccountMutation();
 
   React.useEffect(() => {
     if (search) {
       const params = new URLSearchParams(search);
       const code = params.get('code') as string;
-    } else setProcessing(false);
+      const id = params.get('id') as string;
+      if (code && id) {
+        activateAccount({ id: id, code: code })
+          .unwrap()
+          .then(() => {
+            toast.success('Activate succeed! Please login again using your credentials');
+            logOut();
+            navigate('/');
+          })
+          .catch(() => {
+            toast.error('Activate failed!');
+          });
+      }
+    }
   }, [search]);
 
   return (
@@ -25,7 +42,7 @@ const EmailActivate = () => {
               <img alt="Email verification" src={Email} />
             </Box>
             <Divider />
-            {processing ? (
+            {isLoading ? (
               <>
                 <Typography variant="h6" sx={activatePageSx.paper_title}>
                   Please wait a few moment...
