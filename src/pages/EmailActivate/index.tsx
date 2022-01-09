@@ -55,6 +55,7 @@ const EmailActivate = () => {
                   Your account is not yet activated
                 </Typography>
                 <Typography variant="body2">An activation link has been sent to your email! Please check your registered email!</Typography>
+                <Button onClick={() => navigate('/auth/login')}>Back to login</Button>
               </>
             )}
           </Paper>

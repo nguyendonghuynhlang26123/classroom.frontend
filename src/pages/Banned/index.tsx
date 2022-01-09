@@ -16,6 +16,7 @@ const BannedPage = () => {
             </Typography>
             <Divider />
             <Typography variant="body1">Please contact admin for further support</Typography>
+            <Button onClick={() => navigate('/auth/login')}>Back to login</Button>
           </Paper>
         </Container>
       </Grow>

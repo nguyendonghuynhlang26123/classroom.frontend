@@ -3,6 +3,9 @@ import { NotificationContextProps } from './type';
 import { useGetAllNotificationQuery } from 'services';
 import { useLoading, useLocalStorage } from '../../hooks';
 import { useAuth } from '..';
+import { INotification } from 'common/interfaces';
+import { io, Socket } from 'socket.io-client';
+import { JWT_SESSION_KEY } from 'common/constants';
 
 const defaultValue: NotificationContextProps = {
   notifications: [],
@@ -10,12 +13,14 @@ const defaultValue: NotificationContextProps = {
   isSeen: (id: string) => false,
   seen: (id: string) => {},
 };
+const BACKEND_SOCKET_HOST = process.env.REACT_APP_WEB_SOCKET_DOMAIN;
 
 const NotificationContext = React.createContext<NotificationContextProps>(defaultValue);
 
 export const NotificationContextProvider = ({ children }: { children: any }) => {
   const { isAuthenticated } = useAuth();
-  const { data: notifications, isLoading } = useGetAllNotificationQuery(undefined, { skip: !isAuthenticated });
+  const { data, isLoading } = useGetAllNotificationQuery(undefined, { skip: !isAuthenticated });
+  const [notifications, setNotifications] = React.useState<INotification[]>([]);
   const [localNoti, setLocalNoti] = useLocalStorage<string[]>('notifications', []);
   const [newCount, setNewCount] = React.useState(0);
 
@@ -30,6 +35,20 @@ export const NotificationContextProvider = ({ children }: { children: any }) => 
   };
 
   React.useEffect(() => {
+    const token = localStorage.getItem(JWT_SESSION_KEY);
+    const socket = io(BACKEND_SOCKET_HOST as string, {
+      query: { token },
+    });
+
+    socket.on('notification', (data: INotification) => {
+      setNotifications((curArr) => [data, ...curArr].slice(0, 10));
+    });
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  React.useEffect(() => {
     setLoading(isLoading);
   }, [isLoading]);
 
@@ -39,6 +58,10 @@ export const NotificationContextProvider = ({ children }: { children: any }) => 
       setNewCount(notSeens.length);
     }
   }, [notifications, localNoti]);
+
+  React.useEffect(() => {
+    if (data) setNotifications(data);
+  }, [data]);
 
   const values: NotificationContextProps = {
     ...defaultValue,

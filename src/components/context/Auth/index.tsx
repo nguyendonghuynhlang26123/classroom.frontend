@@ -50,6 +50,7 @@ export const AuthProvider = ({ children }: { children: any }) => {
         else if (err.response.status === 403 && !jwtService.isActivated()) navigate('/mail-activate' + (search ?? ''));
 
         setIsPending(false);
+        jwtService.logOut();
         console.error(err);
       });
   };

@@ -73,7 +73,7 @@ export const NotificationBtn = () => {
         {notifications ? (
           <List sx={notificationBtnSx.container}>
             {notifications.length > 0 ? (
-              notifications.map((n: INotification, i) => (
+              notifications.slice(0, 4).map((n: INotification, i) => (
                 <React.Fragment key={i}>
                   <ListItemButton alignItems="flex-start" onClick={() => handleOnClick(n)}>
                     <ListItemAvatar>
