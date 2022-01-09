@@ -2,7 +2,7 @@ import { AssignmentOutlined, MoreVert } from '@mui/icons-material';
 import { Avatar, Box, Collapse, Container, Divider, Grid, IconButton, Link, Menu, MenuItem, Paper, Stack, Typography } from '@mui/material';
 import { IGradeReview, IGradingAssignment, UserRole } from 'common/interfaces';
 import Utils from 'common/utils';
-import { useClassroomCtx, useCopyToClipboard, useLoading } from 'components';
+import { useClassroomCtx, useCopyToClipboard, useLoading, useNotification } from 'components';
 import React from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { toast } from 'react-toastify';
@@ -18,6 +18,7 @@ import { GradeReviewPanel, RequestForm } from './subcomponents';
 
 const AssignmentDetails = () => {
   const { role, studentId } = useClassroomCtx();
+  const { socketTrigger } = useNotification();
   const navigate = useNavigate();
   const { id, assignmentId } = useParams();
   const [, copyFn] = useCopyToClipboard();
@@ -39,17 +40,17 @@ const AssignmentDetails = () => {
 
   React.useEffect(() => {
     if (studentId) fetchMyGrading({ classId: id as string, studentId: studentId });
-  }, [studentId]);
+  }, [studentId, socketTrigger]);
 
   React.useEffect(() => {
     if (gradings && gradings.length > 0 && data) {
       const grade = gradings.find((g: IGradingAssignment) => g.assignment_id === data._id);
-      if (grade !== null) {
+      if (grade) {
         setGrade(grade);
         fetchAllGradingReviews(grade.reviews);
       }
     }
-  }, [gradings, data]);
+  }, [gradings, data, socketTrigger]);
 
   React.useEffect(() => {
     setLoading(Utils.isLoading(isFetchingAssignment, isSubmitingRequest, isFetchingMark, isFetchingReviews, isSubmitComment));

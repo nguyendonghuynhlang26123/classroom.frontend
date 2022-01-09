@@ -2,7 +2,7 @@ import { Check, Close, GraphicEq } from '@mui/icons-material';
 import { Box, Button, Chip, Collapse, Divider, Stack, Typography } from '@mui/material';
 import { IAssignment, IGradingAssignment, IUser, RequestReviewStatus } from 'common/interfaces';
 import Utils from 'common/utils';
-import { GradeReviewComments, StudentCard, useAuth, useDialog, useLoading } from 'components';
+import { GradeReviewComments, StudentCard, useAuth, useDialog, useLoading, useNotification } from 'components';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -18,7 +18,12 @@ import { AcceptReviewForm } from './subcomponents';
 const ReviewPanel = () => {
   const { id, reviewId } = useParams();
   const { userData } = useAuth();
-  const { data: review, isLoading: isFetchingData } = useGetOneGradeReviewQuery({ id: id as string, gradeReviewId: reviewId as string });
+  const { socketTrigger } = useNotification();
+  const {
+    data: review,
+    refetch,
+    isLoading: isFetchingData,
+  } = useGetOneGradeReviewQuery({ id: id as string, gradeReviewId: reviewId as string });
   const [submitComment, { isLoading: isSubmitComment }] = useCreateCommentRequestMutation();
   const [rejectReview, { isLoading: isRejecting }] = useRejectReviewRequestMutation();
   const [acceptReview, { isLoading: isAccepting }] = useAcceptReviewRequestMutation();
@@ -38,6 +43,10 @@ const ReviewPanel = () => {
       setRequester(review.comments[0].author as IUser);
     }
   }, [review]);
+
+  React.useEffect(() => {
+    refetch();
+  }, [socketTrigger]);
 
   React.useEffect(() => {
     showLoading(Utils.isLoading(isFetchingData, isSubmitComment, isRejecting, isAccepting));

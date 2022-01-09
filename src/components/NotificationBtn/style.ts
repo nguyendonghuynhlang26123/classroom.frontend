@@ -31,5 +31,10 @@ export const notificationBtnSx: MultipleSxTypes = {
     bottom: 0,
     borderTop: 1,
     borderColor: 'divider',
+    zIndex: 4,
+  },
+
+  actionBtns: {
+    fontSize: 13,
   },
 };

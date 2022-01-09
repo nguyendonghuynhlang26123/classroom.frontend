@@ -55,6 +55,7 @@ export const AssignmentForm = ({ formData, isLoading, handleChange, onSubmit, on
   const submitData = () => {
     const submission: IAssignmentBody = {
       ...formData,
+      total_points: Number(formData.total_points),
       due_date: disableDueDate ? undefined : formData.due_date,
     };
     const [success, msg] = validateForm(submission);

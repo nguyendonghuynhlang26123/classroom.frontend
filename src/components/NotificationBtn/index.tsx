@@ -24,9 +24,15 @@ import { useNotification } from 'components';
 
 export const NotificationBtn = () => {
   const navigate = useNavigate();
-  const { notifications, seen, isSeen, newNotiCount } = useNotification();
+  const { notifications, seen, isSeen, newNotiCount, isRemoved, remove } = useNotification();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [availableNotis, setAvailableNoti] = React.useState<INotification[]>(notifications);
+
+  React.useEffect(() => {
+    setAvailableNoti(notifications.filter((n) => !isRemoved(n._id as string)));
+  }, [notifications, isRemoved]);
+
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -47,6 +53,13 @@ export const NotificationBtn = () => {
     ev.preventDefault();
     ev.stopPropagation();
     seen(n._id as string);
+  };
+
+  const handleRemove = (n: INotification) => (ev: any) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    seen(n._id as string);
+    remove(n._id as string);
   };
 
   return (
@@ -76,10 +89,10 @@ export const NotificationBtn = () => {
           horizontal: 'right',
         }}
       >
-        {notifications ? (
+        {availableNotis ? (
           <List sx={notificationBtnSx.container}>
-            {notifications.length > 0 ? (
-              notifications.map((n: INotification, i) => (
+            {availableNotis.length > 0 ? (
+              availableNotis.map((n: INotification, i) => (
                 <React.Fragment key={i}>
                   <ListItemButton alignItems="flex-start" onClick={() => handleOnClick(n)}>
                     <ListItemAvatar>
@@ -91,13 +104,18 @@ export const NotificationBtn = () => {
                         primary={n.type === 'GRADE_FINALIZE' ? 'Grade composition update' : 'Grade Request update'}
                         secondary={<React.Fragment>{`${n.description}`}</React.Fragment>}
                       />
-                      <Stack direction="row" justifyContent="space-between" alignItems="center">
-                        <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={notificationBtnSx.actionBtns}>
+                        <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontSize: 12 }}>
                           {Utils.displayDate(n.created_at as number)}
                         </Typography>
-                        <Link href="#" underline="hover" onClick={handleMarkAsRead(n)}>
-                          Mark as read
-                        </Link>
+                        <Stack direction="row" spacing={2}>
+                          <Link href="#" underline="hover" onClick={handleRemove(n)} color="error">
+                            Remove
+                          </Link>
+                          <Link href="#" underline="hover" onClick={handleMarkAsRead(n)}>
+                            Mark as read
+                          </Link>
+                        </Stack>
                       </Stack>
                     </Box>
                   </ListItemButton>
@@ -106,10 +124,6 @@ export const NotificationBtn = () => {
             ) : (
               <ListItemText sx={{ px: 2 }}>No notification</ListItemText>
             )}
-
-            <ListItemButton alignItems="center" sx={notificationBtnSx.viewAllBtn} color="primary">
-              View All
-            </ListItemButton>
           </List>
         ) : (
           <CircularProgress />

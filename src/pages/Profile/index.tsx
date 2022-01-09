@@ -15,8 +15,8 @@ import { ChangePassBtn } from './subcomponents';
 
 const validationSchema = yup.object({
   student_id: yup.string().matches(STUDENT_ID_REGEX, 'Invalid studentID'),
-  first_name: yup.string().matches(NAME_REGEX, 'Invalid name').required('Firstname is required'),
-  last_name: yup.string().matches(NAME_REGEX, 'Invalid name').required('Lastname is rquired'),
+  first_name: yup.string().required('Firstname is required'),
+  last_name: yup.string().required('Lastname is required'),
 });
 
 const UserProfile = () => {
