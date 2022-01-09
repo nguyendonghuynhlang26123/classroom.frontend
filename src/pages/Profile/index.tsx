@@ -2,15 +2,16 @@
 import { PhotoCamera } from '@mui/icons-material';
 import { Avatar, Box, Button, CircularProgress, Container, Grid, LinearProgress, Stack, TextField, Typography } from '@mui/material';
 import { NAME_REGEX, STUDENT_ID_REGEX } from 'common/constants/regex';
-import { IUserBody } from 'common/interfaces';
+import { IChangePassBody, IUserBody } from 'common/interfaces';
 import Utils from 'common/utils';
 import { Navbar, useAuth, useLoading } from 'components';
 import { useFormik } from 'formik';
 import React from 'react';
 import { toast } from 'react-toastify';
-import { useUpdateProfileMutation, useUploadImageMutation, useGetAllClassesQuery } from 'services/api';
+import { useUpdateProfileMutation, useUploadImageMutation, useGetAllClassesQuery, useChangePassMutation } from 'services/api';
 import * as yup from 'yup';
 import { profileSx } from './style';
+import { ChangePassBtn } from './subcomponents';
 
 const validationSchema = yup.object({
   student_id: yup.string().matches(STUDENT_ID_REGEX, 'Invalid studentID'),
@@ -22,6 +23,7 @@ const UserProfile = () => {
   const { userData, reload } = useAuth();
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
   const [uploadAvatar, { isLoading: isUploading }] = useUploadImageMutation();
+  const [changePass, { isLoading: isChangingPass }] = useChangePassMutation();
   const { data: classrooms, isLoading: isFetchingClassrooms } = useGetAllClassesQuery();
   const [avatar, setAvatar] = React.useState<string | undefined>(userData?.avatar);
   const [uploadFile, setUploadFile] = React.useState<any>(null);
@@ -50,8 +52,8 @@ const UserProfile = () => {
   });
 
   React.useEffect(() => {
-    setLoading(Utils.isLoading(isLoading, isUploading, isFetchingClassrooms));
-  }, [isLoading, isUploading, isFetchingClassrooms]);
+    setLoading(Utils.isLoading(isLoading, isUploading, isFetchingClassrooms, isChangingPass));
+  }, [isLoading, isUploading, isFetchingClassrooms, isChangingPass]);
 
   const handleUpdateData = async (id: string, values: IUserBody, file: any) => {
     let form_data = new FormData();
@@ -77,6 +79,21 @@ const UserProfile = () => {
     }
     setUploadFile(file);
     setAvatar(URL.createObjectURL(file));
+  };
+
+  const handleChangePass = (body: IChangePassBody): Promise<any> => {
+    return new Promise((resolve, reject) =>
+      changePass({ id: userData?._id as string, body: body })
+        .unwrap()
+        .then((response: any) => {
+          toast.success('Change pass succeed');
+          return resolve(response);
+        })
+        .catch((err) => {
+          console.log('log ~ file: index.tsx ~ line 93 ~ returnnewPromise ~ err', err);
+          return reject(err.data);
+        }),
+    );
   };
 
   return (
@@ -111,10 +128,12 @@ const UserProfile = () => {
                   <Avatar variant="rounded" sx={{ width: '100%', height: 'auto' }}></Avatar>
                 )}
 
-                <label htmlFor="icon-button-file" className="overlay">
-                  <input accept="image/*" id="icon-button-file" type="file" onChange={handleSelectFile} />
-                  <PhotoCamera />
-                </label>
+                {userData?.google_id === null && (
+                  <label htmlFor="icon-button-file" className="overlay">
+                    <input accept="image/*" id="icon-button-file" type="file" onChange={handleSelectFile} />
+                    <PhotoCamera />
+                  </label>
+                )}
               </Box>
             </Grid>
             <Grid item xs={8}>
@@ -124,6 +143,7 @@ const UserProfile = () => {
                   name="first_name"
                   label="First name (required)"
                   fullWidth
+                  disabled={userData?.google_id !== null}
                   value={formik.values.first_name}
                   onChange={formik.handleChange}
                   error={formik.touched.first_name && Boolean(formik.errors.first_name)}
@@ -134,6 +154,7 @@ const UserProfile = () => {
                   name="last_name"
                   label="Lastname (required)"
                   fullWidth
+                  disabled={userData?.google_id !== null}
                   onChange={formik.handleChange}
                   value={formik.values.last_name}
                   error={formik.touched.last_name && Boolean(formik.errors.last_name)}
@@ -151,12 +172,12 @@ const UserProfile = () => {
                 helperText={formik.touched.student_id && formik.errors.student_id}
               />
               <TextField id="email" name="email" label="Email" fullWidth disabled value={userData?.email} />
-
-              {userData?.google_id != null && (
+              <Stack justifyContent="space-between">
                 <Typography sx={profileSx.form_note} variant="body2">
-                  *You are linking your account with google
+                  {userData?.google_id != null ? `*You are linking your account with google` : ''}
                 </Typography>
-              )}
+                <ChangePassBtn loading={loading} handleSubmit={handleChangePass} />
+              </Stack>
             </Grid>
           </Grid>
         </Box>

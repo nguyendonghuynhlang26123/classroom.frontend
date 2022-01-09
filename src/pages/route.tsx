@@ -10,6 +10,7 @@ const Dashboard = React.lazy(() => import('./Dashboard'));
 //Auth
 const LoginPage = React.lazy(() => import('./Auth/Login'));
 const RegisterPage = React.lazy(() => import('./Auth/Register'));
+const ResetPassword = React.lazy(() => import('./Auth/ResetPassword'));
 
 //Classroom
 const Classroom = React.lazy(() => import('./Classroom'));
@@ -185,6 +186,10 @@ const appRoutes = (isAuthed: boolean, search: string, pathname: string): RouteCo
         {
           path: '/auth/register',
           element: <RegisterPage />,
+        },
+        {
+          path: '/auth/reset',
+          element: <ResetPassword />,
         },
         {
           path: '/mail-activate',
