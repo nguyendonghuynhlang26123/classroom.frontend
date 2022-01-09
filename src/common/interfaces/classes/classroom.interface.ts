@@ -13,4 +13,5 @@ export interface IClassroomBody {
   section: string;
   subject?: string;
   room?: string;
+  image?: string;
 }
