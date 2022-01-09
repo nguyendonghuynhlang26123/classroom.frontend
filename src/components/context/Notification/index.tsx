@@ -31,7 +31,7 @@ export const NotificationContextProvider = ({ children }: { children: any }) => 
   };
 
   const seen = (id: string) => {
-    if (!checkSeen(id)) setLocalNoti((arr) => [id, ...arr].slice(0, 10)); //Only store 10 of recent notificiation
+    if (!checkSeen(id)) setLocalNoti((arr) => [id, ...arr].slice(0, 20)); //Only store 20 of recent notificiation
   };
 
   React.useEffect(() => {
