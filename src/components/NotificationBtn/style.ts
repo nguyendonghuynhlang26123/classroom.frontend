@@ -2,8 +2,7 @@ import { SxType, MultipleSxTypes } from 'common/type';
 
 export const notificationBtnSx: MultipleSxTypes = {
   container: {
-    width: '100%',
-    maxWidth: 360,
+    width: 360,
     bgcolor: 'background.paper',
     pb: 0,
     borderRadius: 2,

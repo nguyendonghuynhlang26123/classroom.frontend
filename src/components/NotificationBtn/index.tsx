@@ -72,28 +72,32 @@ export const NotificationBtn = () => {
       >
         {notifications ? (
           <List sx={notificationBtnSx.container}>
-            {notifications.map((n: INotification, i) => (
-              <React.Fragment key={i}>
-                <ListItemButton alignItems="flex-start" onClick={() => handleOnClick(n)}>
-                  <ListItemAvatar>
-                    <Avatar alt={n.actor_id.first_name} src={n.actor_id.avatar} />
-                  </ListItemAvatar>
-                  <ListItemText
-                    sx={isSeen(n._id as string) ? {} : { ...notificationBtnSx.notSeen }}
-                    id="not-seen"
-                    primary={n.type === 'GRADE_FINALIZE' ? 'Grade composition update' : 'Grade Request update'}
-                    secondary={
-                      <React.Fragment>
-                        <Typography sx={notificationBtnSx.secondaryText} component="span" variant="body2" color="text.primary">
-                          {Utils.getFullName(n.actor_id.first_name, n.actor_id.last_name)}
-                        </Typography>
-                        {` - ${n.description}`}
-                      </React.Fragment>
-                    }
-                  />
-                </ListItemButton>
-              </React.Fragment>
-            ))}
+            {notifications.length > 0 ? (
+              notifications.map((n: INotification, i) => (
+                <React.Fragment key={i}>
+                  <ListItemButton alignItems="flex-start" onClick={() => handleOnClick(n)}>
+                    <ListItemAvatar>
+                      <Avatar alt={n.actor_id.first_name} src={n.actor_id.avatar} />
+                    </ListItemAvatar>
+                    <ListItemText
+                      sx={isSeen(n._id as string) ? {} : { ...notificationBtnSx.notSeen }}
+                      id="not-seen"
+                      primary={n.type === 'GRADE_FINALIZE' ? 'Grade composition update' : 'Grade Request update'}
+                      secondary={
+                        <React.Fragment>
+                          <Typography sx={notificationBtnSx.secondaryText} component="span" variant="body2" color="text.primary">
+                            {Utils.getFullName(n.actor_id.first_name, n.actor_id.last_name)}
+                          </Typography>
+                          {` - ${n.description}`}
+                        </React.Fragment>
+                      }
+                    />
+                  </ListItemButton>
+                </React.Fragment>
+              ))
+            ) : (
+              <ListItemText sx={{ px: 2 }}>No notification</ListItemText>
+            )}
 
             <ListItemButton alignItems="center" sx={notificationBtnSx.viewAllBtn} color="primary">
               View All
