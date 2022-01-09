@@ -2,15 +2,16 @@ import {
   Avatar,
   IconButton,
   List,
-  ListItem,
   Badge,
   ListItemAvatar,
   ListItemText,
   Popover,
-  Divider,
   Typography,
   CircularProgress,
   ListItemButton,
+  Box,
+  Link,
+  Stack,
 } from '@mui/material';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import React from 'react';
@@ -40,6 +41,12 @@ export const NotificationBtn = () => {
     if (n.type === 'GRADE_FINALIZE') navigate(`/classroom/${n.class_id}/work/details/${n.assignment._id}`);
     else if (n.grading) navigate(`/classroom/${n.class_id}/grade-reviews`);
     else navigate(`/classroom/${n.class_id}`);
+  };
+
+  const handleMarkAsRead = (n: INotification) => (ev: any) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    seen(n._id as string);
   };
 
   return (
@@ -79,19 +86,22 @@ export const NotificationBtn = () => {
                     <ListItemAvatar>
                       <Avatar alt={n.actor_id.first_name} src={n.actor_id.avatar} />
                     </ListItemAvatar>
-                    <ListItemText
-                      sx={isSeen(n._id as string) ? {} : { ...notificationBtnSx.notSeen }}
-                      id="not-seen"
-                      primary={n.type === 'GRADE_FINALIZE' ? 'Grade composition update' : 'Grade Request update'}
-                      secondary={
-                        <React.Fragment>
-                          <Typography sx={notificationBtnSx.secondaryText} component="span" variant="body2" color="text.primary">
-                            {Utils.getFullName(n.actor_id.first_name, n.actor_id.last_name)}
-                          </Typography>
-                          {` - ${n.description}`}
-                        </React.Fragment>
-                      }
-                    />
+                    <Box>
+                      <ListItemText
+                        sx={isSeen(n._id as string) ? {} : { ...notificationBtnSx.notSeen }}
+                        id="not-seen"
+                        primary={n.type === 'GRADE_FINALIZE' ? 'Grade composition update' : 'Grade Request update'}
+                        secondary={<React.Fragment>{`${n.description}`}</React.Fragment>}
+                      />
+                      <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                          {Utils.displayDate(n.created_at as number)}
+                        </Typography>
+                        <Link href="#" underline="hover" onClick={handleMarkAsRead(n)}>
+                          Mark as read
+                        </Link>
+                      </Stack>
+                    </Box>
                   </ListItemButton>
                 </React.Fragment>
               ))
