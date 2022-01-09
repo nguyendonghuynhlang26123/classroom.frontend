@@ -61,7 +61,7 @@ export const GradeReviewComments = ({ gr, handleSendBtn, userData }: GradeCommen
           </ListItem>
         </>
       ) : (
-        <Typography className="info" component="span" color="success.main">
+        <Typography className="info" component="span" color={gr.status === RequestReviewStatus.APPROVED ? 'success.main' : 'error.main'}>
           * {gr.comments[gr.comments.length - 1].message}
         </Typography>
       )}

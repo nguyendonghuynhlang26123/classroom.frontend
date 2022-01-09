@@ -64,7 +64,6 @@ export const NotificationBtn = () => {
         </Badge>
       </IconButton>
       <Popover
-        id={'simple-popover'}
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
         onClose={handleClose}
@@ -80,7 +79,7 @@ export const NotificationBtn = () => {
         {notifications ? (
           <List sx={notificationBtnSx.container}>
             {notifications.length > 0 ? (
-              notifications.slice(0, 4).map((n: INotification, i) => (
+              notifications.map((n: INotification, i) => (
                 <React.Fragment key={i}>
                   <ListItemButton alignItems="flex-start" onClick={() => handleOnClick(n)}>
                     <ListItemAvatar>
@@ -89,7 +88,6 @@ export const NotificationBtn = () => {
                     <Box>
                       <ListItemText
                         sx={isSeen(n._id as string) ? {} : { ...notificationBtnSx.notSeen }}
-                        id="not-seen"
                         primary={n.type === 'GRADE_FINALIZE' ? 'Grade composition update' : 'Grade Request update'}
                         secondary={<React.Fragment>{`${n.description}`}</React.Fragment>}
                       />

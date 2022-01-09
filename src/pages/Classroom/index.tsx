@@ -81,12 +81,20 @@ const ClassroomBoard = () => {
     if (pathname) setTabValue(getTabState(pathname));
   }, [pathname]);
 
+  React.useEffect(() => {
+    if (studentData && studentData.student_id && userData) {
+      if (studentData.student_id !== userData?.student_id) {
+        console.log('Detect studentId inconsistency');
+        handleAutomaticSync();
+      }
+    }
+  }, [studentData, userData]);
+
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setTabValue(newValue);
   };
 
   const handleAutomaticSync = () => {
-    console.log(userData);
     if (!userData?.student_id) {
       showDialog('No student id found in your account setting! You need to set up your student id in your profile setting first!', () => {
         navigate('/profile');

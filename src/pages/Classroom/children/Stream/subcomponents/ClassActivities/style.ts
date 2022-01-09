@@ -12,7 +12,9 @@ export const activitySx: MultipleSxTypes = {
   },
 
   activityContainer: {
-    my: 0,
+    my: 1,
+    maxHeight: 500,
+    overflow: 'auto',
     '& .MuiTimelineItem-root:before': {
       display: 'none !important',
     },
