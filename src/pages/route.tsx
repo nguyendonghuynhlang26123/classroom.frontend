@@ -29,6 +29,7 @@ const AssignmentDetails = React.lazy(() => import('./Classroom/children/Classwor
 const ProfilePage = React.lazy(() => import('./Profile'));
 const InvitationPage = React.lazy(() => import('./InvitationPage'));
 const MailActivation = React.lazy(() => import('./EmailActivate'));
+const BannedPage = React.lazy(() => import('./Banned'));
 
 //Error pages
 const NotFoundPage = React.lazy(() => import('./Errors/NotFound'));
@@ -194,6 +195,10 @@ const appRoutes = (isAuthed: boolean, search: string, pathname: string): RouteCo
         {
           path: '/mail-activate',
           element: <MailActivation />,
+        },
+        {
+          path: '/account-banned',
+          element: <BannedPage />,
         },
       ],
     },

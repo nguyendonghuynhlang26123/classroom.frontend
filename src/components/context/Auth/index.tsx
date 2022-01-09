@@ -69,7 +69,6 @@ export const AuthProvider = ({ children }: { children: any }) => {
           resolve(response);
         })
         .catch((err) => {
-          if (err.response.status === 403) navigate('/mail-activate');
           reject(err);
         });
     });
@@ -100,7 +99,6 @@ export const AuthProvider = ({ children }: { children: any }) => {
           resolve(body);
         })
         .catch((err) => {
-          if (err.response.status === 403) navigate('/mail-activate');
           reject(err);
         });
     });
