@@ -11,13 +11,13 @@ class GoogleValidateService {
       repository
         .post(`${this.resource}`, body)
         .then((response: any) => {
-          if (response.data) {
+          if (response.data && !response.data.is_banned) {
             //eslint disable
             const access_token = response.data.access_token;
             const refresh_token = response.data.refresh_token;
             this._setSession(access_token, refresh_token);
             resolve(response.data);
-          }
+          } else throw new Error('This account is banned');
         })
         .catch((response) => reject(response));
     });

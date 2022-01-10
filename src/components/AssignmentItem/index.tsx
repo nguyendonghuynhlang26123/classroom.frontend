@@ -1,25 +1,11 @@
-import { AssignmentOutlined, MoreVert } from '@mui/icons-material';
-import {
-  Accordion,
-  AccordionActions,
-  AccordionDetails,
-  AccordionSummary,
-  Avatar,
-  Button,
-  Divider,
-  Grid,
-  IconButton,
-  Menu,
-  MenuItem,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { AssignmentOutlined } from '@mui/icons-material';
+import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Avatar, Divider, Grid, Stack, Typography } from '@mui/material';
 import Utils from 'common/utils';
 import React from 'react';
 import { accordionSx } from './style';
 import { AccordionItemProps } from './type';
 
-export const AssignmentItem = ({ data, expanded, onClick, actionBtns, colorMode }: AccordionItemProps) => {
+export const AssignmentItem = ({ data, expanded, onClick, actionBtns, colorMode, mark }: AccordionItemProps) => {
   const isExpired = () => {
     if (data.due_date === null || Date.now() <= data.due_date) return false;
     return true;
@@ -38,26 +24,32 @@ export const AssignmentItem = ({ data, expanded, onClick, actionBtns, colorMode 
         </Stack>
         <Stack direction="row" alignItems="center" gap={1} sx={{ ml: 'auto' }}>
           <Typography sx={accordionSx.time}>
+            <b> {mark !== undefined && `Graded: ${mark}/${data.total_points}`} </b>
+            <br />
             {data.due_date ? 'Due at ' + Utils.displayDate(data.due_date) : 'No due date'}
           </Typography>
         </Stack>
       </AccordionSummary>
 
       <AccordionDetails>
-        <Typography sx={accordionSx.time}>{Utils.displayDate(data.created_at as number)}</Typography>
+        <Typography sx={accordionSx.time}>Post at {Utils.displayDate(data.created_at as number)}</Typography>
 
-        <Grid container spacing={2} width="100%" sx={{ m: 0 }}>
-          <Grid item xs={9}>
-            <div dangerouslySetInnerHTML={{ __html: data.instructions }} />
+        {mark !== undefined ? (
+          <Grid container spacing={2} width="100%" sx={{ m: 0 }}>
+            <Grid item xs={9}>
+              <div dangerouslySetInnerHTML={{ __html: data.instructions }} />
+            </Grid>
+            <Divider orientation="vertical" flexItem sx={{ ml: 1, mr: 2 }} />
+            <Grid item xs={2} alignItems="end" display="flex">
+              <Stack direction="column">
+                <Typography variant="h4">{mark}</Typography>
+                <Typography variant="body2">Your grade</Typography>
+              </Stack>
+            </Grid>
           </Grid>
-          <Divider orientation="vertical" flexItem sx={{ ml: 1, mr: 2 }} />
-          <Grid item xs={2} alignItems="end" display="flex">
-            <Stack direction="column">
-              <Typography variant="h4">10</Typography>
-              <Typography variant="body2">Turned in</Typography>
-            </Stack>
-          </Grid>
-        </Grid>
+        ) : (
+          <div dangerouslySetInnerHTML={{ __html: data.instructions }} />
+        )}
       </AccordionDetails>
 
       <AccordionActions>

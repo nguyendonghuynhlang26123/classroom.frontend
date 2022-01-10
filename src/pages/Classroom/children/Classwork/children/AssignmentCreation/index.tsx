@@ -1,5 +1,4 @@
 import { IAssignmentBody, UserRole } from 'common/interfaces';
-import Utils from 'common/utils';
 import { useClassroomCtx } from 'components';
 import { AssignmentForm } from 'components/AssignmentForm';
 import React from 'react';

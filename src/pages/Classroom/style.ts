@@ -38,7 +38,10 @@ export const navSx: MultipleSxTypes = {
 
 export const mainSx: MultipleSxTypes = {
   container: {
-    mt: 4,
+    pt: 4,
     p: '0 !important',
+    '& .MuiCollapse-root.tab-wrap': {
+      mt: 4,
+    },
   },
 };

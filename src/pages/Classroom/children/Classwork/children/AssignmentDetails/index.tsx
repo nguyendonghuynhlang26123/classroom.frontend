@@ -1,41 +1,99 @@
-import { Add, AssignmentOutlined, MoreVert } from '@mui/icons-material';
-import {
-  Avatar,
-  Box,
-  Button,
-  Collapse,
-  Container,
-  Divider,
-  Grid,
-  IconButton,
-  Menu,
-  MenuItem,
-  Paper,
-  Stack,
-  Typography,
-} from '@mui/material';
-import { UserRole } from 'common/interfaces';
+import { AssignmentOutlined, MoreVert } from '@mui/icons-material';
+import { Avatar, Box, Collapse, Container, Divider, Grid, IconButton, Link, Menu, MenuItem, Paper, Stack, Typography } from '@mui/material';
+import { IGradeReview, IGradingAssignment, UserRole } from 'common/interfaces';
 import Utils from 'common/utils';
-import { useClassroomCtx, useCopyToClipboard } from 'components';
+import { useClassroomCtx, useCopyToClipboard, useLoading, useNotification } from 'components';
 import React from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { useGetAssignmentByIdQuery } from 'services';
+import { toast } from 'react-toastify';
+import {
+  useCreateReviewRequestMutation,
+  useFetchFinalGradesMutation,
+  useGetAssignmentByIdQuery,
+  useCreateCommentRequestMutation,
+  useFetchOneGradeReviewMutation,
+} from 'services';
 import { assignmentDetailsSx } from './style';
+import { GradeReviewPanel, RequestForm } from './subcomponents';
 
 const AssignmentDetails = () => {
-  const { role } = useClassroomCtx();
+  const { role, studentId } = useClassroomCtx();
+  const { socketTrigger } = useNotification();
   const navigate = useNavigate();
   const { id, assignmentId } = useParams();
   const [, copyFn] = useCopyToClipboard();
-  const { data } = useGetAssignmentByIdQuery({
+  const { data, isLoading: isFetchingAssignment } = useGetAssignmentByIdQuery({
     classId: id as string,
     assignmentId: assignmentId as string,
   });
+  const [submitReviewRequest, { isLoading: isSubmitingRequest }] = useCreateReviewRequestMutation();
+  const [fetchMyGrading, { data: gradings, isLoading: isFetchingMark }] = useFetchFinalGradesMutation();
+  const [fetchAGradeReview, { isLoading: isFetchingReviews }] = useFetchOneGradeReviewMutation();
+  const [submitComment, { isLoading: isSubmitComment }] = useCreateCommentRequestMutation();
+
+  const [, setLoading] = useLoading();
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  const [assignmentGrade, setGrade] = React.useState<IGradingAssignment | undefined>();
+  const [reviewRequestForm, showReviewRequestForm] = React.useState<boolean>(false);
+  const [reviewList, setReviewList] = React.useState<IGradeReview[]>([]);
+
+  React.useEffect(() => {
+    if (studentId) fetchMyGrading({ classId: id as string, studentId: studentId });
+  }, [studentId, socketTrigger]);
+
+  React.useEffect(() => {
+    if (gradings && gradings.length > 0 && data) {
+      const grade = gradings.find((g: IGradingAssignment) => g.assignment_id === data._id);
+      if (grade) {
+        setGrade(grade);
+        fetchAllGradingReviews(grade.reviews);
+      }
+    }
+  }, [gradings, data, socketTrigger]);
+
+  React.useEffect(() => {
+    setLoading(Utils.isLoading(isFetchingAssignment, isSubmitingRequest, isFetchingMark, isFetchingReviews, isSubmitComment));
+  }, [isFetchingAssignment, isSubmitingRequest, isFetchingMark, isFetchingReviews, isSubmitComment]);
 
   const handleCloseModal = () => {
     setAnchorEl(null);
+  };
+
+  const refetchGrading = () => {
+    if (studentId && id) fetchMyGrading({ classId: id as string, studentId: studentId as string }); // Refetch data
+  };
+
+  const fetchAllGradingReviews = (reviews: string[]) => {
+    const promises = reviews.map((r) => fetchAGradeReview({ id: id as string, gradeReviewId: r }));
+    Promise.all(promises).then((responses: any[]) => {
+      const reviewList: IGradeReview[] = [];
+      responses.forEach((res) => {
+        if (res.data) reviewList.push(res.data);
+        else if (res.error) toast.warning('Fail to fetch a grade review request');
+      });
+      setReviewList(reviewList);
+    });
+  };
+
+  const handleSubmitReviewRequest = (message: string, mark: number) => {
+    submitReviewRequest({
+      id: id as string,
+      body: {
+        message: message,
+        expect_mark: mark,
+        student_id: studentId as string,
+        assignment_id: assignmentId as string,
+      },
+    })
+      .unwrap()
+      .then(() => {
+        toast.success('Submiting request successfully');
+        refetchGrading();
+      })
+      .catch(() => {
+        toast.error('Failed to submit this review request! Please try again later');
+      });
   };
 
   const handleCopyLink = () => {
@@ -48,17 +106,34 @@ const AssignmentDetails = () => {
     navigate(`/classroom/${id}/work/edit/${assignmentId}`);
   };
 
+  const handleSubmitComment = (requestId: string, message: string) => {
+    submitComment({
+      id: id as string,
+      reviewId: requestId,
+      message: message,
+    })
+      .unwrap()
+      .then(() => {
+        toast.success('Submiting comment successfully');
+        refetchGrading();
+      })
+      .catch(() => {
+        toast.error('Failed to submit this review request! Please try again later');
+      });
+  };
+
   const isExpired = () => {
     if (!data) return false;
     if (data.due_date === null || Date.now() <= data.due_date) return false;
     return true;
   };
+
   return (
     <Collapse timeout={500} appear={true} in={true}>
       <Container>
         {data && (
           <Grid container spacing={2} sx={assignmentDetailsSx.root}>
-            <Grid item xs={9}>
+            <Grid item xs={role === UserRole.STUDENT ? 9 : 12}>
               <Box>
                 <Stack direction="row" alignItems="center" sx={assignmentDetailsSx.header}>
                   <Avatar sizes="small" sx={{ bgcolor: isExpired() ? 'grey.500' : 'primary.main' }}>
@@ -73,9 +148,7 @@ const AssignmentDetails = () => {
                 <Box sx={assignmentDetailsSx.subheader}>
                   <Typography sx={assignmentDetailsSx.time}>{Utils.displayDate(data.created_at as number)}</Typography>
                   <Stack direction="row" justifyContent="space-between">
-                    <Typography className="total_point">
-                      {data.total_points ? `${data.total_points} point` : 'No grading'}
-                    </Typography>
+                    <Typography className="total_point">{data.total_points ? `${data.total_points} point` : 'No grading'}</Typography>
                     <Typography className="total_point">
                       {data.due_date ? 'Due at ' + Utils.displayDate(data.due_date) : 'No due date'}
                     </Typography>
@@ -87,27 +160,54 @@ const AssignmentDetails = () => {
                 <Box className="htmlContainer">
                   <div dangerouslySetInnerHTML={{ __html: data.instructions }} />
                 </Box>
-                {/* <CriteriaDetails criterias={data.grade_criterias} /> */}
                 <Divider className="divider" />
               </Box>
             </Grid>
-            <Grid item xs={3}>
-              <Paper sx={assignmentDetailsSx.submitZone}>
-                <Typography>Your work</Typography>
-                <Button size="small" variant="outlined" fullWidth startIcon={<Add />}>
-                  Add or Create
-                </Button>
-                <Button size="small" variant="contained" fullWidth>
-                  Submit
-                </Button>
-              </Paper>
-            </Grid>
+            {role === UserRole.STUDENT && (
+              <Grid item xs={3}>
+                <Paper sx={assignmentDetailsSx.submitZone}>
+                  <Typography className="title">Your grading</Typography>
+                  {data && assignmentGrade ? (
+                    <>
+                      <Typography color="primary" className="grade">
+                        <b>{assignmentGrade.mark}</b>/{data.total_points}
+                      </Typography>
+                      <Typography className="no-grade">
+                        Not what you expected?{' '}
+                        <Link
+                          href="#"
+                          onClick={(ev) => {
+                            ev.preventDefault();
+                            showReviewRequestForm(true);
+                          }}
+                        >
+                          Request a grade review
+                        </Link>
+                      </Typography>
+                    </>
+                  ) : (
+                    <Typography className="no-grade">Your assignment has not been graded yet</Typography>
+                  )}
+                </Paper>
+              </Grid>
+            )}
           </Grid>
         )}
-        <Menu id="details-menu" anchorEl={anchorEl} open={open} onClose={handleCloseModal}>
+        <Menu id="details-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseModal}>
           {role !== UserRole.STUDENT && <MenuItem onClick={navigateToEditPage}>Go to edit page</MenuItem>}
           <MenuItem onClick={handleCopyLink}>Copy link</MenuItem>
         </Menu>
+
+        {data && (
+          <RequestForm
+            open={reviewRequestForm}
+            handleClose={() => showReviewRequestForm(false)}
+            onSubmit={handleSubmitReviewRequest}
+            assignment={data}
+          />
+        )}
+
+        {role === UserRole.STUDENT && <GradeReviewPanel data={reviewList} handleSubmitComment={handleSubmitComment} />}
       </Container>
     </Collapse>
   );

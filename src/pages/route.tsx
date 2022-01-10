@@ -1,16 +1,8 @@
-import { RouteConfigs } from 'common/type';
-import { Navigate, Outlet } from 'react-router-dom';
-import React from 'react';
-// import { LinearProgress } from '@mui/material';
-import Utils from 'common/utils';
 import { LinearProgress } from '@mui/material';
-// import Dashboard from './Dashboard';
-// import LoginPage from './Auth/Login';
-// import RegisterPage from './Auth/Register';
-// import Classroom from './Classroom';
-// import ProfilePage from './Profile';
-// import NotFoundPage from './Errors/NotFound';
-// import InvitationPage from './InvitationPage';
+import { RouteConfigs } from 'common/type';
+import Utils from 'common/utils';
+import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
 
 // main screen
 const Dashboard = React.lazy(() => import('./Dashboard'));
@@ -18,6 +10,7 @@ const Dashboard = React.lazy(() => import('./Dashboard'));
 //Auth
 const LoginPage = React.lazy(() => import('./Auth/Login'));
 const RegisterPage = React.lazy(() => import('./Auth/Register'));
+const ResetPassword = React.lazy(() => import('./Auth/ResetPassword'));
 
 //Classroom
 const Classroom = React.lazy(() => import('./Classroom'));
@@ -25,33 +18,27 @@ const ClassroomPeople = React.lazy(() => import('./Classroom/children/People'));
 const ClassroomStream = React.lazy(() => import('./Classroom/children/Stream'));
 const ClassroomWork = React.lazy(() => import('./Classroom/children/Classwork'));
 const ClassroomGrading = React.lazy(() => import('./Classroom/children/Grade'));
+const GradeReviews = React.lazy(() => import('./Classroom/children/GradeReview'));
 
+const ReviewPanel = React.lazy(() => import('./Classroom/children/GradeReview/children/ReviewPanel'));
 const AssignmentCreate = React.lazy(() => import('./Classroom/children/Classwork/children/AssignmentCreation'));
 const AssignmentEdit = React.lazy(() => import('./Classroom/children/Classwork/children/AssignmentEdit'));
 const AssignmentDetails = React.lazy(() => import('./Classroom/children/Classwork/children/AssignmentDetails'));
 
+//Other
 const ProfilePage = React.lazy(() => import('./Profile'));
-
 const InvitationPage = React.lazy(() => import('./InvitationPage'));
+const MailActivation = React.lazy(() => import('./EmailActivate'));
+const BannedPage = React.lazy(() => import('./Banned'));
 
 //Error pages
 const NotFoundPage = React.lazy(() => import('./Errors/NotFound'));
 
 // Public routes
-const Wrapper = ({ children }: { children: any }) => (
-  <React.Suspense fallback={<LinearProgress />}>{children}</React.Suspense>
-);
+const Wrapper = ({ children }: { children: any }) => <React.Suspense fallback={<LinearProgress />}>{children}</React.Suspense>;
 
 // Authed routes
-const AuthWrapped = ({
-  isAuthed,
-  search = '',
-  pathname = '',
-}: {
-  isAuthed: boolean;
-  search: string;
-  pathname: string;
-}) => {
+const AuthWrapped = ({ isAuthed, search = '', pathname = '' }: { isAuthed: boolean; search: string; pathname: string }) => {
   if (pathname === '/') {
     pathname = '';
     search = '';
@@ -94,34 +81,84 @@ const appRoutes = (isAuthed: boolean, search: string, pathname: string): RouteCo
           children: [
             {
               index: true,
-              element: <ClassroomStream />,
+              element: (
+                <Wrapper>
+                  <ClassroomStream />
+                </Wrapper>
+              ),
             },
             {
               path: 'people',
-              element: <ClassroomPeople />,
+              element: (
+                <Wrapper>
+                  <ClassroomPeople />
+                </Wrapper>
+              ),
             },
             {
               path: 'grade',
-              element: <ClassroomGrading />,
+              element: (
+                <Wrapper>
+                  <ClassroomGrading />
+                </Wrapper>
+              ),
             },
             {
               path: 'work',
               children: [
                 {
                   index: true,
-                  element: <ClassroomWork />,
+                  element: (
+                    <Wrapper>
+                      <ClassroomWork />
+                    </Wrapper>
+                  ),
                 },
                 {
                   path: 'create',
-                  element: <AssignmentCreate />,
+                  element: (
+                    <Wrapper>
+                      <AssignmentCreate />
+                    </Wrapper>
+                  ),
                 },
                 {
                   path: 'edit/:assignmentId',
-                  element: <AssignmentEdit />,
+                  element: (
+                    <Wrapper>
+                      <AssignmentEdit />
+                    </Wrapper>
+                  ),
                 },
                 {
                   path: 'details/:assignmentId',
-                  element: <AssignmentDetails />,
+                  element: (
+                    <Wrapper>
+                      <AssignmentDetails />
+                    </Wrapper>
+                  ),
+                },
+              ],
+            },
+            {
+              path: 'grade-reviews',
+              element: (
+                <Wrapper>
+                  <GradeReviews />
+                </Wrapper>
+              ),
+              children: [
+                {
+                  index: true,
+                  element: <div />,
+                },
+                {
+                  path: ':reviewId',
+                  element: (
+                    <Wrapper>
+                      <ReviewPanel />
+                    </Wrapper>
+                  ),
                 },
               ],
             },
@@ -150,6 +187,18 @@ const appRoutes = (isAuthed: boolean, search: string, pathname: string): RouteCo
         {
           path: '/auth/register',
           element: <RegisterPage />,
+        },
+        {
+          path: '/auth/reset',
+          element: <ResetPassword />,
+        },
+        {
+          path: '/mail-activate',
+          element: <MailActivation />,
+        },
+        {
+          path: '/account-banned',
+          element: <BannedPage />,
         },
       ],
     },

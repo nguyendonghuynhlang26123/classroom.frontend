@@ -14,6 +14,7 @@ export const bannerSx: MultipleSxTypes = {
   },
   card: {
     borderRadius: 2,
+    mb: 2,
   },
   header: {
     color: '#fff',
@@ -35,7 +36,7 @@ export const bannerSx: MultipleSxTypes = {
     fontSize: 14,
   },
   content: {
-    p: 3,
+    px: 3,
   },
   expand_row: {
     alignItems: 'center',

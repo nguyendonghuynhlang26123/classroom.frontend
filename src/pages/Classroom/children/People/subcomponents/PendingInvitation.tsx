@@ -1,16 +1,5 @@
-import { Mail, PersonAddOutlined } from '@mui/icons-material';
-import {
-  Avatar,
-  Divider,
-  IconButton,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Stack,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Mail } from '@mui/icons-material';
+import { Avatar, Divider, IconButton, List, ListItem, ListItemAvatar, ListItemText, Stack, Tooltip, Typography } from '@mui/material';
 import { IClassroomUser, UserRole } from 'common/interfaces';
 import React from 'react';
 import { styleSx } from './style';

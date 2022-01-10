@@ -1,32 +1,16 @@
 import { Add, Close, DragIndicatorSharp, MoreHorizRounded, RestartAlt, Save } from '@mui/icons-material';
-import {
-  Button,
-  Collapse,
-  Container,
-  Divider,
-  Link as ALink,
-  LinearProgress,
-  MenuItem,
-  Menu,
-  Stack,
-  Tooltip,
-  IconButton,
-  Typography,
-  Slide,
-  Paper,
-} from '@mui/material';
+import { Button, Container, IconButton, Menu, MenuItem, Slide, Stack, Tooltip, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import { IAssignment, IAssignmentBody, UserRole } from 'common/interfaces';
+import NotFoundImg from 'assets/images/reading.svg';
+import { IAssignment } from 'common/interfaces';
 import Utils from 'common/utils';
-import { AssignmentItem, ConfirmDialog, useClassroomCtx, useLoading, NoResourceDisplay } from 'components';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { AssignmentItem, ConfirmDialog, NoResourceDisplay, useLoading } from 'components';
 import React from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { useNavigate, useParams } from 'react-router';
+import { toast } from 'react-toastify';
 import { useGetAssignmentsQuery, useRemoveAssignmentMutation, useUpdateAssignmentMutation } from 'services';
 import { gradeStructureSx } from './style';
-import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
-import NotFoundImg from 'assets/images/reading.svg';
 
 //A list of helper functions
 const reorder = (list: any[], fromIndex: number, toIndex: number): any[] => {
@@ -159,7 +143,7 @@ export const EditableGradeStructure = () => {
           <Slide direction="left" in={!sortMode} container={containerRef.current}>
             <Stack direction="row" alignItems="center" justifyContent="space-between">
               <Typography sx={gradeStructureSx.formHeader} color="primary">
-                Grading Structure{' '}
+                Classwork
               </Typography>
 
               <Button endIcon={<Add />} variant="outlined" color="primary" onClick={handleCreateAssignment}>

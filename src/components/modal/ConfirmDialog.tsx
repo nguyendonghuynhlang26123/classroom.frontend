@@ -7,21 +7,9 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { ConfirmDialogProps } from './type';
 
-export const ConfirmDialog = ({
-  open,
-  handleClose,
-  title,
-  description,
-  onConfirm,
-  alwayShow = false,
-}: ConfirmDialogProps) => {
+export const ConfirmDialog = ({ open, handleClose, title, description, onConfirm, alwayShow = false }: ConfirmDialogProps) => {
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
+    <Dialog open={open} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
       <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">{description}</DialogContentText>

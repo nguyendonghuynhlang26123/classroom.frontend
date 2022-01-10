@@ -1,7 +1,7 @@
-import React from 'react';
-import { Typography, Box, Stack, Button, TextField } from '@mui/material';
+import { Box, Button, Stack, TextField } from '@mui/material';
 import { SimpleModal } from 'components';
 import { useFormik } from 'formik';
+import React from 'react';
 import * as yup from 'yup';
 
 const validationSchema = yup.object({

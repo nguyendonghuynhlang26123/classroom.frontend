@@ -5,3 +5,6 @@ export * from './upload.api';
 export * from './assignment.api';
 export * from './classStudents.api';
 export * from './grade.api';
+export * from './activity.api';
+export * from './gradeReview.api';
+export * from './notification.ai';

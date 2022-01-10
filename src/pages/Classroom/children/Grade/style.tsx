@@ -4,10 +4,9 @@ import { MultipleSxTypes } from 'common/type';
 export const gradeSx: MultipleSxTypes = {
   root: {
     width: '100%',
-    // mt: -4,
-    maxHeight: 'calc(100vh - 100px)',
-    minHeight: 'calc(100vh - 100px)',
- 
+    mt: -4,
+    maxHeight: 'calc(100vh - 64px)',
+    minHeight: 'calc(100vh - 64px)',
   },
 
   table: {
@@ -29,7 +28,7 @@ export const gradeSx: MultipleSxTypes = {
     '& .MuiTableCell-root': {
       p: 1,
       width: 150,
-      minHeight: 100,
+      height: 90,
       borderRight: 1,
       borderColor: 'divider',
       overflow: 'hidden',

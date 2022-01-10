@@ -1,10 +1,10 @@
-import { ManageAccounts, Sync, PersonAddOutlined } from '@mui/icons-material';
+import { ManageAccounts, PersonAddOutlined } from '@mui/icons-material';
 import { Avatar, Divider, IconButton, List, ListItem, ListItemAvatar, ListItemText, Stack, Tooltip, Typography } from '@mui/material';
-import { ClassStudents, UserRole, IStudentInfo } from 'common/interfaces';
+import NotFoundImg from 'assets/images/student.svg';
+import { IStudentInfo, UserRole } from 'common/interfaces';
 import { NoResourceDisplay } from 'components';
 import React from 'react';
 import { styleSx } from './style';
-import NotFoundImg from 'assets/images/student.svg';
 
 type StudentsProps = {
   role: UserRole;
@@ -52,13 +52,7 @@ export const Students = ({ role, studentId, data, onInvite, onBtnSyncClick }: St
                     </>
                   }
                 />
-                {role === UserRole.STUDENT && u.status === 'NOT_SYNCED' && !studentId && (
-                  <Tooltip title={'Synced your account with this account'}>
-                    <IconButton onClick={() => syncBtnHandle(u)}>
-                      <Sync />
-                    </IconButton>
-                  </Tooltip>
-                )}
+
                 {role !== UserRole.STUDENT && (
                   <Tooltip title={'Mannually set account for this student account'}>
                     <IconButton onClick={() => syncBtnHandle(u)}>

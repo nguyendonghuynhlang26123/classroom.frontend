@@ -1,5 +1,6 @@
 import { AuthData, AuthResponse, IUser } from 'common/interfaces';
 import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { repository } from 'services/repository';
 import GoogleValidateService from './google.service';
 import JwtAuthService from './jwt.service';
@@ -19,6 +20,8 @@ const defaultValue: AuthProps = {
 const AuthContext = React.createContext<AuthProps>(defaultValue);
 
 export const AuthProvider = ({ children }: { children: any }) => {
+  const navigate = useNavigate();
+  const { search } = useLocation();
   const [infor, setInfor] = React.useState<IUser | undefined>(undefined);
   const [isAuthen, setIsAuthen] = React.useState<boolean>(false);
   const [pending, setIsPending] = React.useState<boolean>(true);
@@ -30,13 +33,11 @@ export const AuthProvider = ({ children }: { children: any }) => {
   };
 
   React.useEffect(() => {
-    ('Check Auth');
     repository.get('/', { withCredentials: true }); // Send get request to get CSRF token once site is visited.
     checkJWT();
   }, []);
 
   const onAutoLogIn = () => {
-    ('~ onAutoLogIn');
     jwtService
       .getUserData()
       .then((data: any) => {
@@ -45,12 +46,16 @@ export const AuthProvider = ({ children }: { children: any }) => {
         setInfor(data);
       })
       .catch((err: any) => {
+        if (err.response.status === 403 && jwtService.isBanned()) navigate('/account-banned' + (search ?? ''));
+        else if (err.response.status === 403 && !jwtService.isActivated()) navigate('/mail-activate' + (search ?? ''));
+
+        setIsPending(false);
+        jwtService.logOut();
         console.error(err);
       });
   };
 
   const onAutoLogOut = () => {
-    ('~ onAutoLogOut');
     setIsAuthen(false);
     setIsPending(false); //Show that the api has been processed
     setInfor(undefined);
@@ -64,7 +69,9 @@ export const AuthProvider = ({ children }: { children: any }) => {
           onAutoLogIn();
           resolve(response);
         })
-        .catch((err) => reject(err));
+        .catch((err) => {
+          reject(err);
+        });
     });
   };
 
@@ -73,12 +80,20 @@ export const AuthProvider = ({ children }: { children: any }) => {
       ggService
         .validateToken(token)
         .then((response: AuthResponse) => {
-          setIsAuthen(true);
-          setIsPending(false); //Show that the api has been processed
-          setInfor(response.data);
-          resolve(response);
+          if (!response.data.is_banned) {
+            setIsAuthen(true);
+            setIsPending(false); //Show that the api has been processed
+            setInfor(response.data);
+            resolve(response);
+          } else {
+            navigate('/account-banned' + (search ?? ''));
+            logOut();
+            reject(response);
+          }
         })
         .catch((err: any) => {
+          navigate('/account-banned' + (search ?? ''));
+          logOut();
           reject(err);
         });
     });
@@ -92,8 +107,8 @@ export const AuthProvider = ({ children }: { children: any }) => {
           onAutoLogIn();
           resolve(body);
         })
-        .catch((res) => {
-          reject(res);
+        .catch((err) => {
+          reject(err);
         });
     });
   };

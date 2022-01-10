@@ -4,6 +4,8 @@ export interface IGradingAssignment extends IBase {
   class_id: string;
   student_id: string;
   mark?: number;
+  reviews: string[];
+  status: 'FINAL' | 'DRAFT';
 }
 
 export interface IGradingBody {

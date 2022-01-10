@@ -14,16 +14,32 @@ class JwtAuthService {
         const originalRequest = err.config;
         if (err?.response?.status === 401 && originalRequest && !originalRequest._retry) {
           originalRequest._retry = true;
-          if (this.isAuthTokenValid(refresh_token))
-            this.refresh(refresh_token as string)
-              .then(() => repository(err.config))
-              .catch(() => {
-                this._setSession(null, null); //Reset session
-                logoutCallback(); // Callback
-              });
+
+          if (this.isAuthTokenValid(refresh_token)) {
+            try {
+              await this.refresh(refresh_token as string);
+            } catch (err) {
+              //this._setSession(null, null); //Reset session
+              logoutCallback(); // Callback
+            }
+          } else logoutCallback();
+
           return repository(originalRequest);
         }
         return Promise.reject(err);
+      },
+    );
+
+    repository.interceptors.request.use(
+      (config) => {
+        const token = localStorage.getItem(JWT_SESSION_KEY);
+        if (config && config.headers && token) {
+          config.headers['Authorization'] = 'Bearer ' + token;
+        }
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
       },
     );
 
@@ -34,7 +50,7 @@ class JwtAuthService {
       this.refresh(refresh_token as string)
         .then(() => loginCallback())
         .catch(() => {
-          this._setSession(null, null); //Reset session
+          //this._setSession(null, null); //Reset session
           logoutCallback();
         });
     } else {
@@ -138,6 +154,24 @@ class JwtAuthService {
     } else {
       return true;
     }
+  };
+
+  isBanned = (): boolean => {
+    const access_token = localStorage.getItem(JWT_SESSION_KEY);
+    if (!access_token) {
+      return false;
+    }
+    const decoded: any = jwtDecode(access_token);
+    return Boolean(decoded.is_banned);
+  };
+
+  isActivated = (): boolean => {
+    const access_token = localStorage.getItem(JWT_SESSION_KEY);
+    if (!access_token) {
+      return false;
+    }
+    const decoded: any = jwtDecode(access_token);
+    return Boolean(decoded.is_activated);
   };
 
   //HELPER FUNCTIONS

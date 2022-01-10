@@ -15,9 +15,11 @@ export class MyUploadAdapter {
       return new Promise(async (resolve, reject) => {
         const data: any = new FormData();
         data.append('image', uploadedFile);
-        const response = await repository.post(`/upload`, data);
+        const response = await repository.post(`upload-files/imagekit`, data);
         if (response) {
-          resolve(response);
+          resolve({
+            default: response.data.url,
+          });
         } else {
           reject(`Couldn't upload file: ${uploadedFile.name}.`);
         }

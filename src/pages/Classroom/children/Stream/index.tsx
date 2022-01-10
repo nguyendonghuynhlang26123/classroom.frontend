@@ -1,34 +1,32 @@
-import { InfoOutlined, Info } from '@mui/icons-material';
-import {
-  Box,
-  Card,
-  CardContent,
-  CardMedia,
-  IconButton,
-  Stack,
-  Collapse,
-  Typography,
-  Tooltip,
-  Container,
-} from '@mui/material';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { Info, InfoOutlined } from '@mui/icons-material';
+import { Box, Card, CardContent, CardMedia, Collapse, Container, Grid, IconButton, Stack, Typography } from '@mui/material';
 import { UserRole } from 'common/interfaces';
+import { useClassroomCtx, useLoading, ClassroomTab } from 'components';
 import React from 'react';
+import { useParams } from 'react-router-dom';
+import { useGetAllActivitiesQuery } from 'services';
 import { bannerSx } from './style';
-import { useCopyToClipboard, useClassroomCtx } from 'components';
-import Utils from 'common/utils';
+import { ClassCodePanel, ClassActivities } from './subcomponents';
 
 const ClassroomStream = () => {
+  const { id } = useParams<'id'>();
   const { classData, role } = useClassroomCtx();
-  const [copiedText, copy] = useCopyToClipboard();
-  const [details, showDetails] = React.useState<boolean>(true);
+  const [details, showDetails] = React.useState<boolean>(false);
+  const { data, refetch, isLoading } = useGetAllActivitiesQuery(id as string);
+  const [, setLoading] = useLoading();
+
+  React.useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading]);
+
+  React.useEffect(() => refetch(), []);
 
   const toggleShowDetails = () => {
     showDetails((prvState) => !prvState);
   };
 
   return (
-    <Collapse timeout={500} appear={true} in={true}>
+    <ClassroomTab roles={[UserRole.TEACHER, UserRole.STUDENT, UserRole.OWNER]}>
       {classData && role && (
         <Container>
           {/* BANNER */}
@@ -45,21 +43,6 @@ const ClassroomStream = () => {
 
             <Collapse in={details}>
               <CardContent sx={bannerSx.content}>
-                {role !== UserRole.STUDENT && (
-                  <Stack direction="row" sx={bannerSx.expand_row}>
-                    <Typography variant="body2">Class code</Typography>
-                    <Typography variant="body2">{classData.code}</Typography>
-                    <Tooltip title={!copiedText ? 'Copy invitation link' : 'Copied'}>
-                      <IconButton
-                        onClick={() => {
-                          copy(Utils.getInvitationLinkFormat(classData._id as string, classData.code));
-                        }}
-                      >
-                        <ContentCopyIcon sx={{ fontSize: 14 }} />
-                      </IconButton>
-                    </Tooltip>
-                  </Stack>
-                )}
                 {classData?.subject && (
                   <Stack direction="row" sx={bannerSx.expand_row}>
                     <Typography variant="body2">Subject</Typography>
@@ -75,9 +58,21 @@ const ClassroomStream = () => {
               </CardContent>
             </Collapse>
           </Card>
+          {role !== UserRole.STUDENT ? (
+            <Grid container spacing={2}>
+              <Grid item xs={2}>
+                <ClassCodePanel code={classData.code} />
+              </Grid>
+              <Grid item xs={10}>
+                <ClassActivities data={data ?? []} />
+              </Grid>
+            </Grid>
+          ) : (
+            <ClassActivities data={data ?? []} />
+          )}
         </Container>
       )}
-    </Collapse>
+    </ClassroomTab>
   );
 };
 

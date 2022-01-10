@@ -1,22 +1,27 @@
-import { Box, IconButton, LinearProgress, Link, Tab, Tabs, Typography } from '@mui/material';
-import { ClassroomContextProvider, ConfirmDialog, Navbar, ProfileBtn, useAuth, useLoading } from 'components';
+import { Box, LinearProgress, Link, Tab, Tabs, Typography } from '@mui/material';
+import { IClassroomBody, UserRole } from 'common/interfaces';
+import Utils from 'common/utils';
+import { ClassroomContextProvider, Navbar, NotificationBtn, ProfileBtn, useAuth, useDialog, useLoading } from 'components';
 import React from 'react';
-import { useNavigate } from 'react-router';
+import { Outlet, useLocation, useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
-import { useGetClassDetailsQuery, useGetMyRoleQuery, useGetMyStudentIdQuery, useGetAllClassesQuery } from 'services/api';
+import { toast } from 'react-toastify';
+import {
+  useGetAllClassesQuery,
+  useGetClassDetailsQuery,
+  useGetMyRoleQuery,
+  useGetMyStudentIdQuery,
+  useUpdateAccountSyncMutation,
+} from 'services/api';
 import { mainSx, navSx } from './style';
 import { ClassroomSetting } from './subcomponents';
-import { Outlet, useLocation } from 'react-router';
-import { matchPath } from 'react-router-dom';
-import Utils from 'common/utils';
-import { toast } from 'react-toastify';
-import { IClassroomBody, UserRole } from 'common/interfaces';
 
 const getTabState = (pathName: string) => {
-  if (matchPath('/classroom/:id/work', pathName)) return 1;
-  if (matchPath('/classroom/:id/people', pathName)) return 2;
-  if (matchPath('/classroom/:id/grade', pathName)) return 3;
-  return 0;
+  if (/\/classroom\/\w+\/work.*/.test(pathName)) return '1';
+  if (/\/classroom\/\w+\/people.*/.test(pathName)) return '2';
+  if (/\/classroom\/\w+\/grade-reviews.*/.test(pathName)) return '4';
+  if (/\/classroom\/\w+\/grade.*/.test(pathName)) return '3';
+  return '0';
 };
 
 const ClassroomBoard = () => {
@@ -24,8 +29,8 @@ const ClassroomBoard = () => {
   const { pathname } = useLocation();
   const { userData } = useAuth();
   const navigate = useNavigate();
-  const [tabValue, setTabValue] = React.useState<number>(getTabState(pathname));
-  const [notifyMappingStudentId, showNotification] = React.useState<boolean>(false);
+  const [tabValue, setTabValue] = React.useState<string>('0');
+  const [submitAccountSync, { error: syncError, isLoading: isSubmitingAccountSync }] = useUpdateAccountSyncMutation();
 
   const { data, error, isLoading: fetchingClassData } = useGetClassDetailsQuery(id as string);
   const { data: classrooms, isLoading: isFetchingClassrooms } = useGetAllClassesQuery();
@@ -43,6 +48,7 @@ const ClassroomBoard = () => {
   );
 
   const [loading, setLoading] = useLoading();
+  const [showDialog, Dialog] = useDialog();
 
   //Error
   React.useEffect(() => {
@@ -53,18 +59,56 @@ const ClassroomBoard = () => {
   }, [error]);
 
   React.useEffect(() => {
-    setLoading(Utils.isLoading(fetchingRole, fetchingClassData, fetchingStuId, isFetchingClassrooms));
-  }, [fetchingClassData, fetchingRole, fetchingStuId, isFetchingClassrooms]);
+    setLoading(Utils.isLoading(fetchingRole, fetchingClassData, fetchingStuId, isFetchingClassrooms, isSubmitingAccountSync));
+  }, [fetchingClassData, fetchingRole, fetchingStuId, isFetchingClassrooms, isSubmitingAccountSync]);
 
   React.useEffect(() => {
+    if (syncError) {
+      console.log(syncError);
+      showDialog('⚠ Cannot sync your account! Please contact your classroom teacher', () => {});
+      return;
+    }
+
     const err = stuErr as any;
     if (err && err?.status === 404) {
-      showNotification(true);
+      handleAutomaticSync();
     }
-  }, [stuErr]);
+  }, [stuErr, syncError]);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  React.useEffect(() => {
+    if (pathname) setTabValue(getTabState(pathname));
+  }, [pathname]);
+
+  React.useEffect(() => {
+    if (studentData && studentData.student_id && userData) {
+      if (studentData.student_id !== userData?.student_id) {
+        console.log('Detect studentId inconsistency');
+        handleAutomaticSync();
+      }
+    }
+  }, [studentData, userData]);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setTabValue(newValue);
+  };
+
+  const handleAutomaticSync = () => {
+    if (!userData?.student_id) {
+      showDialog('No student id found in your account setting! You need to set up your student id in your profile setting first!', () => {
+        navigate('/profile');
+      });
+    } else
+      submitAccountSync({
+        class_id: id as string,
+        body: {
+          user_id: userData?._id as string,
+          student_id: userData?.student_id as string,
+        },
+      })
+        .unwrap()
+        .then(() => {
+          toast.success('Sync student id succeeded');
+        });
   };
 
   return (
@@ -75,10 +119,13 @@ const ClassroomBoard = () => {
           <>
             <Box sx={navSx.tabsContainer}>
               <Tabs value={tabValue} onChange={handleChange} aria-label="basic tabs example">
-                <Tab label="Stream" id="stream" onClick={() => navigate('.')} />
-                <Tab label="Classwork" id="work" onClick={() => navigate('./work')} />
-                <Tab label="People" id="people" onClick={() => navigate('./people')} />
-                {role !== UserRole.STUDENT && <Tab label="Grading" id="people" onClick={() => navigate('./grade')} />}
+                <Tab value="0" label="Stream" id="stream" onClick={() => navigate('.')} />
+                <Tab value="1" label="Classwork" id="work" onClick={() => navigate('./work')} />
+                <Tab value="2" label="People" id="people" onClick={() => navigate('./people')} />
+                {role !== UserRole.STUDENT && <Tab value="3" label="Grading" id="people" onClick={() => navigate('./grade')} />}
+                {role !== UserRole.STUDENT && (
+                  <Tab value="4" label="Grade Reviews" id="people" onClick={() => navigate('./grade-reviews')} />
+                )}
               </Tabs>
             </Box>
             {loading && <LinearProgress sx={navSx.progressBar} />}
@@ -93,6 +140,7 @@ const ClassroomBoard = () => {
 
         <Box>
           {role !== UserRole.STUDENT && <ClassroomSetting classData={data as IClassroomBody} />}
+          <NotificationBtn />
           {userData && <ProfileBtn fname={userData.first_name} imageUrl={userData.avatar} />}
         </Box>
       </Navbar>
@@ -103,20 +151,7 @@ const ClassroomBoard = () => {
           </ClassroomContextProvider>
         </Box>
       )}
-      {role === UserRole.STUDENT && (
-        <ConfirmDialog
-          open={notifyMappingStudentId}
-          handleClose={() => {
-            showNotification(false);
-          }}
-          title="Reminder"
-          description="You need link your current account with your student account in this class"
-          onConfirm={() => {
-            navigate(`/classroom/${id}/people`);
-            showNotification(false);
-          }}
-        />
-      )}
+      {role === UserRole.STUDENT && <Dialog />}
     </React.Fragment>
   );
 };

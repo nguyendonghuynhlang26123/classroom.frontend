@@ -1,42 +1,50 @@
-import React from 'react';
-import { settingModalSx } from './style';
+import { Close, Download, PhotoCamera, Settings, Upload } from '@mui/icons-material';
 import {
+  Alert,
+  Avatar,
   Box,
+  Button,
+  Container,
   Grow,
   IconButton,
-  Modal,
-  Toolbar,
-  Typography,
-  Container,
-  TextField,
-  Button,
   LinearProgress,
-  Alert,
+  Link,
+  Modal,
   Stack,
   Table,
-  TableContainer,
-  Link,
-  TableRow,
-  TableCell,
   TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  TextField,
+  Toolbar,
   Tooltip,
+  Typography,
 } from '@mui/material';
+import Utils from 'common/utils';
+import { ConfirmDialog, useLoading } from 'components';
 import { useFormik } from 'formik';
-import * as yup from 'yup';
-import { useLoading, ConfirmDialog } from 'components';
+import React from 'react';
 import { useParams } from 'react-router-dom';
-import { ClassroomSettingProps, UploadConfirmProps } from './type';
-import { IClassroomBody } from 'common/interfaces';
 import { toast } from 'react-toastify';
-import { Close, Download, Settings, Upload } from '@mui/icons-material';
 import {
   useDownloadStudentListMutation,
   useGetAllStudentsQuery,
   useUpdateClassMutation,
   useUploadAndUpdateStudentListMutation,
+  useUploadImageMutation,
   useUploadStudentListMutation,
 } from 'services';
-import Utils from 'common/utils';
+import * as yup from 'yup';
+import { settingModalSx } from './style';
+import { ClassroomSettingProps, UploadConfirmProps } from './type';
+
+type FormType = {
+  title: string;
+  section: string;
+  room?: string;
+  subject?: string;
+};
 
 const validationSchema = yup.object({
   title: yup
@@ -48,7 +56,7 @@ const validationSchema = yup.object({
   subject: yup.string().min(1, 'Subject should be of 1-50 characters length').max(50, 'Subject should be of 1-50 characters length'),
   room: yup.string().min(1, 'Room should be of 1-50 characters length').max(50, 'Room should be of 1-50 characters length'),
 });
-const defaultProps: IClassroomBody = {
+const defaultProps: FormType = {
   title: '',
   room: '',
   section: '',
@@ -74,9 +82,14 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
   const uploadRef = React.createRef<HTMLInputElement>();
   const { data: studentData, error: studentsErr, isLoading: isFetchingStudents } = useGetAllStudentsQuery(id as string);
   const [updateClassData, { isLoading: isUpdatingData }] = useUpdateClassMutation();
-  const [uploadList, { isLoading: isUploading }] = useUploadStudentListMutation();
+
+  const [uploadCSVList, { isLoading: isUploading }] = useUploadStudentListMutation();
   const [updateStuList, { isLoading: isUpdateStudents }] = useUploadAndUpdateStudentListMutation();
   const [downloadCsvFile, { isLoading: isDownloadComplete }] = useDownloadStudentListMutation();
+
+  const [uploadAvatar, { isLoading: isUploadingImg }] = useUploadImageMutation();
+  const [avatar, setAvatar] = React.useState<string | undefined>(classData?.image);
+  const [uploadingImgFile, setUploadImgFile] = React.useState<any>(null);
 
   const [modal, showModal] = React.useState<boolean>(false);
   const [alert, showAlert] = React.useState<boolean>(false);
@@ -85,13 +98,12 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
 
   const [loading, setLoading] = useLoading();
 
-  const formik = useFormik<IClassroomBody>({
+  const formik = useFormik<FormType>({
     initialValues: defaultProps,
     validateOnBlur: true,
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      updateClassData({ id: id as string, body: values })
-        .unwrap()
+      handleUpdateData(id as string, values, uploadingImgFile)
         .then(() => {
           toast.success('Update class data completed');
         })
@@ -102,18 +114,20 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
   });
 
   React.useEffect(() => {
-    if (classData)
+    if (classData) {
       formik.setValues({
         title: classData.title,
         section: classData.section,
         room: classData.room || '',
         subject: classData.subject || '',
       });
+      setAvatar(classData?.image);
+    }
   }, [classData]);
 
   React.useEffect(() => {
-    setLoading(Utils.isLoading(isFetchingStudents, isUpdatingData, isUploading, isUpdateStudents, isDownloadComplete));
-  }, [isFetchingStudents, isUpdatingData, isUploading, isUpdateStudents, isDownloadComplete]);
+    setLoading(Utils.isLoading(isFetchingStudents, isUpdatingData, isUploading, isUpdateStudents, isDownloadComplete, isUploadingImg));
+  }, [isFetchingStudents, isUpdatingData, isUploading, isUpdateStudents, isDownloadComplete, isUploadingImg]);
 
   React.useEffect(() => {
     const err = studentsErr as any;
@@ -136,7 +150,7 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
     const form = new FormData();
     if (file) form.append('csv', file);
     if (mode === 'CREATE') {
-      uploadList({ class_id: id as string, body: form })
+      uploadCSVList({ class_id: id as string, body: form })
         .unwrap()
         .then(() => {
           toast.success('Upload student list completed! New students are registered');
@@ -187,6 +201,32 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
     link.click();
   };
 
+  const handleSelectFile = (ev: any) => {
+    const file = ev?.target?.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      toast.warning('Image size is too large! Please try another one');
+      return;
+    }
+    if (file.type.split('/')[0] !== 'image') {
+      toast.warning('Please upload image only!');
+      return;
+    }
+    setUploadImgFile(file);
+    setAvatar(URL.createObjectURL(file));
+  };
+
+  const handleUpdateData = async (id: string, values: FormType, file: any) => {
+    let form_data = new FormData();
+
+    if (file) {
+      form_data.append('image', file);
+      const uploaded = await uploadAvatar(form_data).unwrap();
+      return updateClassData({ id: id, body: { ...values, image: uploaded.url } }).unwrap();
+    }
+    return updateClassData({ id: id, body: { ...values, image: undefined } }).unwrap();
+  };
+
   return (
     <>
       <IconButton
@@ -228,6 +268,15 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
                 <Typography color="primary" className="header">
                   Class Details
                 </Typography>
+
+                <Box sx={settingModalSx.imageContainer}>
+                  <Avatar variant="rounded" sx={{ height: '100%', width: '100%' }} src={avatar} />
+
+                  <label htmlFor="icon-button-file" className="overlay">
+                    <input accept="image/*" id="icon-button-file" type="file" onChange={handleSelectFile} />
+                    <PhotoCamera />
+                  </label>
+                </Box>
                 <TextField
                   id="title"
                   name="title"

@@ -3,7 +3,7 @@ import { NotificationController } from 'components';
 import { mainTheme } from 'configs/theme.config';
 import React from 'react';
 import { useRoutes, useLocation } from 'react-router-dom';
-import { ThemeContext, useAuth } from './components/context';
+import { NotificationContextProvider, ThemeContext, useAuth } from './components/context';
 import appRoutes from './pages/route';
 
 function App() {
@@ -16,7 +16,9 @@ function App() {
       {/* Notification Container */}
       <NotificationController />
 
-      <ThemeContext themeConfig={mainTheme}>{!pending ? routes : <LinearProgress />}</ThemeContext>
+      <NotificationContextProvider>
+        <ThemeContext themeConfig={mainTheme}>{!pending ? routes : <LinearProgress />}</ThemeContext>
+      </NotificationContextProvider>
     </React.Fragment>
   );
 }

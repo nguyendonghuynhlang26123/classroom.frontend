@@ -54,6 +54,8 @@ const LoginPage = () => {
     navigate('/auth/register' + search);
   };
 
+  const resetPassword = () => navigate('/auth/reset' + search);
+
   return (
     <Box sx={sharedStyleSx.root}>
       <Grow appear={true} in={true} timeout={500}>
@@ -88,6 +90,10 @@ const LoginPage = () => {
                 error={formik.touched.password && Boolean(formik.errors.password)}
                 helperText={formik.touched.password && formik.errors.password}
               />
+              <Stack direction="row" sx={sharedStyleSx.resetPasswordContainer}>
+                <Typography variant="body1">Forgot?</Typography>
+                <Link onClick={resetPassword}>Reset password</Link>
+              </Stack>
               <Button
                 fullWidth
                 type="submit"
