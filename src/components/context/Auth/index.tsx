@@ -85,6 +85,10 @@ export const AuthProvider = ({ children }: { children: any }) => {
             setIsPending(false); //Show that the api has been processed
             setInfor(response.data);
             resolve(response);
+          } else {
+            navigate('/account-banned' + (search ?? ''));
+            logOut();
+            reject(response);
           }
         })
         .catch((err: any) => {
