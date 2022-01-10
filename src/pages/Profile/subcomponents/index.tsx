@@ -1,11 +1,10 @@
-import { Container, Grow, Paper, Typography, Box, Button, Link, Stack, TextField, CircularProgress, Modal } from '@mui/material';
-import React from 'react';
-import { useFormik } from 'formik';
-import * as yup from 'yup';
-import { toast } from 'react-toastify';
-import { ChangePassBtnPropType } from './type';
+import { Box, Button, CircularProgress, Grow, Modal, Paper, TextField, Typography } from '@mui/material';
 import { IChangePassBody } from 'common/interfaces';
+import { useFormik } from 'formik';
+import React from 'react';
+import * as yup from 'yup';
 import { changePassSx } from './style';
+import { ChangePassBtnPropType } from './type';
 
 const validationSchema = yup.object({
   old_password: yup

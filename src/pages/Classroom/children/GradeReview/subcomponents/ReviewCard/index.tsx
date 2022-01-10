@@ -1,9 +1,9 @@
-import React from 'react';
-import { ListItemAvatar, Avatar, ListItemText, Typography, Stack, ListItem, Divider, Box } from '@mui/material';
+import { Avatar, Box, Divider, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
+import { IUser, RequestReviewStatus } from 'common/interfaces';
 import Utils from 'common/utils';
+import React from 'react';
 import { cardSx } from './style';
 import { ReviewCardProps } from './type';
-import { IUser, RequestReviewStatus } from 'common/interfaces';
 
 export const ReviewCard = ({ data, handleOnClick, isActive }: ReviewCardProps) => {
   const [author, setAuthor] = React.useState<IUser>();

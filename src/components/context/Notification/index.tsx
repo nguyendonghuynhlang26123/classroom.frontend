@@ -1,11 +1,10 @@
-import React from 'react';
-import { NotificationContextProps } from './type';
-import { useGetAllNotificationQuery } from 'services';
-import { useLoading, useLocalStorage } from '../../hooks';
-import { useAuth } from '..';
 import { INotification } from 'common/interfaces';
-import { io, Socket } from 'socket.io-client';
-import { JWT_SESSION_KEY } from 'common/constants';
+import React from 'react';
+import { useGetAllNotificationQuery } from 'services';
+import { io } from 'socket.io-client';
+import { useAuth } from '..';
+import { useLoading, useLocalStorage } from '../../hooks';
+import { NotificationContextProps } from './type';
 
 const defaultValue: NotificationContextProps = {
   notifications: [],

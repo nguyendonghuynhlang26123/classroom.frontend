@@ -1,4 +1,4 @@
-import { SxType, MultipleSxTypes } from 'common/type';
+import { MultipleSxTypes } from 'common/type';
 
 export const notificationBtnSx: MultipleSxTypes = {
   container: {

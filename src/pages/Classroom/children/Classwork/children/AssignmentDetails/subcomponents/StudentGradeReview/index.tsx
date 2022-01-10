@@ -1,12 +1,11 @@
-import { Check, Close, DoubleArrow, GraphicEq, ThumbDown } from '@mui/icons-material';
+import { Check, Close, GraphicEq } from '@mui/icons-material';
 import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineSeparator } from '@mui/lab';
 import { Box, Typography } from '@mui/material';
 import { IGradeReview, IUser, RequestReviewStatus } from 'common/interfaces';
 import Utils from 'common/utils';
-import { useAuth } from 'components';
+import { GradeReviewComments, useAuth } from 'components';
 import React from 'react';
 import { gradeReviewSx } from './style';
-import { GradeReviewComments } from 'components';
 import { StudentGradeReviewType } from './type';
 
 export const GradeReviewPanel = ({ data, handleSubmitComment }: StudentGradeReviewType) => {

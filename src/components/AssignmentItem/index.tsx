@@ -1,19 +1,5 @@
-import { AssignmentOutlined, MoreVert } from '@mui/icons-material';
-import {
-  Accordion,
-  AccordionActions,
-  AccordionDetails,
-  AccordionSummary,
-  Avatar,
-  Button,
-  Divider,
-  Grid,
-  IconButton,
-  Menu,
-  MenuItem,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { AssignmentOutlined } from '@mui/icons-material';
+import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Avatar, Divider, Grid, Stack, Typography } from '@mui/material';
 import Utils from 'common/utils';
 import React from 'react';
 import { accordionSx } from './style';

@@ -1,11 +1,11 @@
-import React from 'react';
-import { activatePageSx } from './style';
-import { Container, Grow, Paper, Typography, Box, Button, Divider, Link } from '@mui/material';
-import { useNavigate, useLocation } from 'react-router';
+import { Box, Button, Container, Divider, Grow, Paper, Typography } from '@mui/material';
 import Email from 'assets/images/sending-mail.svg';
-import { useActivateAccountMutation } from 'services';
-import { toast } from 'react-toastify';
 import { useAuth } from 'components';
+import React from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
+import { useActivateAccountMutation } from 'services';
+import { activatePageSx } from './style';
 
 const EmailActivate = () => {
   const navigate = useNavigate();

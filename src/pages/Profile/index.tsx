@@ -1,14 +1,14 @@
 //Profile
 import { PhotoCamera } from '@mui/icons-material';
 import { Avatar, Box, Button, CircularProgress, Container, Grid, LinearProgress, Stack, TextField, Typography } from '@mui/material';
-import { NAME_REGEX, STUDENT_ID_REGEX } from 'common/constants/regex';
+import { STUDENT_ID_REGEX } from 'common/constants/regex';
 import { IChangePassBody, IUserBody } from 'common/interfaces';
 import Utils from 'common/utils';
 import { Navbar, useAuth, useLoading } from 'components';
 import { useFormik } from 'formik';
 import React from 'react';
 import { toast } from 'react-toastify';
-import { useUpdateProfileMutation, useUploadImageMutation, useGetAllClassesQuery, useChangePassMutation } from 'services/api';
+import { useChangePassMutation, useGetAllClassesQuery, useUpdateProfileMutation, useUploadImageMutation } from 'services/api';
 import * as yup from 'yup';
 import { profileSx } from './style';
 import { ChangePassBtn } from './subcomponents';
@@ -45,6 +45,7 @@ const UserProfile = () => {
             toast.success('Update succeed');
           })
           .catch((err) => {
+            if (err.status === 409) formik.setFieldError('student_id', 'This id has been registered');
             toast.error('Update failed! ' + err.data);
           });
       }
@@ -61,9 +62,9 @@ const UserProfile = () => {
     if (file) {
       form_data.append('image', file);
       const uploaded = await uploadAvatar(form_data).unwrap();
-      return await updateProfile({ id: id, body: { ...values, avatar: uploaded.url } });
+      return updateProfile({ id: id, body: { ...values, avatar: uploaded.url } }).unwrap();
     }
-    return await updateProfile({ id: id, body: { ...values, avatar: undefined } });
+    return updateProfile({ id: id, body: { ...values, avatar: undefined } }).unwrap();
   };
 
   const handleSelectFile = (ev: any) => {

@@ -1,31 +1,28 @@
-import { Close, Check } from '@mui/icons-material';
+import { Close } from '@mui/icons-material';
 import {
+  AppBar,
   Box,
   Button,
+  Checkbox,
+  Grid,
+  Grow,
   IconButton,
+  InputAdornment,
+  LinearProgress,
+  Modal,
+  Stack,
+  TextField,
   Toolbar,
   Typography,
-  Modal,
-  Grow,
-  Stack,
-  Grid,
-  TextField,
-  InputAdornment,
-  Checkbox,
-  Select,
-  MenuItem,
   useScrollTrigger,
-  AppBar,
-  LinearProgress,
 } from '@mui/material';
-import { RichEditor, MyTimePicker } from 'components';
+import { IAssignmentBody } from 'common/interfaces';
+import { MyTimePicker, RichEditor } from 'components';
 import React from 'react';
-
 import { useNavigate, useParams } from 'react-router';
+import { toast } from 'react-toastify';
 import { formSx } from './style';
 import { AssignmentFormProps } from './type';
-import { IAssignmentBody } from 'common/interfaces';
-import { toast } from 'react-toastify';
 
 const getTommorrowDate = (): number => {
   var day = new Date();

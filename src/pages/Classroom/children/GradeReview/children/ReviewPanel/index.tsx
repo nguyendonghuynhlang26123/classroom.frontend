@@ -103,7 +103,7 @@ const ReviewPanel = () => {
           {review?.status && getIconByStatus(review.status)}
           <Typography>{assignment?.title}</Typography>
         </Stack>
-        {review?.status == RequestReviewStatus.OPEN && (
+        {review?.status === RequestReviewStatus.OPEN && (
           <Stack direction="row" spacing={1}>
             <Button color="error" onClick={() => showDialog('Do you really want to reject this grade review?', handleRejectGradeReview)}>
               ❌ Reject

@@ -1,13 +1,12 @@
-import { Collapse, Grid } from '@mui/material';
-import React from 'react';
-import { gradeReviewSx } from './style';
-import { ReviewCard } from './subcomponents';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
-import { useGetAllGradeReviewsQuery } from 'services';
-import { useLoading, NoResourceDisplay, ClassroomTab } from 'components';
-import Utils from 'common/utils';
+import { Grid } from '@mui/material';
 import Success from 'assets/images/success.svg';
 import { UserRole } from 'common/interfaces';
+import { ClassroomTab, NoResourceDisplay, useLoading } from 'components';
+import React from 'react';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import { useGetAllGradeReviewsQuery } from 'services';
+import { gradeReviewSx } from './style';
+import { ReviewCard } from './subcomponents';
 
 const GradeReviewTab = () => {
   const { id, reviewId } = useParams();

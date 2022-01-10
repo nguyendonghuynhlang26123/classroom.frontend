@@ -40,7 +40,7 @@ export const mainSx: MultipleSxTypes = {
   container: {
     pt: 4,
     p: '0 !important',
-    '& .MuiCollapse-root': {
+    '& .MuiCollapse-root.tab-wrap': {
       mt: 4,
     },
   },

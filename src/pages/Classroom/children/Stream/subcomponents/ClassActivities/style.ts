@@ -18,6 +18,9 @@ export const activitySx: MultipleSxTypes = {
     '& .MuiTimelineItem-root:before': {
       display: 'none !important',
     },
+    '& .MuiTimelineDot-root': {
+      my: 1,
+    },
   },
 
   activityItem: {

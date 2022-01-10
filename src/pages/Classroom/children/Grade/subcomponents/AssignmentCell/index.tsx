@@ -1,9 +1,9 @@
-import React from 'react';
-import { TableCell, Box, Stack, Tooltip, Typography, Link, Button, IconButton } from '@mui/material';
-import { useParams, useNavigate } from 'react-router-dom';
-import { AssignmentCellProps } from './type';
 import { Download, KeyboardReturn, Upload } from '@mui/icons-material';
+import { Box, IconButton, Link, Stack, TableCell, Tooltip, Typography } from '@mui/material';
 import Utils from 'common/utils';
+import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { AssignmentCellProps } from './type';
 
 export const AssignmentCell = ({ data, onDownloadGrade, onUploadGrade, onDownloadTemplate, onFinalizeGrade }: AssignmentCellProps) => {
   const { id } = useParams<'id'>();

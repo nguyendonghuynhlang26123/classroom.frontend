@@ -1,9 +1,9 @@
-import { Box, Card, CardContent, CardMedia, Typography } from '@mui/material';
+import { Card, CardContent, CardMedia, Typography } from '@mui/material';
+import Avatar from 'assets/images/avatar.png';
 import Utils from 'common/utils';
 import React from 'react';
-import { StudentCardProps } from './type';
 import { studentCardSx } from './style';
-import Avatar from 'assets/images/avatar.png';
+import { StudentCardProps } from './type';
 
 export const StudentCard = ({ data }: StudentCardProps) => {
   const [imgSrc, setImg] = React.useState<any>(Avatar);

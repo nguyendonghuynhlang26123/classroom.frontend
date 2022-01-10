@@ -1,8 +1,8 @@
 import { ContentCopy } from '@mui/icons-material';
-import { Collapse, Container, Stack, Typography, Box, IconButton, Tooltip } from '@mui/material';
+import { Box, Container, IconButton, Stack, Tooltip, Typography } from '@mui/material';
 import { IClassroomUser, IStudentInfo, UserRole } from 'common/interfaces';
 import Utils from 'common/utils';
-import { useAuth, useClassroomCtx, useCopyToClipboard, useLoading, ClassroomTab } from 'components';
+import { ClassroomTab, useAuth, useClassroomCtx, useCopyToClipboard, useLoading } from 'components';
 import React from 'react';
 import { useParams } from 'react-router';
 import { toast } from 'react-toastify';

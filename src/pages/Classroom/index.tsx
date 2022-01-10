@@ -1,22 +1,20 @@
-import { Box, IconButton, LinearProgress, Link, Tab, Tabs, Typography } from '@mui/material';
-import { ClassroomContextProvider, ConfirmDialog, Navbar, NotificationBtn, ProfileBtn, useAuth, useDialog, useLoading } from 'components';
+import { Box, LinearProgress, Link, Tab, Tabs, Typography } from '@mui/material';
+import { IClassroomBody, UserRole } from 'common/interfaces';
+import Utils from 'common/utils';
+import { ClassroomContextProvider, Navbar, NotificationBtn, ProfileBtn, useAuth, useDialog, useLoading } from 'components';
 import React from 'react';
-import { useNavigate } from 'react-router';
+import { Outlet, useLocation, useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import {
+  useGetAllClassesQuery,
   useGetClassDetailsQuery,
   useGetMyRoleQuery,
   useGetMyStudentIdQuery,
-  useGetAllClassesQuery,
   useUpdateAccountSyncMutation,
 } from 'services/api';
 import { mainSx, navSx } from './style';
 import { ClassroomSetting } from './subcomponents';
-import { Outlet, useLocation } from 'react-router';
-import { matchPath } from 'react-router-dom';
-import Utils from 'common/utils';
-import { toast } from 'react-toastify';
-import { IClassroomBody, UserRole } from 'common/interfaces';
 
 const getTabState = (pathName: string) => {
   if (/\/classroom\/\w+\/work.*/.test(pathName)) return '1';

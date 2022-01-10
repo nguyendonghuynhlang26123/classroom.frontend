@@ -4,9 +4,9 @@ import { MultipleSxTypes } from 'common/type';
 export const gradeSx: MultipleSxTypes = {
   root: {
     width: '100%',
-    // mt: -4,
-    maxHeight: 'calc(100vh - 100px)',
-    minHeight: 'calc(100vh - 100px)',
+    mt: -4,
+    maxHeight: 'calc(100vh - 64px)',
+    minHeight: 'calc(100vh - 64px)',
   },
 
   table: {

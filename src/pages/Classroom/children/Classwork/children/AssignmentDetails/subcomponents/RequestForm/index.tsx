@@ -1,10 +1,10 @@
-import React from 'react';
-import { Typography, Box, Stack, Button, TextField, InputAdornment } from '@mui/material';
+import { Box, Button, InputAdornment, Stack, TextField } from '@mui/material';
 import { SimpleModal } from 'components';
 import { useFormik } from 'formik';
+import React from 'react';
 import * as yup from 'yup';
-import { RequestFormProps } from './type';
 import { formSx } from './style';
+import { RequestFormProps } from './type';
 
 export const RequestForm = ({ open, assignment, handleClose, onSubmit }: RequestFormProps) => {
   const validationSchema = yup.object({

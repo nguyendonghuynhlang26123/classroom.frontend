@@ -1,10 +1,10 @@
-import React from 'react';
+import { Send } from '@mui/icons-material';
 import { Avatar, Box, Button, Divider, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
-import { IGradeReview, IUser, RequestReviewStatus } from 'common/interfaces';
+import { IUser, RequestReviewStatus } from 'common/interfaces';
 import Utils from 'common/utils';
+import React from 'react';
 import { reviewCommentSx } from './style';
 import { GradeCommentProps } from './type';
-import { Send } from '@mui/icons-material';
 
 export const GradeReviewComments = ({ gr, handleSendBtn, userData }: GradeCommentProps) => {
   const [comment, setComment] = React.useState<string>('');

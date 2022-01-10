@@ -1,26 +1,25 @@
+import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import {
   Avatar,
-  IconButton,
-  List,
   Badge,
+  Box,
+  CircularProgress,
+  IconButton,
+  Link,
+  List,
   ListItemAvatar,
+  ListItemButton,
   ListItemText,
   Popover,
-  Typography,
-  CircularProgress,
-  ListItemButton,
-  Box,
-  Link,
   Stack,
+  Typography,
 } from '@mui/material';
-import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useGetAllNotificationQuery } from 'services';
 import { INotification } from 'common/interfaces';
 import Utils from 'common/utils';
-import { notificationBtnSx } from './style';
 import { useNotification } from 'components';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { notificationBtnSx } from './style';
 
 export const NotificationBtn = () => {
   const navigate = useNavigate();

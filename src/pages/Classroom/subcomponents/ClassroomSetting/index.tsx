@@ -1,35 +1,32 @@
-import React from 'react';
-import { settingModalSx } from './style';
+import { Close, Download, PhotoCamera, Settings, Upload } from '@mui/icons-material';
 import {
+  Alert,
+  Avatar,
   Box,
+  Button,
+  Container,
   Grow,
   IconButton,
-  Modal,
-  Toolbar,
-  Typography,
-  Container,
-  TextField,
-  Button,
   LinearProgress,
-  Alert,
+  Link,
+  Modal,
   Stack,
   Table,
-  TableContainer,
-  Link,
-  TableRow,
-  TableCell,
   TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  TextField,
+  Toolbar,
   Tooltip,
-  Avatar,
+  Typography,
 } from '@mui/material';
+import Utils from 'common/utils';
+import { ConfirmDialog, useLoading } from 'components';
 import { useFormik } from 'formik';
-import * as yup from 'yup';
-import { useLoading, ConfirmDialog } from 'components';
+import React from 'react';
 import { useParams } from 'react-router-dom';
-import { ClassroomSettingProps, UploadConfirmProps } from './type';
-import { IClassroomBody } from 'common/interfaces';
 import { toast } from 'react-toastify';
-import { Close, Download, PhotoCamera, Settings, Upload } from '@mui/icons-material';
 import {
   useDownloadStudentListMutation,
   useGetAllStudentsQuery,
@@ -38,7 +35,9 @@ import {
   useUploadImageMutation,
   useUploadStudentListMutation,
 } from 'services';
-import Utils from 'common/utils';
+import * as yup from 'yup';
+import { settingModalSx } from './style';
+import { ClassroomSettingProps, UploadConfirmProps } from './type';
 
 type FormType = {
   title: string;
@@ -223,9 +222,9 @@ export const ClassroomSetting = ({ classData }: ClassroomSettingProps) => {
     if (file) {
       form_data.append('image', file);
       const uploaded = await uploadAvatar(form_data).unwrap();
-      return await updateClassData({ id: id, body: { ...values, image: uploaded.url } });
+      return updateClassData({ id: id, body: { ...values, image: uploaded.url } }).unwrap();
     }
-    return await updateClassData({ id: id, body: { ...values, image: undefined } });
+    return updateClassData({ id: id, body: { ...values, image: undefined } }).unwrap();
   };
 
   return (

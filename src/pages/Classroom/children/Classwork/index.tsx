@@ -1,8 +1,7 @@
-import { Collapse } from '@mui/material';
 import { UserRole } from 'common/interfaces';
 import { ClassroomTab, useClassroomCtx } from 'components';
-import { EditableGradeStructure, GradeStructure } from './subcomponents';
 import React from 'react';
+import { EditableGradeStructure, GradeStructure } from './subcomponents';
 
 const ClassroomWork = () => {
   const { role } = useClassroomCtx();

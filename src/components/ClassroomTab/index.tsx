@@ -22,7 +22,7 @@ export const ClassroomTab = ({ roles, navigateTo, children }: RoleGuardType) => 
     }
   }, [role]);
   return (
-    <Collapse timeout={500} appear={true} in={true}>
+    <Collapse timeout={500} appear={true} in={true} className="tab-wrap">
       {children}
     </Collapse>
   );

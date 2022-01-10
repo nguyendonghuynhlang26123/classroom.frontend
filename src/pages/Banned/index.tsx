@@ -12,7 +12,7 @@ const BannedPage = () => {
           <Paper elevation={0} square sx={banPageSx.paper}>
             <Typography variant="h1">😭</Typography>
             <Typography variant="h5" sx={banPageSx.paper_title}>
-              You have been blocked from using the app
+              This account has been blocked from using the app
             </Typography>
             <Divider />
             <Typography variant="body1">Please contact admin for further support</Typography>

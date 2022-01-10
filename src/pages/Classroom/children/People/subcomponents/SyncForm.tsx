@@ -1,22 +1,19 @@
-import React from 'react';
 import {
-  Typography,
-  Box,
-  Stack,
+  Avatar,
   Button,
-  TextField,
   FormControl,
   InputLabel,
-  Select,
-  MenuItem,
-  SelectChangeEvent,
-  ListItem,
   ListItemAvatar,
   ListItemText,
-  Avatar,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Stack,
+  Typography,
 } from '@mui/material';
+import { IClassroomUser } from 'common/interfaces';
 import { SimpleModal } from 'components';
-import { IClassroomUser, UserRole } from 'common/interfaces';
+import React from 'react';
 
 type SyncFormProps = {
   open: boolean;

@@ -2,8 +2,8 @@ import { LinearProgress } from '@mui/material';
 import { UserRole } from 'common/interfaces';
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAcceptInvitationMutation } from 'services/api';
 import { toast } from 'react-toastify';
+import { useAcceptInvitationMutation } from 'services/api';
 
 const InvitePage = () => {
   const { search } = useLocation();

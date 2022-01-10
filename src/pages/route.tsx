@@ -1,8 +1,8 @@
+import { LinearProgress } from '@mui/material';
 import { RouteConfigs } from 'common/type';
-import { Navigate, Outlet } from 'react-router-dom';
-import React from 'react';
 import Utils from 'common/utils';
-import { LinearProgress, Skeleton } from '@mui/material';
+import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
 
 // main screen
 const Dashboard = React.lazy(() => import('./Dashboard'));

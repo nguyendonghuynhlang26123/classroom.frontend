@@ -1,13 +1,13 @@
-import { Container, Grow, Paper, Typography, Box, Button, Link, Stack, TextField, CircularProgress, Slide, Zoom } from '@mui/material';
-import React from 'react';
-import { sharedStyleSx } from './style';
-import { useFormik } from 'formik';
-import * as yup from 'yup';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from 'components';
-import { toast } from 'react-toastify';
+import { Box, Button, CircularProgress, Container, Grow, Link, Paper, Stack, TextField, Typography, Zoom } from '@mui/material';
 import ResetPassImg from 'assets/images/reset-pass.svg';
+import { useAuth } from 'components';
+import { useFormik } from 'formik';
+import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { repository } from 'services/repository';
+import * as yup from 'yup';
+import { sharedStyleSx } from './style';
 
 const validationSchema = yup.object({
   email: yup.string().email('This field should be a valid email').required('Please enter email'),

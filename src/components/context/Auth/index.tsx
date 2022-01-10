@@ -80,12 +80,16 @@ export const AuthProvider = ({ children }: { children: any }) => {
       ggService
         .validateToken(token)
         .then((response: AuthResponse) => {
-          setIsAuthen(true);
-          setIsPending(false); //Show that the api has been processed
-          setInfor(response.data);
-          resolve(response);
+          if (!response.data.is_banned) {
+            setIsAuthen(true);
+            setIsPending(false); //Show that the api has been processed
+            setInfor(response.data);
+            resolve(response);
+          }
         })
         .catch((err: any) => {
+          navigate('/account-banned' + (search ?? ''));
+          logOut();
           reject(err);
         });
     });
